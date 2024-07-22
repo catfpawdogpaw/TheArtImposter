@@ -27,3 +27,4 @@ Back/theartimposter/src/main/resources/application-secrets.yml
 
 #vscode
 .vscode
+/.idea/
