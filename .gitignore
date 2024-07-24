@@ -32,3 +32,5 @@ Back/theartimposter/src/main/resources/application-secrets.yml
 */node_modules
 DrawServer/config.js
 DrawServer/DBconfig.js
+
+/.idea/
