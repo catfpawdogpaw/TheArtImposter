@@ -1,17 +1,22 @@
 spring:
     application:
         name: theartimposter
-    # profiles:
-    #     active: secrets
-    datasource:
-        url: ${db.url}
-        username: ${db.username}
-        password: ${db.password}
-        driver-class-name: oracle.jdbc.OracleDriver
+    profiles:
+        active: secrets
     jpa:
         database-platform: org.hibernate.dialect.OracleDialect
         hibernate:
             ddl-auto: update
+            show_sql: true
+            use_sql_comments: true
+
+logging:
+    level:
+        org:
+            hibernate:
+                type:
+                    descriptor:
+                        sql: trace
 
 oracle:
     net:
