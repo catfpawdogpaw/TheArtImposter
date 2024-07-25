@@ -1,5 +1,10 @@
 <template>
     <div>
+        <div>
+            <label for="room">Room:</label>
+            <input v-model="room" id="room" placeholder="Enter room name" />
+            <button @click="joinRoom">Join Room</button>
+        </div>
         <canvas
             ref="canvas"
             @mousedown="startDrawing"
@@ -7,12 +12,32 @@
             @mouseup="stopDrawing"
             @mouseleave="stopDrawing"
         ></canvas>
-        <button @click="clearCanvas">Clear Canvas</button>
+        <div>
+            <button @click="clearCanvas">지우기</button>
+            <button
+                v-for="c in colors"
+                :key="c"
+                @click="selectColor(c)"
+                :style="{ backgroundColor: c }"
+            >
+                {{ c }}
+            </button>
+        </div>
+        <div><button @click="saveCanvasAsImage()">저장하기</button></div>
+        <div>
+            <label for="lineWidth">Line Width:</label>
+            <button @click="setLineWidth(1)">1px</button>
+            <button @click="setLineWidth(2)">2px</button>
+            <button @click="setLineWidth(4)">4px</button>
+            <button @click="setLineWidth(8)">8px</button>
+            <button @click="setLineWidth(16)">16px</button>
+        </div>
     </div>
 </template>
 
 <script>
-import io from "socket.io-client";
+import drawpad from "./drawpad.js";
+import drawsocket from "./drawsocket.js";
 
 export default {
     data() {
@@ -21,47 +46,47 @@ export default {
             isDrawing: false,
             context: null,
             canvas: null,
-            lineWidth: null,
+            lineWidth: 2,
             prevPoint: null,
+            room: "",
+            color: "black",
+            colors: [
+                "black",
+                "red",
+                "blue",
+                "green",
+                "yellow",
+                "orange",
+                "purple",
+            ],
         };
     },
     mounted() {
         this.setupCanvas();
-        this.connectToServer();
     },
     methods: {
         setupCanvas() {
             this.canvas = this.$refs.canvas;
-            this.canvas.width = 800;
-            this.canvas.height = 600;
-            this.context = this.canvas.getContext("2d");
-            this.context.strokeStyle = "#000000";
-            this.context.lineWidth = 2; // 선 굵기 설정
-            this.context.lineCap = "round"; // 선 끝 모양을 둥글게 설정
-            this.context.lineJoin = "round";
+            this.context = drawpad.setupCanvas(this.canvas);
         },
         connectToServer() {
-            this.socket = io("http://localhost:3000");
-            this.socket.on("draw", (data) => {
-                this.drawFromServer(data);
-            });
-            this.socket.on("initDrawing", (data) => {
-                console.log("기존그림 데이터:", data);
-                this.initDrawingFromServer(data);
-            });
-            this.socket.on("clearCanvas", () => {
-                this.clearCanvasLocal();
-            });
+            this.socket = drawsocket.connectToServer("http://localhost:3000");
+            drawsocket.setupDrawingListeners(
+                this.socket,
+                this.drawFromServer,
+                this.initDrawingFromServer,
+                this.clearCanvasLocal
+            );
+        },
+        joinRoom() {
+            this.connectToServer();
+            if (this.socket) {
+                drawsocket.joinRoom(this.socket, this.room);
+            }
         },
         startDrawing(e) {
             this.isDrawing = true;
-            const rect = this.canvas.getBoundingClientRect();
-            this.prevPoint = {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top,
-            };
-            this.context.beginPath();
-            this.context.moveTo(this.prevPoint.x, this.prevPoint.y);
+            this.prevPoint = drawpad.startDrawing(e, this.context, this.canvas);
         },
         stopDrawing() {
             this.isDrawing = false;
@@ -69,37 +94,49 @@ export default {
         },
         draw(e) {
             if (!this.isDrawing) return;
-
-            const rect = this.canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            this.context.lineTo(x, y);
-            this.context.stroke();
-            this.socket.emit("draw", {
-                prevX: this.prevPoint.x,
-                prevY: this.prevPoint.y,
-                x: x,
-                y: y,
-            });
-
-            this.prevPoint = { x, y };
+            const newPoint = drawpad.draw(
+                e,
+                this.context,
+                this.canvas,
+                this.prevPoint,
+                this.color,
+                this.lineWidth
+            );
+            if (this.socket) {
+                drawsocket.emitDraw(this.socket, {
+                    prevX: this.prevPoint.x,
+                    prevY: this.prevPoint.y,
+                    x: newPoint.x,
+                    y: newPoint.y,
+                    color: this.color,
+                    lineWidth: this.lineWidth,
+                });
+            }
+            this.prevPoint = newPoint;
         },
         drawFromServer(data) {
-            this.context.beginPath();
-            this.context.moveTo(data.prevX, data.prevY);
-            this.context.lineTo(data.x, data.y);
-            this.context.stroke();
+            drawpad.drawFromServer(this.context, data);
         },
         initDrawingFromServer(data) {
             data.forEach(this.drawFromServer);
         },
         clearCanvas() {
-            this.socket.emit("clearCanvas");
+            if (this.socket) {
+                drawsocket.emitClearCanvas(this.socket);
+            }
             this.clearCanvasLocal();
         },
         clearCanvasLocal() {
-            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            drawpad.clearCanvas(this.context, this.canvas);
+        },
+        selectColor(color) {
+            this.color = color;
+        },
+        setLineWidth(width) {
+            this.lineWidth = width;
+        },
+        saveCanvasAsImage() {
+            drawpad.saveCanvasAsImage(this.canvas);
         },
     },
 };
@@ -108,5 +145,6 @@ export default {
 <style scoped>
 canvas {
     border: 1px solid black;
+    background-color: ivory;
 }
 </style>
