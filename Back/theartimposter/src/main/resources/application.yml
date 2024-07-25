@@ -1,8 +1,9 @@
 spring:
     application:
         name: theartimposter
-    # profiles:
-    #     active: secrets
+    profiles:
+#        active: secrets
+        active: private
     datasource:
         url: ${db.url}
         username: ${db.username}
@@ -12,7 +13,23 @@ spring:
         database-platform: org.hibernate.dialect.OracleDialect
         hibernate:
             ddl-auto: update
+            show_sql: true
+            use_sql_comments: true
+    data:
+      redis:
+        host: localhost
+        port: 6379
+        
+        
+logging:
+    level:
+        org:
+            hibernate:
+                type:
+                    descriptor:
+                        sql: trace
 
 oracle:
     net:
         ssl_server_dn_match: true
+        
