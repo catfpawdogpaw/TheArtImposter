@@ -41,26 +41,59 @@ public class MatchHandler extends TextWebSocketHandler {
             gameRoomService.leaveRoom(Long.parseLong(gameRoomId));
         }
     }
-
+    @Override
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        log.info("Received message: " + message.getPayload());
+        super.handleTextMessage(session, message);
+    }
     private void checkAndMatchUsers() throws Exception {
-        synchronized (waitingUsers) {
-            while (waitingUsers.size() >= 5) {
-                WebSocketSession[] matchedUsers = new WebSocketSession[5];
-                for (int i = 0; i < 5; i++) {
+    	synchronized (waitingUsers) { // waitingUsers 큐에 대한 동기화 블록 시작
+            while (!waitingUsers.isEmpty()) { // 대기열에 사용자가 있는 동안 반복
+                WebSocketSession[] matchedUsers = new WebSocketSession[Math.min(waitingUsers.size(), 5)];
+                for (int i = 0; i < matchedUsers.length; i++) {
                     matchedUsers[i] = waitingUsers.poll();
                 }
-
-                GameRoom gameRoom = gameRoomService.findOrCreateRoom(); // Find or create a game room
+                // 게임 방을 찾거나 새로 생성
+                GameRoom gameRoom = gameRoomService.findOrCreateRoom();
                 for (WebSocketSession user : matchedUsers) {
                     if (user != null && user.isOpen()) {
-                        gameRoomService.joinRoom(gameRoom.getGameRoomId()); // Update player count in Redis
-                        user.getAttributes().put("gameRoomId", gameRoom.getGameRoomId().toString()); // Store gameRoomId in session
+                        // Redis에서 플레이어 수 업데이트
+                        gameRoomService.joinRoom(gameRoom.getGameRoomId());
+                        // 세션에 gameRoomId 저장
+                        user.getAttributes().put("gameRoomId", gameRoom.getGameRoomId().toString());
+                        // 사용자에게 매칭 완료 메시지 전송
                         user.sendMessage(new TextMessage("Match Found: " + gameRoom.getGameRoomId()));
+                        waitingUsers.remove(user);  // 사용자 제거
                     }
                 }
-                startGame(gameRoom, matchedUsers);
+                if (matchedUsers.length == 5) {
+                    startGame(gameRoom, matchedUsers);
+                } else {
+                    notifyWaitingPlayers(gameRoom, matchedUsers);
+                }
             }
         }
+//        synchronized (waitingUsers) { // waitingUsers 큐에 대한 동기화 블록 시작
+//            while (waitingUsers.size() >= 5) { // 대기열에 5명 이상의 사용자가 있는 동안 반복
+//                WebSocketSession[] matchedUsers = new WebSocketSession[5];
+//                for (int i = 0; i < 5; i++) {
+//                    matchedUsers[i] = waitingUsers.poll();
+//                }
+//             // 게임 방을 찾거나 새로 생성
+//                GameRoom gameRoom = gameRoomService.findOrCreateRoom(); 
+//                for (WebSocketSession user : matchedUsers) {
+//                    if (user != null && user.isOpen()) {
+//                    	// Redis에서 플레이어 수 업데이트
+//                        gameRoomService.joinRoom(gameRoom.getGameRoomId()); 
+//                     // 세션에 gameRoomId 저장
+//                        user.getAttributes().put("gameRoomId", gameRoom.getGameRoomId().toString()); // Store gameRoomId in session
+//                     // 사용자에게 매칭 완료 메시지 전송
+//                        user.sendMessage(new TextMessage("Match Found: " + gameRoom.getGameRoomId()));
+//                    }
+//                }
+//                startGame(gameRoom, matchedUsers);
+//            }
+//        }
     }
 
     private void startGame(GameRoom gameRoom, WebSocketSession[] matchedUsers) {
@@ -77,5 +110,14 @@ public class MatchHandler extends TextWebSocketHandler {
                  }
              }
     	}
+    }
+    
+    private void notifyWaitingPlayers(GameRoom gameRoom, WebSocketSession[] matchedUsers) throws Exception {
+        for (WebSocketSession session : matchedUsers) {
+            if (session != null && session.isOpen()) {
+                session.sendMessage(new TextMessage("Waiting for more players: " + gameRoom.getGameRoomId() 
+                    + " (" + matchedUsers.length + "/5)"));
+            }
+        }
     }
 }

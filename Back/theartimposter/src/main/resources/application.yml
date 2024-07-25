@@ -2,13 +2,13 @@ spring:
     application:
         name: theartimposter
     profiles:
-#        active: secrets
-        active: private
+        active: secrets
     datasource:
         url: ${db.url}
         username: ${db.username}
         password: ${db.password}
         driver-class-name: oracle.jdbc.OracleDriver
+
     jpa:
         database-platform: org.hibernate.dialect.OracleDialect
         hibernate:
@@ -21,6 +21,7 @@ spring:
         port: 6379
         
         
+
 logging:
     level:
         org:

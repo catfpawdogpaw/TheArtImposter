@@ -18,10 +18,15 @@ public class GameRoomService {
 	private final CacheService cacheService;
 
 	public GameRoom findOrCreateRoom() {
+		// 현재 존재하는 모든 게임 방 목록 가져옴 
 		List<GameRoom> rooms = gameRoomMapper.findAll();
+		
+		// Redis에서 저장된 게임 방 목록에서  
+		// 접속 인원 5명 이하인 방 찾음 (현재 접속할 수 있는 방)
 		GameRoom gameRoom = rooms.stream().filter(room -> room.getDestroyAt().isAfter(LocalDateTime.now())
 				&& cacheService.getPlayerCount(room.getGameRoomId().toString()) < 5).findFirst().orElse(null);
 
+		// 접속 가능한 방이 없으면 새로운 방 생성
 		if (gameRoom == null) {
 			gameRoom = new GameRoom();
 			gameRoom.setGameSettingId(1L); // Example gameSettingId
