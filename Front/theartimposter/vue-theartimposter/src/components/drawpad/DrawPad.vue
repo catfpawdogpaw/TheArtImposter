@@ -36,7 +36,8 @@
 </template>
 
 <script>
-import io from "socket.io-client";
+import drawpad from "./drawpad.js";
+import drawsocket from "./drawsocket.js";
 
 export default {
     data() {
@@ -45,7 +46,7 @@ export default {
             isDrawing: false,
             context: null,
             canvas: null,
-            lineWidth: null,
+            lineWidth: 2,
             prevPoint: null,
             room: "",
             color: "black",
@@ -66,43 +67,26 @@ export default {
     methods: {
         setupCanvas() {
             this.canvas = this.$refs.canvas;
-            this.canvas.width = 800;
-            this.canvas.height = 600;
-            this.context = this.canvas.getContext("2d");
-            this.context.strokeStyle = this.color;
-            this.context.lineWidth = 2; // 선 굵기 설정
-            this.context.lineCap = "round"; // 선 끝 모양을 둥글게 설정
-            this.context.lineJoin = "round";
+            this.context = drawpad.setupCanvas(this.canvas);
         },
         connectToServer() {
-            this.socket = io("http://localhost:3000");
-            console.log("서버에 접속하였습니다" + this.room);
-            this.socket.on("draw", (data) => {
-                this.drawFromServer(data);
-            });
-            this.socket.on("initDrawing", (data) => {
-                console.log("기존그림 데이터:", data);
-                this.initDrawingFromServer(data);
-            });
-            this.socket.on("clearCanvas", () => {
-                this.clearCanvasLocal();
-            });
+            this.socket = drawsocket.connectToServer("http://localhost:3000");
+            drawsocket.setupDrawingListeners(
+                this.socket,
+                this.drawFromServer,
+                this.initDrawingFromServer,
+                this.clearCanvasLocal
+            );
         },
         joinRoom() {
             this.connectToServer();
             if (this.socket) {
-                this.socket.emit("joinRoom", this.room);
+                drawsocket.joinRoom(this.socket, this.room);
             }
         },
         startDrawing(e) {
             this.isDrawing = true;
-            const rect = this.canvas.getBoundingClientRect();
-            this.prevPoint = {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top,
-            };
-            this.context.beginPath();
-            this.context.moveTo(this.prevPoint.x, this.prevPoint.y);
+            this.prevPoint = drawpad.startDrawing(e, this.context, this.canvas);
         },
         stopDrawing() {
             this.isDrawing = false;
@@ -110,46 +94,40 @@ export default {
         },
         draw(e) {
             if (!this.isDrawing) return;
-
-            const rect = this.canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            this.context.strokeStyle = this.color;
-            this.context.lineTo(x, y);
-            this.context.stroke();
+            const newPoint = drawpad.draw(
+                e,
+                this.context,
+                this.canvas,
+                this.prevPoint,
+                this.color,
+                this.lineWidth
+            );
             if (this.socket) {
-                this.socket.emit("draw", {
+                drawsocket.emitDraw(this.socket, {
                     prevX: this.prevPoint.x,
                     prevY: this.prevPoint.y,
-                    x: x,
-                    y: y,
+                    x: newPoint.x,
+                    y: newPoint.y,
                     color: this.color,
                     lineWidth: this.lineWidth,
                 });
             }
-
-            this.prevPoint = { x, y };
+            this.prevPoint = newPoint;
         },
         drawFromServer(data) {
-            this.context.save();
-            this.context.strokeStyle = data.color;
-            this.context.lineWidth = data.lineWidth;
-            this.context.beginPath();
-            this.context.moveTo(data.prevX, data.prevY);
-            this.context.lineTo(data.x, data.y);
-            this.context.stroke();
-            this.context.restore();
+            drawpad.drawFromServer(this.context, data);
         },
         initDrawingFromServer(data) {
             data.forEach(this.drawFromServer);
         },
         clearCanvas() {
-            this.socket.emit("clearCanvas");
+            if (this.socket) {
+                drawsocket.emitClearCanvas(this.socket);
+            }
             this.clearCanvasLocal();
         },
         clearCanvasLocal() {
-            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            drawpad.clearCanvas(this.context, this.canvas);
         },
         selectColor(color) {
             this.color = color;
@@ -158,15 +136,7 @@ export default {
             this.lineWidth = width;
         },
         saveCanvasAsImage() {
-            const dataURL = this.canvas.toDataURL("image/png");
-
-            // 이미지 다운로드 링크 생성
-            const link = document.createElement("a");
-            link.href = dataURL;
-            link.download = "drawing.png"; // 다운로드할 파일의 이름
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            drawpad.saveCanvasAsImage(this.canvas);
         },
     },
 };

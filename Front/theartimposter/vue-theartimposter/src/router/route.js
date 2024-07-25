@@ -1,36 +1,29 @@
-import MiddleFrontCompo from "@/components/MiddleFrontCompo.vue";
-import PageLoginCompo from "@/components/PageLoginCompo.vue";
-import PageLogoutCompo from "@/components/PageLogoutCompo.vue";
-import PageMainCompo from "@/components/PageMainCompo.vue";
-import PageMyPageCompo from "@/components/PageMyPageCompo.vue";
-import PageMemoCompo from "@/components/memo/PageMemoCompo.vue";
+import DrawPad from "@/components/drawpad/DrawPad.vue";
+import MiddleComponent from "@/components/MiddleComponent.vue";
+import SideComponent from "@/components/SideComponent.vue";
 
 export default [
     {
+        //메인경로마다 상태
         path: "/",
-        component: MiddleFrontCompo,
+        components: {
+            middle: MiddleComponent,
+        },
         children: [
-            // '/'로 접근하면 PageMainCompo도 같이 보여준다. => 대표페이지
-            { path: "main", component: PageMainCompo, alias: ["/"] },
-            { path: "/mypage", component: PageMyPageCompo },
-            { path: "/login", component: PageLoginCompo },
-            { path: "/logout", component: PageLogoutCompo },
             {
-                path: "/memo",
-                component: PageMemoCompo,
-                children: [
-                    //클릭시 로딩 (lazy loading)
-                    {
-                        path: "/",
-                        component: () =>
-                            import("@/components/memo/MemoListCompo.vue"),
-                    },
-                    {
-                        path: "/memo/input/:idx?",
-                        component: () =>
-                            import("@/components/memo/MemoInputCompo.vue"),
-                    },
-                ],
+                path: "/",
+                components: {
+                    //위에 띄워지는 투표 화면도 생각해야함
+                    main: DrawPad,
+                    side: SideComponent,
+                },
+            },
+            {
+                path: "/lobby",
+                components: {
+                    // main: () => import("@/components/OtherMainComponent.vue"),
+                    // side: () => import("@/components/OtherMainComponent.vue"),
+                },
             },
         ],
     },

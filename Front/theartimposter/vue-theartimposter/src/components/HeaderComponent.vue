@@ -1,7 +1,7 @@
 <template>
     <div class="header" style="display: flex">
         <h3>Header</h3>
-        <router-link></router-link>
+        <router-view></router-view>
     </div>
 </template>
 
