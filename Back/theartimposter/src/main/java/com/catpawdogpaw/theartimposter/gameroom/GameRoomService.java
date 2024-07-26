@@ -17,6 +17,16 @@ public class GameRoomService {
 	private final GameRoomMapper gameRoomMapper;
 	private final CacheService cacheService;
 
+	public Long createGameRoom(GameRoom gameRoom) {
+        gameRoomMapper.createRoom(gameRoom);
+        return gameRoom.getGameRoomId();
+    }
+	
+	public void deleteRoom(Long id) {
+		gameRoomMapper.deleteRoom(id);
+	}
+	
+	
 	public GameRoom findOrCreateRoom() {
 		// 현재 존재하는 모든 게임 방 목록 가져옴 
 		List<GameRoom> rooms = gameRoomMapper.findAll();

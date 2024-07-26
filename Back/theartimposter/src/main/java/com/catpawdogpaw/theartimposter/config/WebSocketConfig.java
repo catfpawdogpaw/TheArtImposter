@@ -23,7 +23,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/wait-service/wait-websocket")
         .setAllowedOrigins("http://localhost:9080")
-                .withSockJS();
+        .withSockJS();
     }
     
     // 메세지 브로거 옵션 설정

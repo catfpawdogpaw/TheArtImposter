@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.catpawdogpaw.theartimposter.gamesetting.mapper.GameSettingMapper">
+
+    <!-- 게임세팅 생성 -->
+    <insert id="createGameSetting" useGeneratedKeys="true" keyProperty="gameRoomId">
+        INSERT INTO game_room (game_setting_id, created_at, destroy_at)
+        VALUES (#{gameSettingId}, SYSTIMESTAMP, #{destroyAt})
+    </insert>
+
+    <!-- 게임세팅 삭제 -->
+    <delete id="deleteGameSetting">
+        DELETE FROM game_room WHERE game_room_id = #{gameRoomId}
+    </delete>
+
+    <!-- 게임세팅 조회 -->
+    <select id="getGameSettingById" resultType="com.catpawdogpaw.theartimposter.gameroom.model.GameRoom">
+        SELECT game_room_id AS gameRoomId, 
+               game_setting_id AS gameSettingId, 
+               created_at AS createdAt, 
+               destroy_at AS destroyAt
+        FROM game_room
+        WHERE game_room_id = #{gameRoomId}
+    </select>
+
+</mapper>

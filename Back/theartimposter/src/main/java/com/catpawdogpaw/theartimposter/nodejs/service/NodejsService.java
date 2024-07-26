@@ -2,13 +2,16 @@ package com.catpawdogpaw.theartimposter.nodejs.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-
-import com.catpawdogpaw.theartimposter.nodejs.entity.dto.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import com.catpawdogpaw.theartimposter.nodejs.entity.dto.GameRoomSTNDTO;
+import com.catpawdogpaw.theartimposter.nodejs.entity.dto.GameSettingSTNDTO;
+import com.catpawdogpaw.theartimposter.nodejs.entity.dto.PlayerSTNDTO;
+import com.catpawdogpaw.theartimposter.nodejs.entity.dto.STNDTO;
+import com.catpawdogpaw.theartimposter.nodejs.entity.dto.SubjectSTNDTO;
 
 @Service
 public class NodejsService {
@@ -55,10 +58,11 @@ public class NodejsService {
 	private GameSettingSTNDTO createGameSettingSTNDTO() {
 		GameSettingSTNDTO gameSettingSTNDTO = new GameSettingSTNDTO();
 		gameSettingSTNDTO.setMinPeople(5);
+		gameSettingSTNDTO.setMaxPeople(5);
 		gameSettingSTNDTO.setRoundTimeLimit(500);
 		gameSettingSTNDTO.setTurnTimeLimit(30);
 		gameSettingSTNDTO.setVersion("1.1.1.1");
-		
+		gameSettingSTNDTO.setRound(3);
 		return gameSettingSTNDTO;
 	}
 	
@@ -89,7 +93,7 @@ public class NodejsService {
 	}
 	
     public void sendToNode(STNDTO stndto) {
-        String nodeServerUrl = "http://localhost:3000/receive-data"; // Node.js ¼­¹öÀÇ URL
+        String nodeServerUrl = "http://localhost:3000/receive-data"; // Node.js ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ URL
         restTemplate.postForObject(nodeServerUrl, stndto, Void.class);
     }
 	

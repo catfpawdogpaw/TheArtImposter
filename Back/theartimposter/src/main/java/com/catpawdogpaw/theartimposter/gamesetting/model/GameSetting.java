@@ -14,5 +14,6 @@ public class GameSetting {
 	private LocalDateTime round_time_limit;
 	private int min_people;
 	private int max_people;
+	private int round; // 라운드 수 설정 추가
 
 }

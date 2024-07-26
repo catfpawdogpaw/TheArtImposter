@@ -17,5 +17,7 @@ public interface GameRoomMapper {
     GameRoom getGameRoomById(@Param("roomId") Long roomId);
 
 	List<GameRoom> findAll();
+
+
 }
 
