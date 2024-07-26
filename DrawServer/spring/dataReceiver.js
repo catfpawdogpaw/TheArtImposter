@@ -1,15 +1,11 @@
 // dataReceiver.js
 const express = require("express");
 const router = express.Router();
-const {
-    PlayerDTO,
-    GameRoomStatus,
-    RoundResult,
-} = require("../model/gameDTO.js");
+const { PlayerDTO, GameRoomStatus } = require("../model/gameDTO.js");
+const { Rooms } = require("../socketHandler.js");
 
 router.post("/receive-data", (req, res) => {
     const data = req.body;
-    // console.log("Received data:", data);
 
     const players = data.playerList.map(
         (player) =>
@@ -22,13 +18,9 @@ router.post("/receive-data", (req, res) => {
                 player.userId
             )
     );
-    const gameRoom = { id: data.gameRoomId, title: data.gameRoomTitle };
-    const settings = {
-        turnTimeLimit: data.turnTimeLeft,
-        roundTimeLimit: data.roundTimeLimit,
-        version: data.gameVersion,
-    };
-    const subjects = data.subjects;
+    const gameRoom = data.gameRoom;
+    const settings = data.gameSetting;
+    const subjects = data.subjectList;
 
     const gameRoomStatus = new GameRoomStatus(
         players,
@@ -36,10 +28,10 @@ router.post("/receive-data", (req, res) => {
         settings,
         subjects
     );
-
-    console.log("Received GameRoomStatus data:", gameRoomStatus.toJSON());
-
+    console.log("Received GameRoomStatus data:", gameRoomStatus);
     res.send("Data received");
+
+    Rooms[gameRoom.id] = gameRoomStatus;
 });
 
 module.exports = router;
