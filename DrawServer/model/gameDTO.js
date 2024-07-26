@@ -2,7 +2,7 @@ class GameRoomStatus {
     constructor(gameRoom, settings, subjects) {
         this.roundResults = [];
         //playerDTO
-        this.players = null;
+        this.players = [];
 
         this.gameRoomId = gameRoom.gameRoomId;
         this.gameRoomTitle = gameRoom.title;
@@ -115,10 +115,16 @@ class PlayerDTO {
     socketId = null;
 }
 
+function testPlayerDTO() {
+    player = new PlayerDTO(3, "3playerNickName", "imagePath3", 1, 6);
+    return player;
+}
+
 module.exports = {
     PlayerDTO,
     GameRoomStatus,
     RoundResult,
     GameSetting,
     Subject,
+    testPlayerDTO,
 };
