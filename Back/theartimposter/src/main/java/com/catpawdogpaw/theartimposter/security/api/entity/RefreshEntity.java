@@ -10,7 +10,7 @@ import lombok.Setter;
 public class RefreshEntity {
 
     @Id
-    @Column(name = "REFRESH_ENTITY_ID")
+//    @Column(name = "REFRESH_ENTITY_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

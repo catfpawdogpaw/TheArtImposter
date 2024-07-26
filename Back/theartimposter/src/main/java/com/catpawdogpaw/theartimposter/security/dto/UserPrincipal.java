@@ -35,7 +35,7 @@ public class UserPrincipal implements OAuth2User {
     public String getName() {
         return userEntity.getNickname();
     }
-    public Long getUserId() {
-        return userEntity.getUserId();
+    public String getId() {
+        return userEntity.getId();
     }
 }

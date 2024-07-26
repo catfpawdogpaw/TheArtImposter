@@ -26,14 +26,16 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         // 헤더에서 access키에 담긴 토큰을 꺼냄
-        String accessToken = request.getHeader("access");
+        String accessToken = request.getHeader("Authorization");
         // 토큰이 없다면 다음 필터로 넘김
-        if (accessToken == null) {
+        if (accessToken == null || !accessToken.startsWith("Bearer ")) {
 
             filterChain.doFilter(request, response);
 
             return;
         }
+        accessToken = accessToken.substring(7);
+
         // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
         try {
             jwtUtil.isExpired(accessToken);
@@ -62,10 +64,12 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         // username, role 값을 획득
+        String id = jwtUtil.getId(accessToken);
         String username = jwtUtil.getUsername(accessToken);
-        RoleType roleType =  RoleType.valueOf(jwtUtil.getRole(accessToken).toUpperCase());
+        RoleType roleType =  RoleType.of(jwtUtil.getRole(accessToken).toUpperCase());
 
         UserEntity userEntity = new UserEntity();
+        userEntity.setId(id);
         userEntity.setNickname(username);
         userEntity.setRoleType(roleType);
         UserPrincipal userPrincipal = new UserPrincipal(userEntity);

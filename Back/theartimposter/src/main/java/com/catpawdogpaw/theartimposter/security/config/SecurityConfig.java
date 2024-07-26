@@ -75,6 +75,7 @@ public class SecurityConfig {
                                 .userService(customOAuth2UserService))
                         .successHandler(oAuth2AuthenticationSuccessHandler));
 
+
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth

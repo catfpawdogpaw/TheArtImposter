@@ -43,7 +43,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private OAuth2User process(OAuth2UserRequest userRequest, OAuth2User user) {
         ProviderType providerType = ProviderType.valueOf(userRequest.getClientRegistration().getRegistrationId().toUpperCase());
         OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
-        UserEntity savedUserEntity = userRepository.findById(userInfo.getId());
+        UserEntity savedUserEntity = userRepository.findById(userInfo.getId()).orElse(null);
 
         if (savedUserEntity != null) {
             if (providerType != savedUserEntity.getSocialProviderType()) {
@@ -52,7 +52,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                                 " account. Please use your " + savedUserEntity.getSocialProviderType() + " account to login."
                 );
             }
-            updateUserEntity(savedUserEntity, userInfo);
+            savedUserEntity = updateUserEntity(savedUserEntity, userInfo);
         } else {
             savedUserEntity = creatUserEntity(userInfo, providerType);
         }
