@@ -4,8 +4,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+
+import com.catpawdogpaw.theartimposter.match.MatchHandler;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,16 +16,13 @@ import lombok.RequiredArgsConstructor;
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final MatchHandler matchHandler;
-    
-    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(matchHandler, "/match").setAllowedOrigins("*");
-    } 
+
     
     // 클라이언트가 WebSocket 서버에 연결하기 위한 엔드포인트
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/wait-service/wait-websocket")
-                .setAllowedOriginPatterns("*")
+        .setAllowedOrigins("http://localhost:8081")
                 .withSockJS();
     }
     

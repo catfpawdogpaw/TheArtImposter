@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.catpawdogpaw.theartimposter.config.CacheService;
 import com.catpawdogpaw.theartimposter.gameroom.mapper.GameRoomMapper;
 import com.catpawdogpaw.theartimposter.gameroom.model.GameRoom;
+import com.catpawdogpaw.theartimposter.match.CacheService;
 
 import lombok.RequiredArgsConstructor;
 

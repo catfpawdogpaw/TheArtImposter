@@ -1,4 +1,4 @@
-package com.catpawdogpaw.theartimposter.config;
+package com.catpawdogpaw.theartimposter.match;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;

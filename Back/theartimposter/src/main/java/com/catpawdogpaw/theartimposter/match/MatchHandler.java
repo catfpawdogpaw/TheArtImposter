@@ -1,4 +1,4 @@
-package com.catpawdogpaw.theartimposter.config;
+package com.catpawdogpaw.theartimposter.match;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -22,6 +22,17 @@ public class MatchHandler extends TextWebSocketHandler {
 	//대기열 
     private final ConcurrentLinkedQueue<WebSocketSession> waitingUsers = new ConcurrentLinkedQueue<>();
     private final GameRoomService gameRoomService;
+    
+    
+    // Add user to the waiting queue
+    public void addUser(WebSocketSession session) {
+        waitingUsers.add(session);
+        try {
+            checkAndMatchUsers();
+        } catch (Exception e) {
+            log.error("Error while matching users", e);
+        }
+    }
     
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
