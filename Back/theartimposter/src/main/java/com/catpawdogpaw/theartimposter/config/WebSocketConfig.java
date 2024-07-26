@@ -22,7 +22,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/wait-service/wait-websocket")
-        .setAllowedOrigins("http://localhost:8081")
+        .setAllowedOrigins("http://localhost:9080")
                 .withSockJS();
     }
     
@@ -33,5 +33,5 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.setApplicationDestinationPrefixes("/wait-service");
     }
 
-
+   
 }
