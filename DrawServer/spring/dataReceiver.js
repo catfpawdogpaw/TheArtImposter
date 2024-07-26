@@ -1,45 +1,39 @@
-// dataReceiver.js
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const {
-    PlayerDTO,
-    GameRoomStatus,
-    RoundResult,
-} = require("../model/gameDTO.js");
 
-router.post("/receive-data", (req, res) => {
+module.exports = (io) => {
+  router.post('/receive-data', (req, res) => {
     const data = req.body;
-    // console.log("Received data:", data);
 
-    const players = data.playerList.map(
-        (player) =>
-            new PlayerDTO(
-                player.playerId,
-                player.nickName,
-                player.profileImage,
-                player.vicCnt,
-                player.gameCnt,
-                player.userId
-            )
-    );
-    const gameRoom = { id: data.gameRoomId, title: data.gameRoomTitle };
-    const settings = {
-        turnTimeLimit: data.turnTimeLeft,
-        roundTimeLimit: data.roundTimeLimit,
-        version: data.gameVersion,
+    // 데이터 수신 확인
+    console.log("Received data:", data);
+
+    // 필요한 데이터 가공
+    const processedData = {
+      player: {
+        playerId: data.player.playerId,
+        nickName: data.player.nickName,
+        profileImage: data.player.profileImage,
+        vicCnt: data.player.vicCnt,
+        gameCnt: data.player.gameCnt,
+      },
+      otherPlayerList: data.otherPlayerList.map(player => ({
+        playerId: player.playerId,
+        nickName: player.nickName,
+        profileImage: player.profileImage
+      })),
+      gameRoom: data.gameRoom,
+      gameSetting: data.gameSetting,
+      subjectList: data.subjectList,
     };
-    const subjects = data.subjects;
 
-    const gameRoomStatus = new GameRoomStatus(
-        players,
-        gameRoom,
-        settings,
-        subjects
-    );
+    console.log("Processed data:", processedData);
 
-    console.log("Received GameRoomStatus data:", gameRoomStatus.toJSON());
+    // 프론트엔드로 전송
+    io.emit('receiveData', processedData);
 
-    res.send("Data received");
-});
+    res.send('Data received and processed');
+  });
 
-module.exports = router;
+  return router;
+};
