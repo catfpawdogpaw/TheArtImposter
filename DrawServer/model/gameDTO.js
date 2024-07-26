@@ -1,13 +1,13 @@
 class GameRoomStatus {
-    constructor(players, gameRoom, settings, subjects) {
+    constructor(gameRoom, settings, subjects) {
         this.roundResults = [];
         //playerDTO
-        this.players = players;
+        this.players = null;
 
         this.gameRoomId = gameRoom.gameRoomId;
         this.gameRoomTitle = gameRoom.title;
 
-        this.playerCount = players.length;
+        this.playerCount = 0;
         this.currentRound = 1;
         this.currentTurnIndex = 0;
         this.drawingData = [];
@@ -16,20 +16,12 @@ class GameRoomStatus {
             (subj) => new Subject(subj.subjectId, subj.category, subj.subject)
         );
 
-        // maxPeople, round설정 필요
-        this.gameSetting = new GameSetting(
-            settings.version,
-            settings.turnTimeLimit,
-            settings.roundTimeLimit,
-            settings.minPeople,
-            8,
-            3
-        );
+        this.gameSetting = settings;
         this.startTime = new Date();
         this.roundStartTime = new Date();
     }
 
-    addRoundResult() {
+    addRoundResult(winRole, image) {
         const activePlayers = this.players.filter(
             (player) => player.gameRole !== null
         );
@@ -40,7 +32,7 @@ class GameRoomStatus {
                 this.currentRound,
                 activePlayers,
                 currentSubject,
-                winrole,
+                winRole,
                 image,
                 this.roundStartTime
             )
@@ -89,7 +81,7 @@ class GameSetting {
         roundTimeLimit,
         minPeople,
         maxPeople,
-        round
+        round = null
     ) {
         this.version = version;
         this.turnTimeLimit = turnTimeLimit;
@@ -109,13 +101,12 @@ class Subject {
 }
 
 class PlayerDTO {
-    constructor(playerId, nickName, profileImage, vicCnt, gameCnt, userId) {
-        this.playerId = playerId;
+    constructor(userId, nickName, profileImage, vicCnt, gameCnt) {
+        this.userId = userId;
         this.nickName = nickName;
         this.profileImage = profileImage;
         this.vicCnt = vicCnt;
         this.gameCnt = gameCnt;
-        this.userId = userId;
     }
     curScore = 0;
     color = null;
