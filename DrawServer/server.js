@@ -2,8 +2,8 @@ const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
 const cors = require("cors");
-const { initializeDatabase, con } = require("./DBconfig.js");
 const setupSocket = require("./socketHandler.js");
+const dataReceiver = require("./spring/dataReceiver");
 
 const app = express();
 const server = http.createServer(app);
@@ -18,12 +18,13 @@ setupSocket(io);
 app.use(cors());
 app.use(express.json());
 
-initializeDatabase().catch(console.error);
-
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send("Something broke!");
 });
+
+// 데이터 수신 라우터 사용
+app.use("/", dataReceiver);
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
