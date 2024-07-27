@@ -10,11 +10,11 @@ import com.catpawdogpaw.theartimposter.gameroom.model.GameRoom;
 @Mapper
 public interface GameRoomMapper {
 
-    void createRoom(GameRoom gameRoom);
+    void createGameRoom(GameRoom gameRoom);
 
-    void deleteRoom(@Param("roomId") Long roomId);
+    void deleteGameRoom(@Param("gameRoomId") Long gameRoomId);
 
-    GameRoom getGameRoomById(@Param("roomId") Long roomId);
+    GameRoom getGameRoomById(@Param("gameRoomId") Long gameRoomId);
 
 	List<GameRoom> findAll();
 

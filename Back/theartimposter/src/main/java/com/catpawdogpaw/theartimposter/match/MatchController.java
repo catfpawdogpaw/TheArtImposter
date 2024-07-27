@@ -17,7 +17,7 @@ public class MatchController {
 	 private final MatchHandler matchHandler;
 
 	    @MessageMapping("/waitroom/join")
-	    @SendTo("/topic/waitroom")
+	    @SendTo("/wait-service/waitroom")
 	    public String join(@Payload String message, SimpMessageHeaderAccessor headerAccessor) {
 
 	    	WebSocketSession session = (WebSocketSession) headerAccessor.getSessionAttributes().get("session");

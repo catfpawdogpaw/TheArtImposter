@@ -18,12 +18,12 @@ public class GameRoomService {
 	private final CacheService cacheService;
 
 	public Long createGameRoom(GameRoom gameRoom) {
-        gameRoomMapper.createRoom(gameRoom);
+        gameRoomMapper.createGameRoom(gameRoom);
         return gameRoom.getGameRoomId();
     }
 	
-	public void deleteRoom(Long id) {
-		gameRoomMapper.deleteRoom(id);
+	public void deleteGameRoom(Long gameRoomId) {
+		gameRoomMapper.deleteGameRoom(gameRoomId);
 	}
 	
 	
@@ -43,7 +43,7 @@ public class GameRoomService {
 			gameRoom.setCreatedAt(LocalDateTime.now());
 			gameRoom.setDestroyAt(LocalDateTime.now().plusHours(1)); // Room will be destroyed in 1 hour
 
-			gameRoomMapper.createRoom(gameRoom);
+			gameRoomMapper.createGameRoom(gameRoom);
 			cacheService.addGameRoom(gameRoom);
 		}
 		return gameRoom;
@@ -58,7 +58,7 @@ public class GameRoomService {
 		int playerCount = cacheService.getPlayerCount(gameRoomId.toString());
 
 		if (playerCount == 0) {
-			gameRoomMapper.deleteRoom(gameRoomId);
+			gameRoomMapper.deleteGameRoom(gameRoomId);
 			cacheService.removeGameRoom(gameRoomId.toString());
 		}
 	}

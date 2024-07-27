@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.catpawdogpaw.theartimposter.gameroom.model.GameRoom;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/gameroom")
@@ -26,10 +28,11 @@ public class GameRoomController {
         return ResponseEntity.ok(gameRoomId);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteRoom(@PathVariable Long id) {
-        gameRoomService.deleteRoom(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/delete/{gameRoomId}")
+    public ResponseEntity<Void> deleteRoom(@PathVariable("gameRoomId") Long id) {
+    	log.info("게임룸 생성");
+        gameRoomService.deleteGameRoom(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/findOrCreate")

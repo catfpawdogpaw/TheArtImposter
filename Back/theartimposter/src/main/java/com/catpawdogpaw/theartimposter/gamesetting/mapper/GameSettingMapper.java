@@ -11,11 +11,11 @@ import com.catpawdogpaw.theartimposter.gamesetting.model.GameSetting;
 public interface GameSettingMapper {
 	void createGameSetting(GameSetting gameSetting);
 
-	void deleteGameSetting(@Param("game_setting_id") Long gameSettingId);
+	void deleteGameSetting(@Param("id") Long id);
 
-	void updateGameSetting(@Param("game_setting_id") GameSetting gameSetting);
-
-	GameSetting getGameSettingById(@Param("game_setting_id") Long gameSettingId);
+	 void updateGameSetting(GameSetting gameSetting);
+	 
+	GameSetting getGameSettingById(@Param("id") Long id);
 
 	List<GameSetting> findAllGameSettings();
 }

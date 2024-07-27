@@ -21,8 +21,8 @@ export default [
             {
                 path: "/lobby",
                 components: {
-                    // main: () => import("@/components/OtherMainComponent.vue"),
-                    // side: () => import("@/components/OtherMainComponent.vue"),
+                    main: () => import("@/components/WaitingRoom.vue"),
+                    side: SideComponent,
                 },
             },
         ],

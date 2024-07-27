@@ -6,24 +6,52 @@
 <mapper namespace="com.catpawdogpaw.theartimposter.gamesetting.mapper.GameSettingMapper">
 
     <!-- 게임세팅 생성 -->
-    <insert id="createGameSetting" useGeneratedKeys="true" keyProperty="gameRoomId">
-        INSERT INTO game_room (game_setting_id, created_at, destroy_at)
-        VALUES (#{gameSettingId}, SYSTIMESTAMP, #{destroyAt})
+    <insert id="createGameSetting" parameterType="com.catpawdogpaw.theartimposter.gamesetting.model.GameSetting">
+        INSERT INTO gamesetting (version, turn_time_limit, round_time_limit, min_people, max_people, round)
+        VALUES (#{version}, #{turnTimeLimit}, #{roundTimeLimit}, #{minPeople}, #{maxPeople}, #{round})
     </insert>
 
     <!-- 게임세팅 삭제 -->
     <delete id="deleteGameSetting">
-        DELETE FROM game_room WHERE game_room_id = #{gameRoomId}
+        DELETE FROM gamesetting WHERE game_setting_id = #{id}
     </delete>
 
+    <!-- 게임세팅 수정 -->
+   <update id="updateGameSetting" parameterType="com.catpawdogpaw.theartimposter.gamesetting.model.GameSetting">
+    UPDATE gamesetting
+    <set>
+        <if test="version != null">version = #{version, jdbcType=VARCHAR},</if>
+        <if test="turnTimeLimit != null">turn_time_limit = #{turnTimeLimit, jdbcType=INTEGER},</if>
+        <if test="roundTimeLimit != null">round_time_limit = #{roundTimeLimit, jdbcType=INTEGER},</if>
+        <if test="minPeople != null">min_people = #{minPeople, jdbcType=INTEGER},</if>
+        <if test="maxPeople != null">max_people = #{maxPeople, jdbcType=INTEGER},</if>
+        <if test="round != null">round = #{round, jdbcType=INTEGER},</if>
+    </set>
+    WHERE game_setting_id = #{gameSettingId, jdbcType=BIGINT}
+</update>
+
     <!-- 게임세팅 조회 -->
-    <select id="getGameSettingById" resultType="com.catpawdogpaw.theartimposter.gameroom.model.GameRoom">
-        SELECT game_room_id AS gameRoomId, 
-               game_setting_id AS gameSettingId, 
-               created_at AS createdAt, 
-               destroy_at AS destroyAt
-        FROM game_room
-        WHERE game_room_id = #{gameRoomId}
+    <select id="getGameSettingById" resultType="com.catpawdogpaw.theartimposter.gamesetting.model.GameSetting">
+        SELECT game_setting_id AS gameSettingId, 
+               version, 
+               turn_time_limit AS turnTimeLimit, 
+               round_time_limit AS roundTimeLimit, 
+               min_people AS minPeople, 
+               max_people AS maxPeople, 
+               round
+        FROM gamesetting
+        WHERE game_setting_id = #{id}
     </select>
 
+    <!-- 모든 게임세팅 조회 -->
+    <select id="findAllGameSettings" resultType="com.catpawdogpaw.theartimposter.gamesetting.model.GameSetting">
+        SELECT game_setting_id AS gameSettingId, 
+               version, 
+               turn_time_limit AS turnTimeLimit, 
+               round_time_limit AS roundTimeLimit, 
+               min_people AS minPeople, 
+               max_people AS maxPeople, 
+               round
+        FROM gamesetting
+    </select>
 </mapper>

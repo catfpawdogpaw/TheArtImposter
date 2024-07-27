@@ -13,6 +13,7 @@ import lombok.Setter;
 public class GameRoom {
     private Long gameRoomId;
     private Long gameSettingId;
+    private String title;
     private LocalDateTime createdAt;
     private LocalDateTime destroyAt;
 
