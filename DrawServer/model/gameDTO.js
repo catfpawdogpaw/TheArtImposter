@@ -49,16 +49,11 @@ class GameRoomStatus {
         this.players.push(player);
         this.playerCount++;
     }
-    leavePlayer(playerId) {
-        const index = this.players.findIndex(
-            (player) => player.playerId === playerId
+    leavePlayer(socketId) {
+        this.players = this.players.filter(
+            (player) => player.socketId !== socketId
         );
-        if (index === -1) {
-            console.log(`${playerId}에 해당하는 유저를 찾을 수 없습니다.`);
-            return;
-        }
-        const removedPlayer = this.players.splice(index, 1)[0];
-        console.log(`${removedPlayer.nickName}님이 게임을 떠났습니다.`);
+        this.playerCount--;
     }
 }
 

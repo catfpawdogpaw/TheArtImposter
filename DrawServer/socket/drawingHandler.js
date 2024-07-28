@@ -1,7 +1,5 @@
 function drawingHandler(io, socket, GameRoomStatus) {
-    socket.on("joinRoom", (room) => {
-        socket.emit("initDrawing", GameRoomStatus.drawingData);
-    });
+    socket.emit("initDrawing", GameRoomStatus.drawingData);
 
     socket.on("draw", (data) => {
         // 그림 데이터 저장
@@ -17,8 +15,11 @@ function drawingHandler(io, socket, GameRoomStatus) {
         io.to(GameRoomStatus.gameRoomId).emit("clearCanvas");
     });
 
-    socket.on("disconnect", () => {
-        console.log("User disconnected");
+    socket.on("getGameRoomStatus", () => {
+        io.to(GameRoomStatus.gameRoomId).emit(
+            "getGameRoomStatus",
+            GameRoomStatus
+        );
     });
 }
 

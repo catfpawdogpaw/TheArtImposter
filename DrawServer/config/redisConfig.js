@@ -1,5 +1,6 @@
 const redisModule = require("redis");
 require("dotenv").config();
+const { PlayerDTO } = require("../model/gameDTO");
 
 // Redis 클라이언트 생성
 const redis = redisModule.createClient({
@@ -52,7 +53,7 @@ async function validateToken(accessToken, socket) {
         // PlayerDTO 객체 생성 및 반환
         return new PlayerDTO(
             parseInt(userInfo.userId),
-            userInfo.nickName,
+            userInfo.nickname,
             userInfo.profileImage,
             parseInt(userInfo.vicCnt),
             parseInt(userInfo.gameCnt)
