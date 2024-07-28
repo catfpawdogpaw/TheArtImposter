@@ -1,4 +1,4 @@
-package com.catpawdogpaw.common.S3;
+package com.catpawdogpaw.theartimposter.common.S3;
 
 import java.io.IOException;
 import java.util.UUID;
