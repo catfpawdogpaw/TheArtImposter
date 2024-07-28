@@ -40,3 +40,5 @@ DrawServer/DBconfig.js
 
 #env
 .env
+# DrawServer/env 파일 무시
+DrawServer/env
