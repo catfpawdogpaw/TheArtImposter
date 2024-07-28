@@ -1,7 +1,9 @@
 package com.catpawdogpaw.theartimposter.security.oauth.handler;
 
 import com.catpawdogpaw.theartimposter.security.api.entity.RefreshEntity;
+import com.catpawdogpaw.theartimposter.security.api.entity.UserEntity;
 import com.catpawdogpaw.theartimposter.security.api.repository.RefreshRepository;
+import com.catpawdogpaw.theartimposter.security.api.repository.UserRepository;
 import com.catpawdogpaw.theartimposter.security.dto.UserPrincipal;
 import com.catpawdogpaw.theartimposter.security.jwt.JwtUtil;
 import jakarta.servlet.ServletException;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -27,6 +30,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private final JwtUtil jwtUtil;
     private final RefreshRepository refreshRepository;
+    private final UserRepository userRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -40,6 +44,14 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         GrantedAuthority authority = authoritiesIterator.next();
         String role = authority.getAuthority();
 
+        // 회원 정보 가져오기
+        Optional<UserEntity> userEntity = userRepository.findById(id);
+        if (userEntity.isEmpty()) {
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.getWriter().write("User not found");
+            return;
+        }
+
         //토큰 생성
         String access = jwtUtil.createJwt("access", username, id, role, 600000L);
         String refresh = jwtUtil.createJwt("refresh", username, id, role, 86400000L);
@@ -47,9 +59,13 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         //Refresh 토큰 저장
         addRefreshEntity(username, refresh, 86400000L);
 
+        // Redis에 JWT 토큰 및 회원 정보 저장
+        //userid, nickname, image, vicCnt, gameCnt를 가지고 와야한다.
+
+
         //응답 설정
         // 쿼리 파라미터로 access 및 refresh 토큰 전달
-        String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/")
+        String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:9080/store-tokens")
                 .queryParam("access", access)
                 .queryParam("refresh", refresh)
                 .build().toUriString();

@@ -20,7 +20,10 @@ export default {
     flex: 3;
 }
 .side-content {
-    flex: 1;
-    border: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid black;
+  background-color: #f4f4f4;
 }
 </style>
