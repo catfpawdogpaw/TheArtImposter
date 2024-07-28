@@ -1,5 +1,6 @@
 package com.catpawdogpaw.theartimposter.security.oauth.handler;
 
+import com.catpawdogpaw.theartimposter.config.CacheService;
 import com.catpawdogpaw.theartimposter.security.api.entity.RefreshEntity;
 import com.catpawdogpaw.theartimposter.security.api.entity.UserEntity;
 import com.catpawdogpaw.theartimposter.security.api.repository.RefreshRepository;
@@ -11,7 +12,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -31,6 +30,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final JwtUtil jwtUtil;
     private final RefreshRepository refreshRepository;
     private final UserRepository userRepository;
+    private final CacheService cacheService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -45,22 +45,26 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String role = authority.getAuthority();
 
         // 회원 정보 가져오기
-        Optional<UserEntity> userEntity = userRepository.findById(id);
-        if (userEntity.isEmpty()) {
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.getWriter().write("User not found");
-            return;
-        }
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
         //토큰 생성
         String access = jwtUtil.createJwt("access", username, id, role, 600000L);
         String refresh = jwtUtil.createJwt("refresh", username, id, role, 86400000L);
 
         //Refresh 토큰 저장
-        addRefreshEntity(username, refresh, 86400000L);
+        addRefreshEntity(username, refresh);
 
         // Redis에 JWT 토큰 및 회원 정보 저장
         //userid, nickname, image, vicCnt, gameCnt를 가지고 와야한다.
+        cacheService.saveUserData(
+                userEntity.getUserId(),
+                refresh,
+                userEntity.getNickname(),
+                userEntity.getProfileImageUrl(),
+                userEntity.getVicCnt(),
+                userEntity.getGameCnt(),
+                86400000L
+        );
 
 
         //응답 설정
@@ -73,8 +77,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         response.sendRedirect(targetUrl);
     }
 
-    private void addRefreshEntity(String username, String refresh, long expiredMs) {
-        Date date = new Date(System.currentTimeMillis() + expiredMs);
+    private void addRefreshEntity(String username, String refresh) {
+        Date date = new Date(System.currentTimeMillis() + 86400000L);
 
         RefreshEntity refreshEntity = new RefreshEntity();
         refreshEntity.setUsername(username);

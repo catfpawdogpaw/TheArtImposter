@@ -27,6 +27,7 @@ spring:
 
 logging:
     level:
+        org.apache.coyote.http11.Http11InputBuffer: DEBUG
         org:
             hibernate:
                 type:

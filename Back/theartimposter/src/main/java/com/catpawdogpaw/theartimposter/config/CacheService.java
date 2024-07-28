@@ -7,11 +7,16 @@ import com.catpawdogpaw.theartimposter.gameroom.model.GameRoom;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 @Service
 @RequiredArgsConstructor
 public class CacheService {
 
     private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, String> customStringRedisTemplate;
 
     private static final String PLAYER_COUNT_KEY_PREFIX = "gameRoom:playerCount:";
     private static final String GAME_ROOM_KEY_PREFIX = "gameRoom:";
@@ -44,5 +49,22 @@ public class CacheService {
 
     public GameRoom getGameRoom(String gameRoomId) {
         return (GameRoom) redisTemplate.opsForValue().get(GAME_ROOM_KEY_PREFIX + gameRoomId);
+    }
+
+    public void saveUserData(Long userId, String refreshToken, String nickname, String image, Long vicCnt, Long gameCnt, Long expiry) {
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("userId", userId.toString());
+        userData.put("nickname", nickname);
+        userData.put("profileImage", image);
+        userData.put("vicCnt", vicCnt.toString());
+        userData.put("gameCnt", gameCnt.toString());
+
+//        redisTemplate.opsForValue().set(refreshToken, userData, expiry, TimeUnit.MILLISECONDS);
+        customStringRedisTemplate.opsForHash().putAll("userToken:"+refreshToken, userData);
+        customStringRedisTemplate.expire(refreshToken, expiry, TimeUnit.MILLISECONDS);
+    }
+
+    public void removeUserData(String refreshToken) {
+        customStringRedisTemplate.delete(refreshToken);
     }
 }
