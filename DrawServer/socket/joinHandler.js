@@ -1,17 +1,19 @@
 const drawingHandler = require("./drawingHandler");
 const { getGameRoomStatus } = require("./roomHandler");
 const { testPlayerDTO } = require("../model/gameDTO");
+const { validateToken } = require("../config/redisConfig");
 
-function joinHandler(io, socket) {
+async function joinHandler(io, socket) {
     socket.on("joinRoom", (roomId, accessToken) => {
         // redis jwt토큰 있는지 검증후 해당유저정보 가져오기
         // redis에서 유효한 방인지 검증
-        const player = validateToken(accessToken);
+        // const player = await validateToken(accessToken, socket);
         const testplayer = testPlayerDTO();
 
         // 생성된 GameRoomStatus의 gameRoomId에 socket.join(gameRoomId)
         // + player의 socketid 설정
         const gameRoomStatus = getGameRoomStatus(roomId);
+        console.log(gameRoomStatus);
         if (!gameRoomStatus) {
             socket.emit("error", { message: "해당하는 방이 없습니다." });
             console.log(`${roomId}에 해당하는 방이 없습니다`);
@@ -32,12 +34,6 @@ function joinHandler(io, socket) {
         drawingHandler(io, socket, gameRoomStatus);
         return gameRoomStatus;
     });
-}
-
-function validateToken(accessToken) {
-    //토큰 검증 후 데이터가져와서 playerDTO생성 리턴
-    // PlayerDTO = (userId, nickName, profileImage, vicCnt, gameCnt)
-    // return PlayerDTO;
 }
 
 module.exports = joinHandler;

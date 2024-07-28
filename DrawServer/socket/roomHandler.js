@@ -2,18 +2,26 @@
 /* 'roomid': GameRoomStatus.
  * @type {Object.<string, GameRoomStatus>}
  */
-const Rooms = {}; // 방 상태를 관리
+const Rooms = new Map(); // 방 상태를 관리
 
 function getGameRoomStatus(roomId) {
-    return Rooms[roomId];
+    return Rooms.get(roomId);
 }
 
 function addGameRoomStatus(gameRoomStatus) {
-    Rooms[gameRoomStatus.gameRoomId] = gameRoomStatus;
+    Rooms.set(gameRoomStatus.gameRoomId, gameRoomStatus);
 }
 
 function deleteGameRoomStatus(roomId) {
-    delete Rooms[roomId];
+    return Rooms.delete(roomId);
 }
 
-module.exports = { getGameRoomStatus, addGameRoomStatus, deleteGameRoomStatus };
+function getAllRoomIds() {
+    return Array.from(Rooms.keys());
+}
+module.exports = {
+    getGameRoomStatus,
+    addGameRoomStatus,
+    deleteGameRoomStatus,
+    getAllRoomIds,
+};

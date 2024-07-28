@@ -4,7 +4,7 @@ function setupSocket(io) {
     io.on("connection", (socket) => {
         console.log(`소켓아이디: ${socket.id} 접속`);
 
-        const GameRoomStatus = joinHandler(io, socket);
+        joinHandler(io, socket);
 
         socket.on("disconnect", () => {
             console.log(`소켓아이디: ${socket.id} 접속해제`);

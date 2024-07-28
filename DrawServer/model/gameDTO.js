@@ -115,8 +115,34 @@ class PlayerDTO {
     socketId = null;
 }
 
+//랜덤 플레이어 생성
 function testPlayerDTO() {
-    player = new PlayerDTO(3, "3playerNickName", "imagePath3", 1, 6);
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function getRandomFloat(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+    const nicknames = [
+        "하이요",
+        "Bravo",
+        "Charlie",
+        "집에가고싶다.",
+        "Echo",
+        "코딩하는즐거움",
+        "Golf",
+        "우리집에왜왔니",
+        "India",
+        "123v123",
+    ];
+
+    const id = getRandomInt(1, 100);
+    const nickname = nicknames[Math.floor(Math.random() * nicknames.length)];
+    const imagePath = `imagePath${getRandomInt(1, 100)}`;
+    const level = getRandomInt(1, 50);
+    const score = Math.floor(level * getRandomFloat(1.5, 2.5));
+
+    player = new PlayerDTO(id, nickname, imagePath, level, score);
     return player;
 }
 
