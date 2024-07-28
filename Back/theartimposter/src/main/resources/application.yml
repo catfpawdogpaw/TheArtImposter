@@ -4,12 +4,24 @@ spring:
         name: theartimposter
     profiles:
         active: secrets
+    datasource:
+        url: ${db.url}
+        username: ${db.username}
+        password: ${db.password}
+        driver-class-name: oracle.jdbc.OracleDriver
+
     jpa:
         database-platform: org.hibernate.dialect.OracleDialect
         hibernate:
             ddl-auto: update
             show_sql: true
             use_sql_comments: true
+    data:
+      redis:
+        host: localhost
+        port: 6379
+        
+        
 
 
 
@@ -23,9 +35,4 @@ logging:
 
 oracle:
     net:
-    ssl_server_dn_match: true
-
-
-
-
-
+        ssl_server_dn_match: true
