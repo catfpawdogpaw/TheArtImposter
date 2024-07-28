@@ -18,6 +18,7 @@ export default {
 <style scoped>
 .main-content {
     flex: 3;
+    border: 1px solid black;
 }
 .side-content {
   display: flex;

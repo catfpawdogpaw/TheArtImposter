@@ -4,14 +4,15 @@ class GameRoomStatus {
         //playerDTO
         this.players = players;
 
-        this.gameRoomId = gameRoom.id;
+        this.gameRoomId = gameRoom.gameRoomId;
         this.gameRoomTitle = gameRoom.title;
 
         this.playerCount = players.length;
         this.currentRound = 1;
         this.currentTurnIndex = 0;
+        this.drawingData = [];
 
-        this.subject = subjects.map(
+        this.subjects = subjects.map(
             (subj) => new Subject(subj.subjectId, subj.category, subj.subject)
         );
 
@@ -24,12 +25,28 @@ class GameRoomStatus {
             8,
             3
         );
-
         this.startTime = new Date();
+        this.roundStartTime = new Date();
     }
 
-    setRoundResult() {
-        this.roundResults.push(new RoundResult(this.currentRound));
+    addRoundResult() {
+        const activePlayers = this.players.filter(
+            (player) => player.gameRole !== null
+        );
+        const currentSubject = this.subjects[this.currentRound - 1];
+
+        this.roundResults.push(
+            new RoundResult(
+                this.currentRound,
+                activePlayers,
+                currentSubject,
+                winrole,
+                image,
+                this.roundStartTime
+            )
+        );
+        this.drawingData = [];
+        this.roundStartTime = new Date();
     }
 
     getRoundResult(roundIndex) {
@@ -51,47 +68,17 @@ class GameRoomStatus {
         const removedPlayer = this.players.splice(index, 1)[0];
         console.log(`${removedPlayer.nickName}님이 게임을 떠났습니다.`);
     }
-
-    toJSON() {
-        return JSON.stringify({
-            players: this.players,
-            gameRoomId: this.gameRoomId,
-            gameRoomTitle: this.gameRoomTitle,
-            subjects: this.subjects,
-            playerCount: this.playerCount,
-            currentRound: this.currentRound,
-            currentTurnIndex: this.currentTurnIndex,
-            turnOrder: this.turnOrder,
-            turnTimeLeft: this.turnTimeLeft,
-            roundTimeLimit: this.roundTimeLimit,
-            gameVersion: this.gameVersion,
-            roundResults: this.roundResults,
-            startTime: this.startTime.toISOString(),
-        });
-    }
 }
 
 class RoundResult {
     constructor(roundNumber, players, subject, winRole, image, startTime) {
-        this.this.roundNumber = roundNumber;
         this.players = players;
         this.subject = subject;
+        this.roundNumber = roundNumber;
         this.winRole = winRole;
         this.image = image;
         this.startTime = startTime;
         this.endTime = new Date();
-    }
-
-    addTurn(playerId, subject, answer) {
-        this.turns.push({ playerId, subject, answer });
-    }
-
-    setVotes(votes) {
-        this.votes = votes;
-    }
-
-    setWinner(winnerId) {
-        this.winner = winnerId;
     }
 }
 
@@ -134,6 +121,7 @@ class PlayerDTO {
     color = null;
     turn = null;
     gameRole = null;
+    socketId = null;
 }
 
 module.exports = {

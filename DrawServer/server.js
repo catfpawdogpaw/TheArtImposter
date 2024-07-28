@@ -2,8 +2,9 @@ const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
 const cors = require("cors");
-const setupSocket = require("./socketHandler.js");
+const { setupSocket } = require("./socketHandler.js");
 const dataReceiver = require("./spring/dataReceiver");
+const redis = require("./config/redisConfig.js");
 
 const app = express();
 const server = http.createServer(app);
@@ -17,6 +18,7 @@ setupSocket(io);
 
 app.use(cors());
 app.use(express.json());
+redis.connect();
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
@@ -35,3 +37,14 @@ server.listen(PORT, () => {
 //     res.send(result);
 // });
 // app.use("/board", boardRouter);
+
+app.post("/set-data", (req, res) => {
+    const { key, value } = req.body;
+    try {
+        const reply = redis.set(key, value);
+        res.json({ message: "Data saved successfully", reply });
+    } catch (err) {
+        console.error("Redis error:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
