@@ -51,11 +51,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String access = jwtUtil.createJwt("access", username, id, role, 600000L);
         String refresh = jwtUtil.createJwt("refresh", username, id, role, 86400000L);
 
-        //Refresh 토큰 저장
-        addRefreshEntity(username, refresh);
+//        Refresh 토큰 DB 저장
+//        addRefreshEntity(username, refresh);
 
-        // Redis에 JWT 토큰 및 회원 정보 저장
-        //userid, nickname, image, vicCnt, gameCnt를 가지고 와야한다.
+        /* Redis에 JWT 토큰 및 회원 정보 저장
+        ** userid, nickname, image, vicCnt, gameCnt를 가지고 와야한다.
+        */
         cacheService.saveUserData(
                 userEntity.getUserId(),
                 refresh,

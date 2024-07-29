@@ -51,20 +51,39 @@ public class CacheService {
         return (GameRoom) redisTemplate.opsForValue().get(GAME_ROOM_KEY_PREFIX + gameRoomId);
     }
 
+    /*
+    * Refresh 토큰 저장, 조회, 삭제, 업데이트
+    * */
     public void saveUserData(Long userId, String refreshToken, String nickname, String image, Long vicCnt, Long gameCnt, Long expiry) {
-        Map<String, Object> userData = new HashMap<>();
-        userData.put("userId", userId.toString());
-        userData.put("nickname", nickname);
-        userData.put("profileImage", image);
-        userData.put("vicCnt", vicCnt.toString());
-        userData.put("gameCnt", gameCnt.toString());
+
+        Map<String, Object> userData = Map.of(
+                "refreshToken", refreshToken,
+                "userId", userId.toString(),
+                "nickname", nickname,
+                "profileImage", image,
+                "vicCnt", vicCnt.toString(),
+                "gameCnt", gameCnt.toString()
+        );
 
 //        redisTemplate.opsForValue().set(refreshToken, userData, expiry, TimeUnit.MILLISECONDS);
-        customStringRedisTemplate.opsForHash().putAll("userToken:"+refreshToken, userData);
-        customStringRedisTemplate.expire(refreshToken, expiry, TimeUnit.MILLISECONDS);
+        customStringRedisTemplate.opsForHash().putAll("userData:"+userId, userData);
+        customStringRedisTemplate.expire("userData:" + userId, expiry, TimeUnit.MILLISECONDS);
     }
 
-    public void removeUserData(String refreshToken) {
-        customStringRedisTemplate.delete(refreshToken);
+    public String getRefreshToken(String userId) {
+        return customStringRedisTemplate.opsForValue().get("refreshToken:" + userId);
     }
+
+    public void saveRefreshToken(Long userId, String refreshToken, Long duration) {
+        customStringRedisTemplate.opsForValue().set("refreshToken:" + userId, refreshToken, duration, TimeUnit.MILLISECONDS);
+    }
+
+    public void deleteRefreshToken(String userId) {
+        redisTemplate.delete("refreshToken:" + userId);
+    }
+
+    public void deleteUserData(String userId) {
+        redisTemplate.delete("userData:" + userId);
+    }
+
 }
