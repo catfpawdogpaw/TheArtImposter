@@ -4,7 +4,6 @@ import { eraseCookie } from "@/utils/cookie";
 import Vuex from "vuex"; // 쿠키 유틸리티 함수 가져오기
 
 Vue.use(Vuex);
-
 export default new Vuex.Store({
     state: {
         accessToken: localStorage.getItem("access_token") || "",
@@ -44,7 +43,33 @@ export default new Vuex.Store({
                 });
         },
         logout({ commit }) {
-            commit("logout");
+            return axios
+                .post('/user/logout', {}, { withCredentials: true }) // withCredentials 추가
+                .then(() => {
+                    commit("logout");
+                })
+                .catch(error => {
+                    console.error("Logout failed:", error);
+                    if (error.response && error.response.status === 403) {
+                        commit("logout");
+                    }
+                });
+        },
+        refreshToken({ commit }) {
+            return axios
+                .post('/reissue', {}, { withCredentials: true })
+                .then(response => {
+                    const { access, refresh } = response.data;
+                    commit('setAccessToken', access);
+                    // Optional: Set new refresh token as cookie if necessary
+                    document.cookie = `refresh=${refresh};path=/;SameSite=Lax;`;
+                    return access;
+                })
+                .catch(error => {
+                    commit('logout');
+                    return Promise.reject(error);
+                });
         },
     },
+
 });
