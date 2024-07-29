@@ -55,6 +55,9 @@ class GameRoomStatus {
         );
         this.playerCount--;
     }
+    getSubject() {
+        return this.subjects[this.currentRound - 1];
+    }
 }
 
 class RoundResult {
@@ -76,7 +79,7 @@ class GameSetting {
         roundTimeLimit,
         minPeople,
         maxPeople,
-        round = null
+        round = 3
     ) {
         this.version = version;
         this.turnTimeLimit = turnTimeLimit;

@@ -1,7 +1,8 @@
 import DrawPad from "@/components/drawpad/DrawPad.vue";
-import MiddleComponent from "@/components/MiddleComponent.vue";
 import LoginCompo from "@/components/loginCompo/LoginCompo.vue";
 import StoreTokens from "@/components/loginCompo/StoreTokens.vue";
+import MiddleComponent from "@/components/MiddleComponent.vue";
+import SideComponent from "@/components/SideComponent.vue";
 
 export default [
     {

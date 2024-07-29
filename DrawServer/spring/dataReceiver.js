@@ -2,7 +2,10 @@
 const express = require("express");
 const router = express.Router();
 const { GameRoomStatus } = require("../model/gameDTO.js");
-const { addGameRoomStatus } = require("../socket/roomHandler.js");
+const {
+    getGameRoomStatus,
+    addGameRoomStatus,
+} = require("../socket/roomHandler.js");
 
 router.post("/receive-data", (req, res) => {
     const data = req.body;
@@ -13,10 +16,13 @@ router.post("/receive-data", (req, res) => {
 
     const gameRoomStatus = new GameRoomStatus(gameRoom, settings, subjects);
 
-    console.log("게임방 생성:", gameRoomStatus.gameRoomId);
+    console.log("게임방 생성:", gameRoomStatus.gameRoomTitle);
     res.send("Data received");
 
     addGameRoomStatus(gameRoomStatus);
+    console.log(
+        "생성된 방정보" + getGameRoomStatus(gameRoomStatus.gameRoomTitle)
+    );
 });
 
 module.exports = router;

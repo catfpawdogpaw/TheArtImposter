@@ -9,7 +9,7 @@ function getGameRoomStatus(roomId) {
 }
 
 function addGameRoomStatus(gameRoomStatus) {
-    Rooms.set(gameRoomStatus.gameRoomId, gameRoomStatus);
+    Rooms.set(gameRoomStatus.gameRoomTitle, gameRoomStatus);
 }
 
 function deleteGameRoomStatus(roomId) {
@@ -19,9 +19,15 @@ function deleteGameRoomStatus(roomId) {
 function getAllRoomIds() {
     return Array.from(Rooms.keys());
 }
+
+const defaultGameSet = {
+    GAME_START_DELAY: 3000,
+    COLORS: ["red", "blue", "green", "yellow", "orange", "purple"],
+};
 module.exports = {
     getGameRoomStatus,
     addGameRoomStatus,
     deleteGameRoomStatus,
     getAllRoomIds,
+    defaultGameSet,
 };
