@@ -1,39 +1,30 @@
-const express = require('express');
+// dataReceiver.js
+const express = require("express");
 const router = express.Router();
+const { GameRoomStatus } = require("../model/gameDTO.js");
+const {
+    getGameRoomStatus,
+    addGameRoomStatus,
+} = require("../socket/roomHandler.js");
+const { updateRedisRoomStatus } = require("../config/redisConfig.js");
 
-module.exports = (io) => {
-  router.post('/receive-data', (req, res) => {
+router.post("/receive-data", (req, res) => {
     const data = req.body;
+    console.log(data);
+    const gameRoom = data.gameRoom;
+    const settings = data.gameSetting;
+    const subjects = data.subjectList;
 
-    // 데이터 수신 확인
-    console.log("Received data:", data);
+    const gameRoomStatus = new GameRoomStatus(gameRoom, settings, subjects);
 
-    // 필요한 데이터 가공
-    const processedData = {
-      player: {
-        playerId: data.player.playerId,
-        nickName: data.player.nickName,
-        profileImage: data.player.profileImage,
-        vicCnt: data.player.vicCnt,
-        gameCnt: data.player.gameCnt,
-      },
-      otherPlayerList: data.otherPlayerList.map(player => ({
-        playerId: player.playerId,
-        nickName: player.nickName,
-        profileImage: player.profileImage
-      })),
-      gameRoom: data.gameRoom,
-      gameSetting: data.gameSetting,
-      subjectList: data.subjectList,
-    };
+    console.log("게임방 생성:", gameRoomStatus.gameRoomTitle);
+    res.send("Data received");
 
-    console.log("Processed data:", processedData);
+    addGameRoomStatus(gameRoomStatus);
+    console.log(
+        "생성된 방정보" + getGameRoomStatus(gameRoomStatus.gameRoomTitle)
+    );
+    updateRedisRoomStatus(gameRoomStatus);
+});
 
-    // 프론트엔드로 전송
-    io.emit('receiveData', processedData);
-
-    res.send('Data received and processed');
-  });
-
-  return router;
-};
+module.exports = router;

@@ -1,35 +1,44 @@
 class GameRoomStatus {
-    constructor(players, gameRoom, settings, subjects) {
+    constructor(gameRoom, settings, subjects) {
         this.roundResults = [];
         //playerDTO
-        this.players = players;
+        this.players = [];
 
-        this.gameRoomId = gameRoom.id;
+        this.gameRoomId = gameRoom.gameRoomId;
         this.gameRoomTitle = gameRoom.title;
 
-        this.playerCount = players.length;
+        this.playerCount = 0;
         this.currentRound = 1;
         this.currentTurnIndex = 0;
+        this.drawingData = [];
 
-        this.subject = subjects.map(
+        this.subjects = subjects.map(
             (subj) => new Subject(subj.subjectId, subj.category, subj.subject)
         );
 
-        // maxPeople, round설정 필요
-        this.gameSetting = new GameSetting(
-            settings.version,
-            settings.turnTimeLimit,
-            settings.roundTimeLimit,
-            settings.minPeople,
-            8,
-            3
-        );
-
+        this.gameSetting = settings;
         this.startTime = new Date();
+        this.roundStartTime = new Date();
     }
 
-    setRoundResult() {
-        this.roundResults.push(new RoundResult(this.currentRound));
+    addRoundResult(winRole, image) {
+        const activePlayers = this.players.filter(
+            (player) => player.gameRole !== null
+        );
+        const currentSubject = this.subjects[this.currentRound - 1];
+
+        this.roundResults.push(
+            new RoundResult(
+                this.currentRound,
+                activePlayers,
+                currentSubject,
+                winRole,
+                image,
+                this.roundStartTime
+            )
+        );
+        this.drawingData = [];
+        this.roundStartTime = new Date();
     }
 
     getRoundResult(roundIndex) {
@@ -40,58 +49,26 @@ class GameRoomStatus {
         this.players.push(player);
         this.playerCount++;
     }
-    leavePlayer(playerId) {
-        const index = this.players.findIndex(
-            (player) => player.playerId === playerId
+    leavePlayer(socketId) {
+        this.players = this.players.filter(
+            (player) => player.socketId !== socketId
         );
-        if (index === -1) {
-            console.log(`${playerId}에 해당하는 유저를 찾을 수 없습니다.`);
-            return;
-        }
-        const removedPlayer = this.players.splice(index, 1)[0];
-        console.log(`${removedPlayer.nickName}님이 게임을 떠났습니다.`);
+        this.playerCount--;
     }
-
-    toJSON() {
-        return JSON.stringify({
-            players: this.players,
-            gameRoomId: this.gameRoomId,
-            gameRoomTitle: this.gameRoomTitle,
-            subjects: this.subjects,
-            playerCount: this.playerCount,
-            currentRound: this.currentRound,
-            currentTurnIndex: this.currentTurnIndex,
-            turnOrder: this.turnOrder,
-            turnTimeLeft: this.turnTimeLeft,
-            roundTimeLimit: this.roundTimeLimit,
-            gameVersion: this.gameVersion,
-            roundResults: this.roundResults,
-            startTime: this.startTime.toISOString(),
-        });
+    getSubject() {
+        return this.subjects[this.currentRound - 1];
     }
 }
 
 class RoundResult {
     constructor(roundNumber, players, subject, winRole, image, startTime) {
-        this.this.roundNumber = roundNumber;
         this.players = players;
         this.subject = subject;
+        this.roundNumber = roundNumber;
         this.winRole = winRole;
         this.image = image;
         this.startTime = startTime;
         this.endTime = new Date();
-    }
-
-    addTurn(playerId, subject, answer) {
-        this.turns.push({ playerId, subject, answer });
-    }
-
-    setVotes(votes) {
-        this.votes = votes;
-    }
-
-    setWinner(winnerId) {
-        this.winner = winnerId;
     }
 }
 
@@ -102,7 +79,7 @@ class GameSetting {
         roundTimeLimit,
         minPeople,
         maxPeople,
-        round
+        round = 3
     ) {
         this.version = version;
         this.turnTimeLimit = turnTimeLimit;
@@ -122,18 +99,49 @@ class Subject {
 }
 
 class PlayerDTO {
-    constructor(playerId, nickName, profileImage, vicCnt, gameCnt, userId) {
-        this.playerId = playerId;
+    constructor(userId, nickName, profileImage, vicCnt, gameCnt) {
+        this.userId = userId;
         this.nickName = nickName;
         this.profileImage = profileImage;
         this.vicCnt = vicCnt;
         this.gameCnt = gameCnt;
-        this.userId = userId;
     }
     curScore = 0;
     color = null;
     turn = null;
     gameRole = null;
+    socketId = null;
+}
+
+//랜덤 플레이어 생성
+function testPlayerDTO() {
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function getRandomFloat(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+    const nicknames = [
+        "하이요",
+        "Bravo",
+        "Charlie",
+        "집에가고싶다.",
+        "Echo",
+        "코딩하는즐거움",
+        "Golf",
+        "우리집에왜왔니",
+        "India",
+        "123v123",
+    ];
+
+    const id = getRandomInt(1, 100);
+    const nickname = nicknames[Math.floor(Math.random() * nicknames.length)];
+    const imagePath = `imagePath${getRandomInt(1, 100)}`;
+    const level = getRandomInt(1, 50);
+    const score = Math.floor(level * getRandomFloat(1.5, 2.5));
+
+    player = new PlayerDTO(id, nickname, imagePath, level, score);
+    return player;
 }
 
 module.exports = {
@@ -142,4 +150,5 @@ module.exports = {
     RoundResult,
     GameSetting,
     Subject,
+    testPlayerDTO,
 };

@@ -1,5 +1,6 @@
 package com.catpawdogpaw.theartimposter.security.api.controller;
 
+import com.catpawdogpaw.theartimposter.config.CacheService;
 import com.catpawdogpaw.theartimposter.security.api.entity.RefreshEntity;
 import com.catpawdogpaw.theartimposter.security.api.repository.RefreshRepository;
 import com.catpawdogpaw.theartimposter.security.jwt.JwtUtil;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +31,12 @@ public class ReissueController {
 
     private final JwtUtil jwtUtil;
     private final RefreshRepository refreshRepository;
+    private final CacheService cacheService;
+
+    private static final String RESPONSE_MESSAGE_REFRESH_TOKEN_NULL = "refresh token null";
+    private static final String RESPONSE_MESSAGE_REFRESH_TOKEN_EXPIRED = "refresh token expired";
+    private static final String RESPONSE_MESSAGE_INVALID_REFRESH_TOKEN = "invalid refresh token";
+
 
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -47,7 +55,7 @@ public class ReissueController {
         if (refresh == null) {
 
             //response status code
-            return new ResponseEntity<>("refresh token null", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(RESPONSE_MESSAGE_REFRESH_TOKEN_NULL, HttpStatus.BAD_REQUEST);
         }
 
         //expired check
@@ -56,25 +64,26 @@ public class ReissueController {
         } catch (ExpiredJwtException e) {
 
             //response status code
-            return new ResponseEntity<>("refresh token expired", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(RESPONSE_MESSAGE_REFRESH_TOKEN_EXPIRED, HttpStatus.BAD_REQUEST);
         }
 
         // 토큰이 refresh인지 확인 (발급시 페이로드에 명시)
-        String category = jwtUtil.getCategory(refresh);
+//        String category = jwtUtil.getCategory(refresh);
 
-        if (!category.equals("refresh")) {
+        if (!"refresh".equals(jwtUtil.getCategory(refresh))) {
 
             //response status code
-            return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(RESPONSE_MESSAGE_INVALID_REFRESH_TOKEN, HttpStatus.BAD_REQUEST);
         }
 
-        //DB에 저장되어 있는지 확인
-        Boolean isExist = refreshRepository.existsByRefresh(refresh);
-        if (!isExist) {
-
-            //response body
-            return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
+        String userId = jwtUtil.getId(refresh);
+        //레디스에 refresh 토큰이 저장되어 있는지 확인
+        String storedRefreshToken = cacheService.getRefreshToken(userId);
+        if (storedRefreshToken == null || !storedRefreshToken.equals(refresh)) {
+            // 레디스에 토큰값이 저장되어 있지 않다면 로그아웃 처리됨(Vue에서 처리)
+            return new ResponseEntity<>(RESPONSE_MESSAGE_INVALID_REFRESH_TOKEN, HttpStatus.BAD_REQUEST);
         }
+
         String id = jwtUtil.getId(refresh);
         String username = jwtUtil.getUsername(refresh);
         String role = jwtUtil.getRole(refresh);
@@ -84,8 +93,9 @@ public class ReissueController {
         String newRefresh = jwtUtil.createJwt("refresh", username, id, role, 86400000L);
 
         //Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
-        refreshRepository.deleteByRefresh(refresh);
-        addRefreshEntity(username, newRefresh, 86400000L);
+//        refreshRepository.deleteByRefresh(refresh);
+//        addRefreshEntity(username, newRefresh, 86400000L);
+        cacheService.saveRefreshToken(Long.parseLong(userId), newRefresh, 86400000L);
 
         //response as parameters
         Map<String, String> tokens = new HashMap<>();
@@ -95,26 +105,27 @@ public class ReissueController {
         return new ResponseEntity<>(tokens, HttpStatus.OK);
     }
 
-    private void addRefreshEntity(String username, String refresh, Long expiredMs) {
+//    private void addRefreshEntity(String username, String refresh, Long expiredMs) {
+//
+//        Date date = new Date(System.currentTimeMillis() + expiredMs);
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+//
+//        RefreshEntity refreshEntity = new RefreshEntity();
+//        refreshEntity.setUsername(username);
+//        refreshEntity.setRefresh(refresh);
+//        refreshEntity.setExpiration(dateFormat.format(date));
+//
+//        refreshRepository.save(refreshEntity);
+//    }
 
-        Date date = new Date(System.currentTimeMillis() + expiredMs);
-
-        RefreshEntity refreshEntity = new RefreshEntity();
-        refreshEntity.setUsername(username);
-        refreshEntity.setRefresh(refresh);
-        refreshEntity.setExpiration(date.toString());
-
-        refreshRepository.save(refreshEntity);
-    }
-
-    private Cookie createCookie(String key, String value) {
-
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
-        //cookie.setSecure(true);
-        //cookie.setPath("/");
-        cookie.setHttpOnly(true);
-
-        return cookie;
-    }
+//    private Cookie createCookie(String key, String value) {
+//
+//        Cookie cookie = new Cookie(key, value);
+//        cookie.setMaxAge(24*60*60);
+//        //cookie.setSecure(true);
+//        //cookie.setPath("/");
+//        cookie.setHttpOnly(true);
+//
+//        return cookie;
+//    }
 }

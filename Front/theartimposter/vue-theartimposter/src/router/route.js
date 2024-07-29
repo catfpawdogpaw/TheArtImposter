@@ -1,4 +1,6 @@
 import DrawPad from "@/components/drawpad/DrawPad.vue";
+import LoginCompo from "@/components/loginCompo/LoginCompo.vue";
+import StoreTokens from "@/components/loginCompo/StoreTokens.vue";
 import MiddleComponent from "@/components/MiddleComponent.vue";
 import SideComponent from "@/components/SideComponent.vue";
 import GameHeaderComponent from "@/components/game/header/GameHeaderComponent.vue";
@@ -19,7 +21,7 @@ export default [
                 components: {
                     //위에 띄워지는 투표 화면도 생각해야함
                     main: DrawPad,
-                    side: SideComponent,
+                    side: LoginCompo,
                     left_game_header: LeftGameHeaderComponent,
                     right_game_header:RightGameHeaderComponent,
                 },
@@ -27,10 +29,15 @@ export default [
             {
                 path: "/lobby",
                 components: {
-                    // main: () => import("@/components/OtherMainComponent.vue"),
-                    // side: () => import("@/components/OtherMainComponent.vue"),
+                    main: () => import("@/components/WaitingRoom.vue"),
+                    side: SideComponent,
                 },
             },
         ],
     },
+    {   // 서버에서 토큰을 쿼리스트링으로 전송한 것을 처리하는 path
+        path: '/store-tokens',
+        name: 'StoreTokens',
+        component: StoreTokens
+    }
 ];
