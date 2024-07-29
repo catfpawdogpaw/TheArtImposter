@@ -89,6 +89,8 @@ async function updateRedisRoomStatus(gameRoomStatus) {
             playerCount: gameRoomStatus.playerCount,
             currentRound: gameRoomStatus.currentRound,
             currentTurnIndex: gameRoomStatus.currentTurnIndex,
+            minPeople: gameRoomStatus.gameSetting.minPeople,
+            maxPeople: gameRoomStatus.gameSetting.maxPeople,
             drawingData: JSON.stringify(gameRoomStatus.drawingData),
             subjects: JSON.stringify(gameRoomStatus.subjects),
             gameSetting: JSON.stringify(gameRoomStatus.gameSetting),

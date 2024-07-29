@@ -2,8 +2,10 @@ const drawingHandler = require("./drawingHandler");
 const { gameStatusHandler } = require("./gameStatusHandler");
 const { getGameRoomStatus } = require("./roomHandler");
 const { testPlayerDTO } = require("../model/gameDTO");
-const { updateRedisRoomStatus } = require("../config/redisConfig");
-const { validateToken } = require("../config/redisConfig");
+const {
+    validateToken,
+    updateRedisRoomStatus,
+} = require("../config/redisConfig");
 
 async function joinHandler(io, socket) {
     socket.on("joinRoom", async (roomTitle, accessToken) => {
@@ -23,13 +25,16 @@ async function joinHandler(io, socket) {
         }
 
         gameRoomStatus.addPlayer(player);
-        updateRedisRoomStatus(gameRoomStatus);
+        io.to(roomTitle).emit("playerJoined", player);
         socket.join(roomTitle);
 
+        //그림관리
         drawingHandler(io, socket, gameRoomStatus);
+        //턴, 게임관리
         gameStatusHandler(io, socket, gameRoomStatus);
-        loadGameRoomInfo(gameRoomStatus);
 
+        loadGameRoomInfo(gameRoomStatus);
+        updateRedisRoomStatus(gameRoomStatus);
         socket.emit("GameRoomStatus", gameRoomStatus);
 
         socket.on("disconnect", () => {
@@ -37,8 +42,8 @@ async function joinHandler(io, socket) {
             if (gameRoomStatus) {
                 gameRoomStatus.leavePlayer(player.socketId);
                 io.to(roomTitle).emit("playerDisconnected", player);
+                updateRedisRoomStatus(gameRoomStatus);
             }
-            updateRedisRoomStatus(gameRoomStatus);
         });
 
         return gameRoomStatus;
