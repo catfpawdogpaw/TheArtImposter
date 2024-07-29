@@ -1,12 +1,12 @@
 export default {
     setupCanvas(canvas) {
-        const context = canvas.getContext("2d");
+        const context = canvas.getContext('2d');
         canvas.width = 800;
-        canvas.height = 600;
-        context.strokeStyle = "black";
+        canvas.height = 580;
+        context.strokeStyle = 'black';
         context.lineWidth = 2;
-        context.lineCap = "round";
-        context.lineJoin = "round";
+        context.lineCap = 'round';
+        context.lineJoin = 'round';
         return context;
     },
 
@@ -49,10 +49,10 @@ export default {
     },
 
     saveCanvasAsImage(canvas) {
-        const dataURL = canvas.toDataURL("image/png");
-        const link = document.createElement("a");
+        const dataURL = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
         link.href = dataURL;
-        link.download = "drawing.png";
+        link.download = 'drawing.png';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

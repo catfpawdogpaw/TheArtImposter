@@ -1,3 +1,10 @@
+:root {
+    --max-width: 1280px;
+    --h-left-game-header-width: 800px;
+    --h-game-header-height: 100px;
+    --h-game-header-margin-bottom: 20px;
+}
+
 #app {
     font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -10,23 +17,27 @@
 
 .header {
     width: 100%;
-    max-width: 1400px;
+    max-width: var(--max-width);
     height: 130px;
     border: 1px solid navy;
-    margin-top: 100px;
+    /* margin-top: 100px; */
+}
+
+.game-header {
+    width: 100%;
+    max-width: var(--max-width);
 }
 .middle {
     width: 100%;
-    max-width: 1400px;
+    max-width: var(--max-width);
     height: 100%;
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
 }
 
 .footer {
     width: 100%;
-    max-width: 1400px;
+    max-width: var(--max-width);
     height: 100px;
     border: 1px solid black;
     margin-top: 20px;

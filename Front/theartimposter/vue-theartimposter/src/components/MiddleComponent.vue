@@ -11,7 +11,7 @@
 
 <script>
 export default {
-    name: "MiddleComponent",
+    name: 'MiddleComponent',
 };
 </script>
 
