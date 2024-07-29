@@ -6,6 +6,7 @@ const {
     getGameRoomStatus,
     addGameRoomStatus,
 } = require("../socket/roomHandler.js");
+const { updateRedisRoomStatus } = require("../config/redisConfig.js");
 
 router.post("/receive-data", (req, res) => {
     const data = req.body;
@@ -23,6 +24,7 @@ router.post("/receive-data", (req, res) => {
     console.log(
         "생성된 방정보" + getGameRoomStatus(gameRoomStatus.gameRoomTitle)
     );
+    updateRedisRoomStatus(gameRoomStatus);
 });
 
 module.exports = router;
