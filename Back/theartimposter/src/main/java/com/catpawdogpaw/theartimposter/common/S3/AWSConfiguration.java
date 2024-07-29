@@ -1,4 +1,4 @@
-package com.catpawdogpaw.common.S3;
+package com.catpawdogpaw.theartimposter.common.S3;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

@@ -1,13 +1,13 @@
 class GameRoomStatus {
-    constructor(players, gameRoom, settings, subjects) {
+    constructor(gameRoom, settings, subjects) {
         this.roundResults = [];
         //playerDTO
-        this.players = players;
+        this.players = [];
 
         this.gameRoomId = gameRoom.gameRoomId;
         this.gameRoomTitle = gameRoom.title;
 
-        this.playerCount = players.length;
+        this.playerCount = 0;
         this.currentRound = 1;
         this.currentTurnIndex = 0;
         this.drawingData = [];
@@ -16,20 +16,12 @@ class GameRoomStatus {
             (subj) => new Subject(subj.subjectId, subj.category, subj.subject)
         );
 
-        // maxPeople, round설정 필요
-        this.gameSetting = new GameSetting(
-            settings.version,
-            settings.turnTimeLimit,
-            settings.roundTimeLimit,
-            settings.minPeople,
-            8,
-            3
-        );
+        this.gameSetting = settings;
         this.startTime = new Date();
         this.roundStartTime = new Date();
     }
 
-    addRoundResult() {
+    addRoundResult(winRole, image) {
         const activePlayers = this.players.filter(
             (player) => player.gameRole !== null
         );
@@ -40,7 +32,7 @@ class GameRoomStatus {
                 this.currentRound,
                 activePlayers,
                 currentSubject,
-                winrole,
+                winRole,
                 image,
                 this.roundStartTime
             )
@@ -57,16 +49,14 @@ class GameRoomStatus {
         this.players.push(player);
         this.playerCount++;
     }
-    leavePlayer(playerId) {
-        const index = this.players.findIndex(
-            (player) => player.playerId === playerId
+    leavePlayer(socketId) {
+        this.players = this.players.filter(
+            (player) => player.socketId !== socketId
         );
-        if (index === -1) {
-            console.log(`${playerId}에 해당하는 유저를 찾을 수 없습니다.`);
-            return;
-        }
-        const removedPlayer = this.players.splice(index, 1)[0];
-        console.log(`${removedPlayer.nickName}님이 게임을 떠났습니다.`);
+        this.playerCount--;
+    }
+    getSubject() {
+        return this.subjects[this.currentRound - 1];
     }
 }
 
@@ -89,7 +79,7 @@ class GameSetting {
         roundTimeLimit,
         minPeople,
         maxPeople,
-        round
+        round = 3
     ) {
         this.version = version;
         this.turnTimeLimit = turnTimeLimit;
@@ -109,13 +99,12 @@ class Subject {
 }
 
 class PlayerDTO {
-    constructor(playerId, nickName, profileImage, vicCnt, gameCnt, userId) {
-        this.playerId = playerId;
+    constructor(userId, nickName, profileImage, vicCnt, gameCnt) {
+        this.userId = userId;
         this.nickName = nickName;
         this.profileImage = profileImage;
         this.vicCnt = vicCnt;
         this.gameCnt = gameCnt;
-        this.userId = userId;
     }
     curScore = 0;
     color = null;
@@ -124,10 +113,42 @@ class PlayerDTO {
     socketId = null;
 }
 
+//랜덤 플레이어 생성
+function testPlayerDTO() {
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function getRandomFloat(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+    const nicknames = [
+        "하이요",
+        "Bravo",
+        "Charlie",
+        "집에가고싶다.",
+        "Echo",
+        "코딩하는즐거움",
+        "Golf",
+        "우리집에왜왔니",
+        "India",
+        "123v123",
+    ];
+
+    const id = getRandomInt(1, 100);
+    const nickname = nicknames[Math.floor(Math.random() * nicknames.length)];
+    const imagePath = `imagePath${getRandomInt(1, 100)}`;
+    const level = getRandomInt(1, 50);
+    const score = Math.floor(level * getRandomFloat(1.5, 2.5));
+
+    player = new PlayerDTO(id, nickname, imagePath, level, score);
+    return player;
+}
+
 module.exports = {
     PlayerDTO,
     GameRoomStatus,
     RoundResult,
     GameSetting,
     Subject,
+    testPlayerDTO,
 };
