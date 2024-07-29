@@ -12,7 +12,7 @@ function gameStatusHandler(io, socket, GameRoomStatus) {
         console.log(`${GameRoomStatus.gameRoomTitle} 방 게임 시작 준비 중...`);
         setTimeout(
             () => startGame(io, socket, GameRoomStatus),
-            defaultGameSet.GAME_START_DELAY
+            defaultGameSet.GAME_START_DELAY * 1000
         );
     }
 }

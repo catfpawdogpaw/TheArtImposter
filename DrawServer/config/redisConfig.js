@@ -1,6 +1,7 @@
 const redisModule = require("redis");
 require("dotenv").config();
 const { PlayerDTO } = require("../model/gameDTO");
+const { defaultGameSet } = require("../socket/roomHandler");
 
 // Redis 클라이언트 생성
 const redis = redisModule.createClient({
@@ -38,30 +39,20 @@ async function findRedisDataByKey(key) {
     }
 }
 
-async function validateToken(accessToken, socket) {
+async function validateToken(userId, refreshToken, socket) {
     try {
         // Redis에서 토큰으로 사용자 정보 조회
-        const userInfo = await redis.hGetAll(accessToken);
+        const userInfo = await redis.hGetAll("userData:" + userId);
         if (!userInfo || Object.keys(userInfo).length === 0) {
-            console.log(`존재하지 않는 토큰: ${accessToken} `);
+            console.log(`존재하지 않는 토큰: ${refreshToken} `);
+            socket.emit("error", { message: "유효하지 않은 아이디입니다." });
+            socket.disconnect();
+            return null;
+        } else if (userInfo.refreshToken != refreshToken) {
             socket.emit("error", { message: "유효하지 않은 토큰입니다." });
             socket.disconnect();
             return null;
         }
-
-        //userid를 키로하고 refreshToken필드를검사하는경우
-        // const userInfo1 = await redis.hGetAll(userid);
-        // if (!userInfo || Object.keys(userInfo).length === 0) {
-        //     console.log(`존재하지 않는 토큰: ${accessToken} `);
-        //     socket.emit("error", { message: "유효하지 않은 아이디입니다." });
-        //     socket.disconnect();
-        //     return null;
-        //     if (userInfo1.refreshToken != refreshToken) {
-        //         socket.emit("error", { message: "유효하지 않은 토큰입니다." });
-        //         socket.disconnect();
-        //         return null;
-        //     }
-        // }
 
         // PlayerDTO 객체 생성 및 반환
         return new PlayerDTO(
@@ -102,7 +93,10 @@ async function updateRedisRoomStatus(gameRoomStatus) {
             "gameroom:" + gameRoomStatus.gameRoomId,
             serializedStatus
         );
-        redis.expire("gameroom:" + gameRoomStatus.gameRoomId, 1800);
+        redis.expire(
+            "gameroom:" + gameRoomStatus.gameRoomId,
+            defaultGameSet.REDIS_EXPIRE_TIME
+        );
     } catch (err) {
         console.error("방을 업데이트 하는중 에러발생", err);
     }

@@ -8,11 +8,10 @@ const {
 } = require("../config/redisConfig");
 
 async function joinHandler(io, socket) {
-    socket.on("joinRoom", async (roomTitle, accessToken) => {
+    socket.on("joinRoom", async (roomTitle, userId, refreshToken) => {
         // redis jwt토큰 있는지 검증후 해당유저정보 가져오기
-        // redis에서 유효한 방인지 검증
-        console.log(roomTitle + "  " + accessToken);
-        // const player = await validateToken(accessToken, socket);
+        console.log(roomTitle + "  " + userId + " " + refreshToken.slice(-10));
+        // const player = await validateToken(userId, refreshToken, socket);
         const player = testPlayerDTO();
         if (!player) {
             return;
@@ -35,7 +34,10 @@ async function joinHandler(io, socket) {
 
         loadGameRoomInfo(gameRoomStatus);
         updateRedisRoomStatus(gameRoomStatus);
-        socket.emit("GameRoomStatus", gameRoomStatus);
+        socket.emit(
+            "GameRoomStatus",
+            (({ subjects, ...rest }) => rest)(gameRoomStatus)
+        );
 
         socket.on("disconnect", () => {
             console.log(`${player.nickName}님이 게임을 떠났습니다.`);
