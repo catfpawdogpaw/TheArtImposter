@@ -1,6 +1,6 @@
 const drawingHandler = require("./drawingHandler");
 const { gameStatusHandler } = require("./gameStatusHandler");
-const { getGameRoomStatus } = require("./roomHandler");
+const { getGameRoomStatus, getRoomStatus } = require("./roomHandler");
 const { testPlayerDTO } = require("../model/gameDTO");
 const {
   validateToken,
@@ -14,7 +14,9 @@ const chatHandler = require("./chatHandler"); //chatHandler 추가
 async function joinHandler(io, socket) {
   socket.on("joinRoom", async (roomTitle, refreshToken, userId) => {
     // redis jwt토큰 있는지 검증후 해당유저정보 가져오기
-    console.log(roomTitle + "  " + userId + " " + refreshToken + "유저 ID: " + userId);
+    console.log(
+      roomTitle + "  " + userId + " " + refreshToken + "유저 ID: " + userId
+    );
     // const player = await validateToken(userId, refreshToken, socket);
 
     const player = testPlayerDTO();
@@ -100,6 +102,13 @@ function checkRoomStatus(socket, roomTitle) {
     return;
   }
   return gameRoomStatus;
+}
+
+function sendGameRoomStatus(socket, gameRoomStatus) {
+  socket.on("GameRoomStatus", () => {
+    socket.emit("GameRoomStatus", getRoomStatus(gameRoomStatus));
+  });
+  socket.emit("GameRoomStatus", getRoomStatus(gameRoomStatus));
 }
 
 module.exports = joinHandler;
