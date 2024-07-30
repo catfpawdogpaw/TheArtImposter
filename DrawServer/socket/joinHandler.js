@@ -1,11 +1,8 @@
 const drawingHandler = require("./drawingHandler");
 const { gameStatusHandler } = require("./gameStatusHandler");
-const { getGameRoomStatus } = require("./roomHandler");
+const { getGameRoomStatus, getRoomStatus } = require("./roomHandler");
 const { testPlayerDTO } = require("../model/gameDTO");
-const {
-    validateToken,
-    updateRedisRoomStatus,
-} = require("../config/redisConfig");
+const { validateToken, updateRedisRoomStatus } = require("../config/redisConfig");
 
 async function joinHandler(io, socket) {
     socket.on("joinRoom", async (roomTitle, userId, refreshToken) => {
@@ -34,10 +31,7 @@ async function joinHandler(io, socket) {
 
         loadGameRoomInfo(gameRoomStatus);
         updateRedisRoomStatus(gameRoomStatus);
-        socket.emit(
-            "GameRoomStatus",
-            (({ subjects, ...rest }) => rest)(gameRoomStatus)
-        );
+        sendGameRoomStatus(socket, gameRoomStatus);
 
         socket.on("disconnect", () => {
             console.log(`${player.nickName}님이 게임을 떠났습니다.`);
@@ -64,10 +58,7 @@ function loadGameRoomInfo(gameRoomStatus) {
             
             플레이어 목록:
             ${gameRoomStatus.players
-                .map(
-                    (player) =>
-                        `userId: ${player.userId}, 닉네임: ${player.nickName}, socketId: ${player.socketId}`
-                )
+                .map((player) => `userId: ${player.userId}, 닉네임: ${player.nickName}, socketId: ${player.socketId}`)
                 .join("\n       ")}`
     );
 }
@@ -79,9 +70,7 @@ function checkRoomStatus(socket, roomTitle) {
         socket.emit("error", { message: "해당하는 방이 없습니다." });
         console.log(`${roomTitle}에 해당하는 방이 없습니다`);
         isJoinable = false;
-    } else if (
-        gameRoomStatus.players.length >= gameRoomStatus.gameSetting.maxPeople
-    ) {
+    } else if (gameRoomStatus.players.length >= gameRoomStatus.gameSetting.maxPeople) {
         socket.emit("error", { message: "방이 가득 찼습니다." });
         console.log(`${roomTitle} 방이 가득 찼습니다.`);
         socket.disconnect();
@@ -93,6 +82,13 @@ function checkRoomStatus(socket, roomTitle) {
         return;
     }
     return gameRoomStatus;
+}
+
+function sendGameRoomStatus(socket, gameRoomStatus) {
+    socket.on("GameRoomStatus", () => {
+        socket.emit("GameRoomStatus", getRoomStatus(gameRoomStatus));
+    });
+    socket.emit("GameRoomStatus", getRoomStatus(gameRoomStatus));
 }
 
 module.exports = joinHandler;

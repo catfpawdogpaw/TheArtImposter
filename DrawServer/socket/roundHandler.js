@@ -1,5 +1,6 @@
 const { updateRedisRoomStatus } = require("../config/redisConfig");
 const { defaultGameSet } = require("./roomHandler");
+const { RoundResult } = require("../model/gameDTO");
 
 const roundHandler = {
     async startRound(io, socket, GameRoomStatus) {
@@ -8,6 +9,7 @@ const roundHandler = {
             randomRole(GameRoomStatus);
             // 각 플레이어에게 정보 전송
             sendRoletoPlayers(io, GameRoomStatus);
+            GameRoomStatus.roundStartTime = new Date();
 
             console.log(`라운드 ${GameRoomStatus.currentRound} 시작`);
 
@@ -243,6 +245,23 @@ async function finalizeRound(io, GameRoomStatus, winner) {
     }
 
     // 라운드 결과 저장
+    const playerInfo = GameRoomStatus.players.filter((player) => player.gameRole);
+    const currentSubject = GameRoomStatus.subjects[GameRoomStatus.currentRound - 1];
+    const roundResult = new RoundResult(
+        GameRoomStatus.currentRound,
+        playerInfo,
+        currentSubject,
+        winner,
+        //이미지
+        [],
+        GameRoomStatus.roundStartTime
+    );
+
+    GameRoomStatus.roundResults.push(roundResult);
+
+    console.log(`Round ${GameRoomStatus.currentRound} finalized. Winner: ${winner}`);
+    console.log("Updated scores:", GameRoomStatus.players.map((p) => `${p.nickName}: ${p.curScore}`).join(", "));
+    console.log("Current subject:", currentSubject);
 }
 
 function randomRole(GameRoomStatus) {
