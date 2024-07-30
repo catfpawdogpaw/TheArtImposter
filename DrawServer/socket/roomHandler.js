@@ -21,7 +21,9 @@ function getAllRoomIds() {
 }
 
 const defaultGameSet = {
-    GAME_START_DELAY: 3000,
+    REDIS_EXPIRE_TIME: 1800, //30분
+    GAME_START_DELAY: 3,
+    VOTE_TIME: 40,
     COLORS: ["red", "blue", "green", "yellow", "orange", "purple"],
 };
 module.exports = {

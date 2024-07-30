@@ -3,64 +3,66 @@ const { gameStatusHandler } = require("./gameStatusHandler");
 const { getGameRoomStatus } = require("./roomHandler");
 const { testPlayerDTO } = require("../model/gameDTO");
 const {
-    validateToken,
-    updateRedisRoomStatus,
+  validateToken,
+  updateRedisRoomStatus,
 } = require("../config/redisConfig");
 /*
-* 24-07-30 jaewoo추가
-* */
+ * 24-07-30 jaewoo추가
+ * */
 const chatHandler = require("./chatHandler"); //chatHandler 추가
 
 async function joinHandler(io, socket) {
-    socket.on("joinRoom", async (roomTitle, accessToken) => {
-        // redis jwt토큰 있는지 검증후 해당유저정보 가져오기
-        // redis에서 유효한 방인지 검증
-        console.log("룸: "+roomTitle + "  토큰:" + accessToken);
-        // const player = await validateToken(accessToken, socket);
-        const player = testPlayerDTO();
-        if (!player) {
-            return;
-        }
-        player.socketId = socket.id;
+  socket.on("joinRoom", async (roomTitle, userId, refreshToken) => {
+    // redis jwt토큰 있는지 검증후 해당유저정보 가져오기
+    console.log(roomTitle + "  " + userId + " " + refreshToken.slice(-10));
+    // const player = await validateToken(userId, refreshToken, socket);
 
-        const gameRoomStatus = checkRoomStatus(socket, roomTitle);
-        if (!gameRoomStatus) {
-            return;
-        }
+    const player = testPlayerDTO();
+    if (!player) {
+      return;
+    }
+    player.socketId = socket.id;
 
-        gameRoomStatus.addPlayer(player);
-        io.to(roomTitle).emit("userJoined", player);
-        socket.join(roomTitle);
+    const gameRoomStatus = checkRoomStatus(socket, roomTitle);
+    if (!gameRoomStatus) {
+      return;
+    }
 
+    gameRoomStatus.addPlayer(player);
+    io.to(roomTitle).emit("userJoined", player);
+    socket.join(roomTitle);
 
-        //그림관리
-        drawingHandler(io, socket, gameRoomStatus);
-        //턴, 게임관리
-        gameStatusHandler(io, socket, gameRoomStatus);
-        /* chatHandler 추가*/
-        chatHandler(io, socket, gameRoomStatus);
+    //그림관리
+    drawingHandler(io, socket, gameRoomStatus);
+    //턴, 게임관리
+    gameStatusHandler(io, socket, gameRoomStatus);
+    /* chatHandler 추가*/
+    chatHandler(io, socket, gameRoomStatus);
 
-        loadGameRoomInfo(gameRoomStatus);
+    loadGameRoomInfo(gameRoomStatus);
+    updateRedisRoomStatus(gameRoomStatus);
+    socket.emit(
+      "GameRoomStatus",
+      (({ subjects, ...rest }) => rest)(gameRoomStatus)
+    );
+
+    socket.on("disconnect", () => {
+      console.log(`${player.nickName}님이 게임을 떠났습니다.`);
+      if (gameRoomStatus) {
+        gameRoomStatus.leavePlayer(player.socketId);
+        io.to(roomTitle).emit("playerDisconnected", player);
         updateRedisRoomStatus(gameRoomStatus);
-        socket.emit("GameRoomStatus", gameRoomStatus);
-
-        socket.on("disconnect", () => {
-            console.log(`${player.nickName}님이 게임을 떠났습니다.`);
-            if (gameRoomStatus) {
-                gameRoomStatus.leavePlayer(player.socketId);
-                io.to(roomTitle).emit("playerDisconnected", player);
-                updateRedisRoomStatus(gameRoomStatus);
-            }
-        });
-
-        return gameRoomStatus;
+      }
     });
+
+    return gameRoomStatus;
+  });
 }
 
 function loadGameRoomInfo(gameRoomStatus) {
-    console.log(gameRoomStatus.gameRoomTitle + "접속");
-    console.log(
-        `방상태: 
+  console.log(gameRoomStatus.gameRoomTitle + "접속");
+  console.log(
+    `방상태: 
             방 ID: ${gameRoomStatus.gameRoomId}
             방 제목: ${gameRoomStatus.gameRoomTitle}
             현재 인원: ${gameRoomStatus.playerCount}명
@@ -69,35 +71,35 @@ function loadGameRoomInfo(gameRoomStatus) {
             
             플레이어 목록:
             ${gameRoomStatus.players
-                .map(
-                    (player) =>
-                        `userId: ${player.userId}, 닉네임: ${player.nickName}, socketId: ${player.socketId}`
-                )
-                .join("\n       ")}`
-    );
+              .map(
+                (player) =>
+                  `userId: ${player.userId}, 닉네임: ${player.nickName}, socketId: ${player.socketId}`
+              )
+              .join("\n       ")}`
+  );
 }
 
 function checkRoomStatus(socket, roomTitle) {
-    const gameRoomStatus = getGameRoomStatus(roomTitle);
-    isJoinable = true;
-    if (!gameRoomStatus) {
-        socket.emit("error", { message: "해당하는 방이 없습니다." });
-        console.log(`${roomTitle}에 해당하는 방이 없습니다`);
-        isJoinable = false;
-    } else if (
-        gameRoomStatus.players.length >= gameRoomStatus.gameSetting.maxPeople
-    ) {
-        socket.emit("error", { message: "방이 가득 찼습니다." });
-        console.log(`${roomTitle} 방이 가득 찼습니다.`);
-        socket.disconnect();
-        isJoinable = false;
-    }
+  const gameRoomStatus = getGameRoomStatus(roomTitle);
+  isJoinable = true;
+  if (!gameRoomStatus) {
+    socket.emit("error", { message: "해당하는 방이 없습니다." });
+    console.log(`${roomTitle}에 해당하는 방이 없습니다`);
+    isJoinable = false;
+  } else if (
+    gameRoomStatus.players.length >= gameRoomStatus.gameSetting.maxPeople
+  ) {
+    socket.emit("error", { message: "방이 가득 찼습니다." });
+    console.log(`${roomTitle} 방이 가득 찼습니다.`);
+    socket.disconnect();
+    isJoinable = false;
+  }
 
-    if (!isJoinable) {
-        socket.disconnect();
-        return;
-    }
-    return gameRoomStatus;
+  if (!isJoinable) {
+    socket.disconnect();
+    return;
+  }
+  return gameRoomStatus;
 }
 
 module.exports = joinHandler;

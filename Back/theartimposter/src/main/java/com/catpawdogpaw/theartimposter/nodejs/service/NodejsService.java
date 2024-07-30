@@ -2,6 +2,7 @@ package com.catpawdogpaw.theartimposter.nodejs.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.catpawdogpaw.theartimposter.nodejs.entity.dto.*;
 
@@ -15,10 +16,21 @@ public class NodejsService {
 	@Autowired
 	private RestTemplate restTemplate;
 
-	private List<PlayerSTNDTO> createPlayerSTNDTO(){
-		List<PlayerSTNDTO> playerSTNDTOList = new ArrayList<>();
+	private PlayerSTNDTO createPlayerSTNDTO() {
+		PlayerSTNDTO playerSTNDTO = new PlayerSTNDTO();
+		playerSTNDTO.setPlayerId(1000);
+		playerSTNDTO.setNickName(String.valueOf(0) + "playerNickName");
+		playerSTNDTO.setGameCnt(0);
+		playerSTNDTO.setVicCnt(0);
+		playerSTNDTO.setUserId(0);
+		playerSTNDTO.setProfileImage("imagePath"+0);
+		return playerSTNDTO;
+	}
+	
+	private List<PlayerSTNDTO> createOtherPlayerSTNDTOList(){
+		List<PlayerSTNDTO> otherPlayerSTNDTOList = new ArrayList<>();
 		
-		for(int i = 0; i< 5; ++i) {
+		for(int i = 1; i< 5; ++i) {
 			PlayerSTNDTO playerSTNDTO = new PlayerSTNDTO();
 			playerSTNDTO.setPlayerId(i);
 			playerSTNDTO.setNickName(String.valueOf(i) + "playerNickName");
@@ -26,10 +38,10 @@ public class NodejsService {
 			playerSTNDTO.setVicCnt(i/2);
 			playerSTNDTO.setUserId(i);
 			playerSTNDTO.setProfileImage("imagePath"+i);
-			playerSTNDTOList.add(playerSTNDTO);
+			otherPlayerSTNDTOList.add(playerSTNDTO);
 		}
 		
-		return playerSTNDTOList;
+		return otherPlayerSTNDTOList;
 	}
 	
 	private GameRoomSTNDTO createGameRoomSTNDTO() {
@@ -66,8 +78,9 @@ public class NodejsService {
 	
 	public STNDTO createSTNDTO() {
 		STNDTO sTNDTO = new STNDTO();
-		
-		sTNDTO.setPlayerList(createPlayerSTNDTO());
+
+		sTNDTO.setPlayer(createPlayerSTNDTO());
+		sTNDTO.setOtherPlayerList(createOtherPlayerSTNDTOList());
 		sTNDTO.setGameRoom(createGameRoomSTNDTO());
 		sTNDTO.setGameSetting(createGameSettingSTNDTO());
 		sTNDTO.setSubjectList(createSubjectSTNDTO());

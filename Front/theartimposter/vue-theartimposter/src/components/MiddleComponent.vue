@@ -1,39 +1,39 @@
 <template>
-    <div class="middle">
-      <div class="header">
-        <div class="room-input">
-          <label for="room">Room:</label>
-          <input v-model="room" id="room" placeholder="Enter room name" />
-          <button @click="joinRoom">Join Room</button>
-        </div>
-      </div>
-      <div class="content">
-        <div class="main-content">
-          <router-view name="main"></router-view>
-        </div>
-        <div class="side-content">
-          <router-view name="side"></router-view>
-        </div>
+  <div class="middle">
+    <div class="header">
+      <div class="room-input">
+        <label for="room">Room:</label>
+        <input v-model="room" id="room" placeholder="Enter room name" />
+        <button @click="joinRoom">Join Room</button>
       </div>
     </div>
+    <div class="content">
+      <div class="main-content">
+        <router-view name="main"></router-view>
+      </div>
+      <div class="side-content">
+        <router-view name="side"></router-view>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 export default {
-    name: "MiddleComponent",
-    data() {
-      return {
-        room: ''
-      };
+  name: "MiddleComponent",
+  data() {
+    return {
+      room: "",
+    };
   },
   methods: {
     joinRoom() {
-      if (this.room.trim() !== '') {
-        this.$root.$emit('joinRoom', this.room);
+      if (this.room.trim() !== "") {
+        this.$root.$emit("joinRoom", this.room);
         console.log(this.room);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -76,5 +76,17 @@ export default {
   flex: 1;
   padding: 50px;
   box-sizing: border-box;
+  // =======
+  // .main-content {
+  //     flex: 3;
+  // }
+  // .side-content {
+  //     flex: 1;
+  //     display: flex;
+  //     justify-content: center;
+  //     align-items: center;
+  //     border: 1px solid black;
+  //     background-color: #f4f4f4;
+  // >>>>>>> origin/feat_kh_turn
 }
 </style>
