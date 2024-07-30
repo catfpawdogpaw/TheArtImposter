@@ -51,13 +51,12 @@ export default {
 }
 
 .clock-icon {
-    width: 40px;
-    height: 40px;
-    margin-left: 10px;
+    width: 55px;
+    height: 55px;
 }
 
 .count-component span {
-    margin-left: 20px;
+    margin-left: 15px;
     scale: 2;
 }
 </style>

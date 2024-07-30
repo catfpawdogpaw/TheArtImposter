@@ -68,13 +68,15 @@ export default {
 .main-content {
     flex: 3;
     border-right: 1px solid #ccc;
-    padding: 20px;
     box-sizing: border-box;
 }
 
 .side-content {
     flex: 1;
-    padding: 50px;
-    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    background-color: #ffffff;
 }
 </style>

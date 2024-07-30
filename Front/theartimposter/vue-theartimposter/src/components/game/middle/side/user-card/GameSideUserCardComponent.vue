@@ -27,9 +27,11 @@ export default {
 .user-card {
     display: flex;
     align-items: center;
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin: 5px 0;
+    background-color: #ffffff;
+    border: 1px solid #7a7a7a;
+    margin: 0 0 20px;
+    width: 300px;
+    height: 100px;
 }
 
 .profile-picture {
@@ -38,32 +40,39 @@ export default {
 }
 
 .profile-picture img {
-    width: 50px;
-    height: 50px;
+    width: 75px;
+    height: 75px;
     border-radius: 50%;
+    margin-left: 12.5px;
 }
 
 .user-number {
     position: absolute;
     bottom: -5px;
-    right: -5px;
+    right: -15px;
     background-color: #ff00ff;
     color: white;
     border-radius: 50%;
     padding: 5px;
+    width: 35px;
+    height: 35px;
 }
 
 .user-info {
-    display: flex;
     flex-direction: column;
 }
 
 .nickname {
+    text-align: left;
     font-weight: bold;
-    margin-bottom: 5px;
+    margin-left: 15px;
+    margin-bottom: 10px;
+    scale: 1.2;
 }
 
 .score {
+    text-align: left;
     color: #999;
+    margin-left: 120px;
 }
 </style>

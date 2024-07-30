@@ -1,6 +1,6 @@
 <template>
     <div class="answer-component">
-        <span class="answer-span">가오나시</span>
+        <span class="answer-span"><strong>가오나시</strong></span>
     </div>
 </template>
 

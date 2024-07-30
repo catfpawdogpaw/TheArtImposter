@@ -1,6 +1,6 @@
 <template>
     <div class="category-component">
-        <span class="category-span">만화 캐릭터</span>
+        <span class="category-span"><strong>만화 캐릭터</strong></span>
     </div>
 </template>
 
