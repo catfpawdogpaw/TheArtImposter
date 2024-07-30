@@ -1,6 +1,6 @@
 import Vue from "vue";
 import axios from "@/plugins/axios";
-import { eraseCookie } from "@/utils/cookie";
+import {eraseCookie, getCookie} from "@/utils/cookie";
 import Vuex from "vuex"; // 쿠키 유틸리티 함수 가져오기
 
 Vue.use(Vuex);
@@ -71,5 +71,9 @@ export default new Vuex.Store({
                 });
         },
     },
-
+    getters: {
+        getUser: state => state.user,
+        isAuthenticated: state => state.isAuthenticated,
+        refreshToken: () => getCookie('refresh_token')
+    }
 });

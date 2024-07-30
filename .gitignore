@@ -42,3 +42,5 @@ DrawServer/DBconfig.js
 .env
 # DrawServer/env 파일 무시
 DrawServer/env
+Front/package-lock.json
+Front/package.json

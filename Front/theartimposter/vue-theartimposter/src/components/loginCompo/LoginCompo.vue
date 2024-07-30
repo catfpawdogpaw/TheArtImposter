@@ -1,8 +1,8 @@
 <template>
   <div class="login">
     <template v-if="isAuthenticated">
-      <h1>Welcome, {{ user.name }}!</h1>
-      <p>Email: {{ user.email }}</p>
+<!--      <h1>Welcome, {{ user.name }}!</h1>-->
+<!--      <p>Email: {{ user.email }}</p>-->
       <button @click="logout">Logout</button>
     </template>
     <template v-else>

@@ -1,9 +1,10 @@
 function chatHandler(io, socket, GameRoomStatus) {
-
-
     socket.on("sendMessage", (messageData) => {
+        // messageData.user가 없는 경우 기본 사용자 정보 설정
+        const user = messageData.user || { nickname: 'Unknown' };
+
         const chatMessage = {
-            user: messageData.user,
+            user: user,
             message: messageData.message,
             timestamp: new Date().toISOString(),
         };

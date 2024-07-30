@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @Entity
 public class UserEntity {
 
-    @JsonIgnore
+//    @JsonIgnore
     @Id
     @Column(name = "USER_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
