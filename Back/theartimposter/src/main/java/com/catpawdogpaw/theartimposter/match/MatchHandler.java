@@ -35,7 +35,7 @@ public class MatchHandler  {
 
     // 대기열 
     private final ConcurrentLinkedQueue<WebSocketSession> waitingUsers = new ConcurrentLinkedQueue<>();
-    private final Map<String, WebSocketSession> sessionMap = new ConcurrentHashMap<>();
+    private static final Map<String, WebSocketSession> sessionMap = new ConcurrentHashMap<>();
     private final GameRoomService gameRoomService;
     private final GameSettingService gameSettingService;
     private final SubjectService subjectService;
@@ -50,7 +50,6 @@ public class MatchHandler  {
     }
   
     public void addUser(String sessionId) {
-    	log.info("add user " );
         WebSocketSession session = sessionMap.get(sessionId);
         log.info(sessionId);
         if (session != null) {
@@ -70,9 +69,9 @@ public class MatchHandler  {
     private void checkAndMatchUsers() throws Exception {
     	log.info("checkAndMatchUsers" );
         synchronized (waitingUsers) {
-            while (waitingUsers.size() >= 5) {
+            while (waitingUsers.size() >= 1) { //5로 변경하기
                 WebSocketSession[] matchedUsers = new WebSocketSession[5];
-                for (int i = 0; i < 5; i++) {
+                for (int i = 0; i < 1; i++) {
                     matchedUsers[i] = waitingUsers.poll();
                 }
                 createAndAssignGameRoom(matchedUsers);

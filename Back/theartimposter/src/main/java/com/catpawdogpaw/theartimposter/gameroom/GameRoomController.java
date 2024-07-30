@@ -2,7 +2,6 @@ package com.catpawdogpaw.theartimposter.gameroom;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,7 +33,7 @@ public class GameRoomController {
         gameRoomService.deleteGameRoom(id);
         return ResponseEntity.ok().build();
     }
-
+/*
     @GetMapping("/findOrCreate")
     public ResponseEntity<GameRoom> findOrCreateRoom() {
         GameRoom gameRoom = gameRoomService.findOrCreateRoom();
@@ -52,4 +51,5 @@ public class GameRoomController {
         gameRoomService.leaveRoom(gameRoomId);
         return ResponseEntity.ok().build();
     }
+    */
 }

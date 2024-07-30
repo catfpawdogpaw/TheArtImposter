@@ -1,13 +1,10 @@
 package com.catpawdogpaw.theartimposter.gameroom;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
+import com.catpawdogpaw.theartimposter.config.CacheService;
 import com.catpawdogpaw.theartimposter.gameroom.mapper.GameRoomMapper;
 import com.catpawdogpaw.theartimposter.gameroom.model.GameRoom;
-import com.catpawdogpaw.theartimposter.match.CacheService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,7 +23,7 @@ public class GameRoomService {
 		gameRoomMapper.deleteGameRoom(gameRoomId);
 	}
 	
-	
+	/*
 	public GameRoom findOrCreateRoom() {
 		// 현재 존재하는 모든 게임 방 목록 가져옴 
 		List<GameRoom> rooms = gameRoomMapper.findAll();
@@ -44,7 +41,7 @@ public class GameRoomService {
 			gameRoom.setDestroyAt(LocalDateTime.now().plusHours(1)); // Room will be destroyed in 1 hour
 
 			gameRoomMapper.createGameRoom(gameRoom);
-			cacheService.addGameRoom(gameRoom);
+//			cacheService.addGameRoom(gameRoom);
 		}
 		return gameRoom;
 	}
@@ -61,5 +58,5 @@ public class GameRoomService {
 			gameRoomMapper.deleteGameRoom(gameRoomId);
 			cacheService.removeGameRoom(gameRoomId.toString());
 		}
-	}
+	}*/
 }

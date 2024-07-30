@@ -17,7 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 public class WebSocketSessionHandlerDecoratorFactory implements WebSocketHandlerDecoratorFactory {
 
     private final MatchHandler matchHandler;
-
+ 
+    
     @Override
     public WebSocketHandler decorate(WebSocketHandler handler) {
         return new WebSocketHandlerDecorator(handler) {
@@ -27,6 +28,12 @@ public class WebSocketSessionHandlerDecoratorFactory implements WebSocketHandler
                 session.getAttributes().put("sessionId", sessionId);
                 matchHandler.getSessionMap().put(sessionId, session);
                 log.info("WebSocket connection established - sessionId: " + sessionId);
+                
+                if (session.getPrincipal() != null) {
+                    String username = session.getPrincipal().getName();
+                    log.info("Connected user: " + username);
+                }
+                
                 super.afterConnectionEstablished(session);
             }
 
@@ -36,6 +43,12 @@ public class WebSocketSessionHandlerDecoratorFactory implements WebSocketHandler
                 matchHandler.getSessionMap().remove(sessionId);
                 log.info("WebSocket connection closed - sessionId: " + sessionId);
                 super.afterConnectionClosed(session, closeStatus);
+                
+                
+                if (session.getPrincipal() != null) {
+                    String username = session.getPrincipal().getName();
+                    log.info("Connected user: " + username);
+                }
             }
 
             public void handleMessage(WebSocketSession session, TextMessage message) throws Exception {

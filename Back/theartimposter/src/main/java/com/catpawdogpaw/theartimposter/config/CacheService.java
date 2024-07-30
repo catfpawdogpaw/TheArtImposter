@@ -1,9 +1,9 @@
 package com.catpawdogpaw.theartimposter.config;
 
-
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CacheService {
 
+    @Qualifier("redisTemplate")
     private final RedisTemplate<String, Object> redisTemplate;
+
+    @Qualifier("customStringRedisTemplate")
     private final RedisTemplate<String, String> customStringRedisTemplate;
 
     private static final String PLAYER_COUNT_KEY_PREFIX = "gameRoom:playerCount:";
@@ -55,7 +58,6 @@ public class CacheService {
     * Refresh 토큰 저장, 조회, 삭제, 업데이트
     * */
     public void saveUserData(Long userId, String refreshToken, String nickname, String image, Long vicCnt, Long gameCnt, Long expiry) {
-
         Map<String, Object> userData = Map.of(
                 "refreshToken", refreshToken,
                 "userId", userId.toString(),
@@ -65,7 +67,6 @@ public class CacheService {
                 "gameCnt", gameCnt.toString()
         );
 
-//        redisTemplate.opsForValue().set(refreshToken, userData, expiry, TimeUnit.MILLISECONDS);
         customStringRedisTemplate.opsForHash().putAll("userData:"+userId, userData);
         customStringRedisTemplate.expire("userData:" + userId, expiry, TimeUnit.MILLISECONDS);
     }
@@ -85,5 +86,4 @@ public class CacheService {
     public void deleteUserData(String userId) {
         redisTemplate.delete("userData:" + userId);
     }
-
 }
