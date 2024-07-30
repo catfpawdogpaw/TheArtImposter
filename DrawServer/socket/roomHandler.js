@@ -23,6 +23,7 @@ function getAllRoomIds() {
 const defaultGameSet = {
     REDIS_EXPIRE_TIME: 1800, //30분
     GAME_START_DELAY: 3,
+    STEP_INTERVAL: 3,
     VOTE_TIME: 40,
     COLORS: ["red", "blue", "green", "yellow", "orange", "purple"],
 };
