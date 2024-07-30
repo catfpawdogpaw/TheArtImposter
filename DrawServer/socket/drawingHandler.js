@@ -1,40 +1,18 @@
-// 그림 데이터 저장 객체
-let drawingData = {};
-
-function drawingHandler(io, socket) {
-    socket.on("joinRoom", (room) => {
-        socket.join(room);
-        currentRoom = room;
-
-        if (!drawingData[room]) {
-            drawingData[room] = [];
-        }
-        // 기존 그림 전송
-        socket.emit("initDrawing", drawingData[room]);
-    });
+function drawingHandler(io, socket, GameRoomStatus) {
+    socket.emit("initDrawing", GameRoomStatus.drawingData);
 
     socket.on("draw", (data) => {
-        if (currentRoom) {
-            // 그림 데이터 저장
-            drawingData[currentRoom].push(data);
-
-            // 그림 데이터 방에 전파
-            socket.to(currentRoom).emit("draw", data);
-        }
+        // 그림 데이터 저장
+        GameRoomStatus.drawingData.push(data);
+        // 그림 데이터 방에 전파
+        socket.to(GameRoomStatus.gameRoomTitle).emit("draw", data);
     });
 
     socket.on("clearCanvas", () => {
-        if (currentRoom) {
-            // 그림 데이터 초기화
-            drawingData[currentRoom] = [];
+        // 그림 데이터 초기화
+        GameRoomStatus.drawingData = [];
 
-            // 클리어 이벤트 방에 전파
-            io.to(currentRoom).emit("clearCanvas");
-        }
-    });
-
-    socket.on("disconnect", () => {
-        console.log("User disconnected");
+        io.to(GameRoomStatus.gameRoomTitle).emit("clearCanvas");
     });
 }
 

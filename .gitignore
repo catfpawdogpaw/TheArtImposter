@@ -26,14 +26,19 @@ Back/theartimposter/src/main/resources/key.properties
 Back/theartimposter/src/main/resources/application-secrets.yml
 
 #vscode
-.vscode
+.vscode/
 
-#node_moudle
-*/node_modules
+#node_modules
+**/node_modules
+
+# IntelliJ IDEA project files
+**/.idea/
+**/*.iml
+
 DrawServer/config.js
 DrawServer/DBconfig.js
 
-/.idea/
-
 #env
 .env
+# DrawServer/env 파일 무시
+DrawServer/env

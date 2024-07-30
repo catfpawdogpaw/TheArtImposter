@@ -3,8 +3,8 @@ const http = require("http");
 const socketIo = require("socket.io");
 const cors = require("cors");
 const { setupSocket } = require("./socketHandler.js");
-const dataReceiver = require("./spring/dataReceiver");
-const redis = require("./config/redisConfig.js");
+const dataReceiver = require("./spring/dataReceiver.js");
+const { redis, findRedisDataByKey } = require("./config/redisConfig.js");
 
 const app = express();
 const server = http.createServer(app);
@@ -33,11 +33,6 @@ server.listen(PORT, () => {
   console.log(`서버가 시작되었습니다. http://localhost:${PORT}`);
 });
 
-// app.get("/", (req, res) => {
-//     res.send(result);
-// });
-// app.use("/board", boardRouter);
-
 app.post("/set-data", (req, res) => {
     const { key, value } = req.body;
     try {
@@ -46,5 +41,19 @@ app.post("/set-data", (req, res) => {
     } catch (err) {
         console.error("Redis error:", err);
         res.status(500).json({ error: err.message });
+    }
+});
+
+app.get("/get-data/:key", async (req, res) => {
+    const key = req.params.key;
+    try {
+        const data = await findRedisDataByKey(key);
+        if (data) {
+            res.json({ data });
+        } else {
+            res.status(404).json({ message: "Data not found" });
+        }
+    } catch (err) {
+        res.status(500).json({ error: "Internal server error" });
     }
 });

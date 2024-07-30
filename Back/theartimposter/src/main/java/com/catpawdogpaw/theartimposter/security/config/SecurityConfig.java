@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -63,6 +64,18 @@ public class SecurityConfig {
 		// JWTFilter 추가
 		http.addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
+                
+        //csrf disable
+        http
+                .csrf(AbstractHttpConfigurer::disable);
+        //From 로그인 방식 disable
+        http
+                .formLogin(AbstractHttpConfigurer::disable);
+
+        //HTTP Basic 인증 방식 disable
+        http
+                .httpBasic(AbstractHttpConfigurer::disable);
+
 		// oauth2
 		http.oauth2Login((oauth2) -> oauth2
 				.userInfoEndpoint(
@@ -70,10 +83,12 @@ public class SecurityConfig {
 				.successHandler(oAuth2AuthenticationSuccessHandler));
 
 		// 경로별 인가 작업
-		http.authorizeHttpRequests((auth) -> auth.requestMatchers("/", "/login", "/*").permitAll()
-				.requestMatchers("/reissue").permitAll().
-				requestMatchers("/wait-service/wait-websocket/**", "/waitroom/**").permitAll() // WebSocket
-				.requestMatchers("/ws/**").permitAll().anyRequest().authenticated());
+		http.authorizeHttpRequests((auth) -> auth.requestMatchers("/","/login","/*", "/api/user/logout").permitAll()
+				.requestMatchers("/reissue").permitAll()
+				.requestMatchers("/api/*").permitAll()
+				.requestMatchers("/wait-service/wait-websocket/**", "/waitroom/**").permitAll() // WebSocket
+				.requestMatchers("/ws/**").permitAll()
+				.anyRequest().authenticated());
 
 		// 세션 설정 : STATELESS
 		http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
@@ -81,8 +96,8 @@ public class SecurityConfig {
 		return http.build();
 	}
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }
