@@ -1,10 +1,10 @@
 <template>
     <div>
-        <div>
-            <label for="room">Room:</label>
-            <input v-model="room" id="room" placeholder="Enter room name" />
-            <button @click="joinRoom">Join Room</button>
-        </div>
+<!--        <div>-->
+<!--            <label for="room">Room:</label>-->
+<!--            <input v-model="room" id="room" placeholder="Enter room name" />-->
+<!--            <button @click="joinRoom">Join Room</button>-->
+<!--        </div>-->
         <canvas
             ref="canvas"
             @mousedown="startDrawing"
@@ -48,7 +48,7 @@ export default {
             canvas: null,
             lineWidth: 2,
             prevPoint: null,
-            room: "",
+            room: "TestRoom",
             color: "black",
             colors: [
                 "black",
@@ -61,9 +61,10 @@ export default {
             ],
         };
     },
-    mounted() {
-        this.setupCanvas();
-    },
+  mounted() {
+    this.setupCanvas();
+    this.$root.$on('joinRoom', this.joinRoom);
+  },
     methods: {
         setupCanvas() {
             this.canvas = this.$refs.canvas;
@@ -81,7 +82,7 @@ export default {
         joinRoom() {
             this.connectToServer();
             if (this.socket) {
-                drawsocket.joinRoom(this.socket, this.room);
+                drawsocket.joinRoom(this.socket, this.room, null);
             }
         },
         startDrawing(e) {

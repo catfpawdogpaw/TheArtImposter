@@ -1,8 +1,9 @@
 import DrawPad from "@/components/drawpad/DrawPad.vue";
-import LoginCompo from "@/components/loginCompo/LoginCompo.vue";
 import StoreTokens from "@/components/loginCompo/StoreTokens.vue";
 import MiddleComponent from "@/components/MiddleComponent.vue";
 import SideComponent from "@/components/SideComponent.vue";
+import ChatCompo from "@/components/chatting/ChatCompo.vue";
+import LoginCompo from "@/components/loginCompo/LoginCompo.vue";
 
 export default [
     {
@@ -13,18 +14,25 @@ export default [
         },
         children: [
             {
-                path: "/",
+                path: "",
                 components: {
                     //위에 띄워지는 투표 화면도 생각해야함
                     main: DrawPad,
-                    side: LoginCompo,
+                    side: ChatCompo,
                 },
             },
             {
-                path: "/lobby",
+                path: "lobby",
                 components: {
                     main: () => import("@/components/WaitingRoom.vue"),
                     side: SideComponent,
+                },
+            },
+            {
+                path: "login",
+                components: {
+                    main: DrawPad,
+                    side: LoginCompo,
                 },
             },
         ],

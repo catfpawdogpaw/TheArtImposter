@@ -7,8 +7,8 @@ export default {
         return socket;
     },
 
-    joinRoom(socket, room) {
-        socket.emit("joinRoom", room);
+    joinRoom(socket, room, accessToken) {
+        socket.emit("joinRoom", room, accessToken);  // accessToken도 함께 전송
     },
 
     setupDrawingListeners(

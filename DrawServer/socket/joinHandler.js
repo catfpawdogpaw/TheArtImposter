@@ -6,12 +6,16 @@ const {
     validateToken,
     updateRedisRoomStatus,
 } = require("../config/redisConfig");
+/*
+* 24-07-30 jaewoo추가
+* */
+const chatHandler = require("./chatHandler"); //chatHandler 추가
 
 async function joinHandler(io, socket) {
     socket.on("joinRoom", async (roomTitle, accessToken) => {
         // redis jwt토큰 있는지 검증후 해당유저정보 가져오기
         // redis에서 유효한 방인지 검증
-        console.log(roomTitle + "  " + accessToken);
+        console.log("룸: "+roomTitle + "  토큰:" + accessToken);
         // const player = await validateToken(accessToken, socket);
         const player = testPlayerDTO();
         if (!player) {
@@ -25,13 +29,16 @@ async function joinHandler(io, socket) {
         }
 
         gameRoomStatus.addPlayer(player);
-        io.to(roomTitle).emit("playerJoined", player);
+        io.to(roomTitle).emit("userJoined", player);
         socket.join(roomTitle);
+
 
         //그림관리
         drawingHandler(io, socket, gameRoomStatus);
         //턴, 게임관리
         gameStatusHandler(io, socket, gameRoomStatus);
+        /* chatHandler 추가*/
+        chatHandler(io, socket, gameRoomStatus);
 
         loadGameRoomInfo(gameRoomStatus);
         updateRedisRoomStatus(gameRoomStatus);

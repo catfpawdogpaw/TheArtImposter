@@ -3,7 +3,7 @@ const { roundHandler } = require("./roundHandler");
 
 function gameStatusHandler(io, socket, GameRoomStatus) {
     // 이미 게임 진행중이라면 대기
-    if (GameRoomStatus.currentTurnIndex != 0) {
+    if (GameRoomStatus.currentTurnIndex !== 0) {
         return;
     }
 
