@@ -39,7 +39,7 @@
 .footer {
     width: 100%;
     max-width: var(--max-width);
-    height: 100px;
+    height: 150px;
     border: 1px solid black;
     margin-top: 20px;
 }

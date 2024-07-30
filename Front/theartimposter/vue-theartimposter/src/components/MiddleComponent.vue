@@ -18,13 +18,13 @@ export default {
 <style scoped>
 .main-content {
     flex: 3;
-    border: 1px solid black;
 }
 .side-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid black;
-  background-color: #f4f4f4;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    background-color: #f4f4f4;
 }
 </style>
