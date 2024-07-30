@@ -68,7 +68,6 @@ public class NodejsService {
 	
 	private List<SubjectSTNDTO> createSubjectSTNDTO(){
 		List<SubjectSTNDTO> subjectSTNDTOList = new ArrayList<>();
-		
 		for(int i = 0 ; i < 5; ++i) {
 			SubjectSTNDTO subjectSTNDTO = new SubjectSTNDTO();
 			subjectSTNDTO.setSubjectId(i);
@@ -83,8 +82,8 @@ public class NodejsService {
 	public STNDTO createSTNDTO() {
 		STNDTO sTNDTO = new STNDTO();
 
-		sTNDTO.setPlayer(createPlayerSTNDTO());
-		sTNDTO.setOtherPlayerList(createOtherPlayerSTNDTOList());
+//		sTNDTO.setPlayer(createPlayerSTNDTO());
+//		sTNDTO.setOtherPlayerList(createOtherPlayerSTNDTOList());
 		sTNDTO.setGameRoom(createGameRoomSTNDTO());
 		sTNDTO.setGameSetting(createGameSettingSTNDTO());
 		sTNDTO.setSubjectList(createSubjectSTNDTO());
@@ -93,8 +92,10 @@ public class NodejsService {
 	}
 	
     public void sendToNode(STNDTO stndto) {
-        String nodeServerUrl = "http://localhost:3000/receive-data"; // Node.js ������ URL
+        String nodeServerUrl = "http://localhost:3000/receive-data"; // Node.js  URL
         restTemplate.postForObject(nodeServerUrl, stndto, Void.class);
     }
+
+
 	
 }

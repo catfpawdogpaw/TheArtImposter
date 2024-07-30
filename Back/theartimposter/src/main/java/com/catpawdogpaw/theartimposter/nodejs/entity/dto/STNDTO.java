@@ -9,8 +9,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class STNDTO {
-	PlayerSTNDTO player;
-	List<PlayerSTNDTO> otherPlayerList = new ArrayList<>();
+//	PlayerSTNDTO player;
+//	List<PlayerSTNDTO> otherPlayerList = new ArrayList<>();
 	GameRoomSTNDTO gameRoom;
 	GameSettingSTNDTO gameSetting;
 	List<SubjectSTNDTO> subjectList = new ArrayList<>();

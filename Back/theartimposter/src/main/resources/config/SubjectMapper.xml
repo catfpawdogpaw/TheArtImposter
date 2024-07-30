@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.catpawdogpaw.theartimposter.subject.mapper.SubjectMapper">
+
+    
+    <select id="getSubjectById" parameterType="long" resultType="com.catpawdogpaw.theartimposter.subject.model.Subject">
+        SELECT * FROM subject WHERE subject_id = #{id}
+    </select>
+
+    <select id="getAllSubjects" resultType="com.catpawdogpaw.theartimposter.subject.model.Subject">
+        SELECT * FROM subject
+    </select>
+
+    <insert id="createSubject" parameterType="com.catpawdogpaw.theartimposter.subject.model.Subject">
+        INSERT INTO subject (subject_name, category_id)
+        VALUES (#{subjectName}, #{categoryId})
+    </insert>
+
+    <delete id="deleteSubject" parameterType="long">
+        DELETE FROM subject WHERE subject_id = #{id}
+    </delete>
+
+    
+</mapper>

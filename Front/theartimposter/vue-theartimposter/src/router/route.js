@@ -1,6 +1,8 @@
 import DrawPad from "@/components/drawpad/DrawPad.vue";
 import MiddleComponent from "@/components/MiddleComponent.vue";
 import SideComponent from "@/components/SideComponent.vue";
+import MatchComponent from "@/components/MatchComponent.vue";
+
 
 export default [
     {
@@ -26,5 +28,12 @@ export default [
                 },
             },
         ],
-    },
+    },{
+         //메인경로마다 상태
+         path: "/game-matching",
+         components: {
+             middle: MatchComponent,
+         },
+    }
+   
 ];

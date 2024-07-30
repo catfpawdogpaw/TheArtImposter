@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@RedisHash("GameRoom")
+@RedisHash
 public class GameRoom {
     private Long gameRoomId;
     private Long gameSettingId;

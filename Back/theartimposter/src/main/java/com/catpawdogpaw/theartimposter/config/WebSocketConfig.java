@@ -5,7 +5,6 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
-import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 import com.catpawdogpaw.theartimposter.match.MatchHandler;
 
@@ -17,15 +16,14 @@ import lombok.RequiredArgsConstructor;
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final MatchHandler matchHandler;
-
     
     // 클라이언트가 WebSocket 서버에 연결하기 위한 엔드포인트
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/wait-service/wait-websocket")
-        .setAllowedOrigins("http://localhost:9080")
-        .addInterceptors(new HttpSessionHandshakeInterceptor())
-        .withSockJS();
+                .setAllowedOrigins("http://localhost:9080")
+                .addInterceptors(new WebSocketSessionInterceptor(matchHandler))
+                .withSockJS();
     }
     
     // 메세지 브로거 옵션 설정
@@ -35,5 +33,4 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.setApplicationDestinationPrefixes("/wait-service");
     }
 
-   
 }
