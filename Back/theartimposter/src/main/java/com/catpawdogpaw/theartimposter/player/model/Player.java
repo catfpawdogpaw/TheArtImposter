@@ -2,14 +2,13 @@ package com.catpawdogpaw.theartimposter.player.model;
 
 
 
-import org.springframework.data.redis.core.RedisHash;
+import com.catpawdogpaw.theartimposter.domain.GameRole;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@RedisHash("player")
 public class Player {
 	private Long id;
 	private Long userId;

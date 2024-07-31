@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.UnknownContentTypeException;
 
 import com.catpawdogpaw.theartimposter.nodejs.entity.dto.GameRoomSTNDTO;
-import com.catpawdogpaw.theartimposter.nodejs.entity.dto.GameSettingSTNDTO;
+import com.catpawdogpaw.theartimposter.nodejs.entity.dto.GameSettingDTO;
 import com.catpawdogpaw.theartimposter.nodejs.entity.dto.PlayerSTNDTO;
 import com.catpawdogpaw.theartimposter.nodejs.entity.dto.STNDTO;
 import com.catpawdogpaw.theartimposter.nodejs.entity.dto.SubjectSTNDTO;
@@ -59,8 +59,8 @@ public class NodejsService {
 		return gameRoomSTNDTO;
 	}
 	
-	private GameSettingSTNDTO createGameSettingSTNDTO() {
-		GameSettingSTNDTO gameSettingSTNDTO = new GameSettingSTNDTO();
+	private GameSettingDTO createGameSettingSTNDTO() {
+		GameSettingDTO gameSettingSTNDTO = new GameSettingDTO();
 		gameSettingSTNDTO.setMinPeople(5);
 		gameSettingSTNDTO.setMaxPeople(5);
 		gameSettingSTNDTO.setRoundTimeLimit(500);
@@ -115,5 +115,8 @@ public class NodejsService {
         }
 	
 	}
+
+	
+	
 	
 }

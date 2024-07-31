@@ -19,7 +19,7 @@ import com.catpawdogpaw.theartimposter.gameroom.model.GameRoom;
 import com.catpawdogpaw.theartimposter.gamesetting.GameSettingService;
 import com.catpawdogpaw.theartimposter.gamesetting.model.GameSetting;
 import com.catpawdogpaw.theartimposter.nodejs.entity.dto.GameRoomSTNDTO;
-import com.catpawdogpaw.theartimposter.nodejs.entity.dto.GameSettingSTNDTO;
+import com.catpawdogpaw.theartimposter.nodejs.entity.dto.GameSettingDTO;
 import com.catpawdogpaw.theartimposter.nodejs.entity.dto.STNDTO;
 import com.catpawdogpaw.theartimposter.nodejs.entity.dto.SubjectSTNDTO;
 import com.catpawdogpaw.theartimposter.nodejs.service.NodejsService;
@@ -94,7 +94,7 @@ public class MatchHandler {
 
 		stnDTO.setGameRoom(gameRoomStnDto);
 
-		GameSettingSTNDTO gameSettingStnDto = new GameSettingSTNDTO();
+		GameSettingDTO gameSettingStnDto = new GameSettingDTO();
 
 		GameSetting gameSetting = gameSettingService.getGameSettingById(gameRoom.getGameSettingId());
 		gameSettingStnDto.setMaxPeople(gameSetting.getMaxPeople());

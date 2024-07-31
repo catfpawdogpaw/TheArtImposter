@@ -12,6 +12,6 @@ public class STNDTO {
 //	PlayerSTNDTO player;
 //	List<PlayerSTNDTO> otherPlayerList = new ArrayList<>();
 	GameRoomSTNDTO gameRoom;
-	GameSettingSTNDTO gameSetting;
+	GameSettingDTO gameSetting;
 	List<SubjectSTNDTO> subjectList = new ArrayList<>();
 }
