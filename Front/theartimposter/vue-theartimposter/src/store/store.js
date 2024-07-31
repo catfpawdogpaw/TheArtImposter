@@ -1,7 +1,7 @@
-import Vue from "vue";
-import axios from "@/plugins/axios";
-import {eraseCookie, getCookie} from "@/utils/cookie";
-import Vuex from "vuex"; // 쿠키 유틸리티 함수 가져오기
+import Vue from 'vue';
+import axios from '@/plugins/axios';
+import { eraseCookie, getCookie } from '@/utils/cookie';
+import Vuex from 'vuex'; // 쿠키 유틸리티 함수 가져오기
 
 Vue.use(Vuex);
 export default new Vuex.Store({
@@ -52,7 +52,9 @@ export default new Vuex.Store({
             return axios
                 .get('/user/me')
                 .then((response) => {
+                    console.log('내가 원하는 순서 0');
                     commit('setUser', response.data);
+                    console.log('내가 원하는 순서 1');
                     console.log(response.data);
                     return response.data; // Promise 반환
                 })
@@ -107,6 +109,6 @@ export default new Vuex.Store({
         getGameRoomStatus: (state) => state.gameRoomStatus, // 게임 룸 상태 getter 추가
         getPlayers: (state) => state.players, // 플레이어 목록 getter 추가
         getTurnPlayer: (state) => state.turnPlayer, // getTurnPlayer getter 추가
-        refreshToken: () => getCookie('refresh_token')
+        refreshToken: () => getCookie('refresh_token'),
     },
 });

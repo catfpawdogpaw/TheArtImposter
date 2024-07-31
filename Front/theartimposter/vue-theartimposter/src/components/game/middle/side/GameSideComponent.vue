@@ -22,6 +22,14 @@ export default {
         ...mapGetters(['getPlayers']),
         playersToShow() {
             const players = this.getPlayers.length > 0 ? this.getPlayers : [];
+
+            if (players.length > 0) {
+                players[players.length - 1] = {
+                    ...players[players.length - 1],
+                    isMe: true,
+                };
+            }
+
             // 스토어에서 받아온 유저 데이터가 있으면 그것을 사용하고, 그렇지 않으면 더미 데이터를 사용
             const dummyPlayers = this.dummyPlayers.slice(players.length);
             return players.concat(dummyPlayers).slice(0, 5);
@@ -72,8 +80,8 @@ export default {
                     // profilePicture: require('@/assets/user/image/profile/u1.png'),
                     nickName: '거췬 꿈이 이쒀~',
                     curScore: 2,
-                    isMe: true,
-                    number: 2,
+                    isMe: false,
+                    number: null,
                 },
             ],
         };

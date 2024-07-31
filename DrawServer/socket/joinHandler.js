@@ -19,6 +19,7 @@ async function joinHandler(io, socket) {
     //console.log(roomTitle + "  " + userId + " " + refreshToken.slice(-10));
 
     //위가 진짜 데이터, 아래가 더미 데이터
+    console.log('진짜 플레이어 데이터' + userId +'왼쪽은 아디 오른쪽 토큰'+ refreshToken+'오른소켓'+ socket);
      const player = await validateToken(userId, refreshToken, socket);
      //const player = testPlayerDTO();
 

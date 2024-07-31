@@ -3,7 +3,7 @@
         <div class="profile-picture">
             <!-- <img :src="user.profilePicture" alt="Profile Picture" /> -->
             <img :src="user.profileImage" @error="onImageError" alt="Profile Image" />
-            <div v-if="user.isMe" class="user-number">{{ user.number }}</div>
+            <div v-if="user.isMe" class="user-number" :style="userNumberStyle">{{ userTurnNumber }}</div>
         </div>
         <div class="user-info">
             <div class="nickname">{{ user.nickName }}</div>
@@ -26,6 +26,17 @@ export default {
             // user.curScore가 존재하는지 확인하고, 없으면 0으로 설정
             const score = this.user.curScore || 0;
             return `${score}점`;
+        },
+        userTurnNumber() {
+            if (this.user.turn === null) {
+                return '?';
+            }
+            return this.user.turn;
+        },
+        userNumberStyle() {
+            return {
+                backgroundColor: this.user.color || '#404040',
+            };
         },
     },
     methods: {
@@ -64,7 +75,7 @@ export default {
     position: absolute;
     bottom: -5px;
     right: -15px;
-    background-color: #ff00ff;
+    /* background-color: #404040; */
     color: white;
     border-radius: 50%;
     padding: 5px;

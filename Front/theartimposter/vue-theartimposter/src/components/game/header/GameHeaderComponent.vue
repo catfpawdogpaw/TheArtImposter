@@ -13,7 +13,9 @@
 export default {
     created() {
         this.$store.dispatch('fetchUser').then((user) => {
-            this.$socket.emit('joinRoom', 'TestRoom', user.userId, user.token);
+            console.log('내가 원하는 순서 2');
+            console.log(user.userId);
+            this.$socket.emit('joinRoom', 'TestRoom', this.$store.getters.refreshToken, user.userId);
         });
     },
 };
