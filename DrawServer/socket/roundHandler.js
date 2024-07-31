@@ -64,11 +64,12 @@ async function startTurns(io, socket, GameRoomStatus) {
             console.log(`${currentPlayer.nickName}님의 차례 시작. (턴 ${currentPlayerIndex + 1} / ${players.length} )`);
 
             let turnTimer = setTimeout(
-                () => endTurn(),
-                GameRoomStatus.gameSetting.turnTimeLimit * 1000
-                // 100
+                () => {
+                    endTurn();
+                },
+                100
+                // GameRoomStatus.gameSetting.turnTimeLimit * 1000
             );
-
             const playerSocket = io.sockets.sockets.get(currentPlayer.socketId);
 
             // 리스너 추가
@@ -91,7 +92,6 @@ async function startTurns(io, socket, GameRoomStatus) {
                     removeDrawListeners(playerSocket);
                     playerSocket.removeListener("drawEnd", handleDrawEnd);
                 }
-
                 currentPlayerIndex++;
                 nextTurn();
             }
@@ -184,7 +184,7 @@ async function voteStep(io, socket, GameRoomStatus) {
 }
 
 async function announceRoundResult(io, GameRoomStatus, voteResult) {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
         const { sortedCandidates, abstentionCount } = voteResult;
 
         const voteCountMap = Object.fromEntries(sortedCandidates);
@@ -193,6 +193,7 @@ async function announceRoundResult(io, GameRoomStatus, voteResult) {
         const voteResults = GameRoomStatus.players.map((player) => {
             const votes = voteCountMap[player.userId] || 0;
             return {
+                userId: player.userId,
                 username: player.nickName,
                 votes: votes,
                 role: player.gameRole,
@@ -217,8 +218,8 @@ async function announceRoundResult(io, GameRoomStatus, voteResult) {
             const mostVotedPlayer = mostVotedPlayers[0];
             if (mostVotedPlayer.role === "fake_artist") {
                 // 가짜 예술가의 주제 맞추기 단계
-                // startFakeArtistGuess(mostVotedPlayer);
-                endRound("artist");
+                const winner = await startFakeArtistGuess(io, GameRoomStatus, mostVotedPlayer);
+                endRound(winner);
             } else {
                 // 가짜 예술가의 승리
                 endRound("fake_artist");
@@ -230,6 +231,52 @@ async function announceRoundResult(io, GameRoomStatus, voteResult) {
                 winner: winner,
             });
             console.log("라운드 종료 승리 역할:" + winner);
+            resolve(winner);
+        }
+    });
+}
+
+async function startFakeArtistGuess(io, GameRoomStatus, mostVotedPlayer) {
+    return new Promise((resolve) => {
+        const guessTime = defaultGameSet.GUESS_TIME * 1000;
+        let guessWord = null;
+
+        const fakeArtist = GameRoomStatus.players.find((player) => player.userId === mostVotedPlayer.userId);
+        console.log(`가짜 예술가 ${fakeArtist.nickName}의 주제 맞추기 단계 시작`);
+
+        io.to(GameRoomStatus.gameRoomTitle).emit("fakeArtistGuessStart", {
+            fakeArtistName: fakeArtist.nickName,
+            timeLimit: guessTime,
+        });
+
+        const fakeArtistSocket = io.sockets.sockets.get(fakeArtist.socketId);
+        fakeArtistSocket.on("guessWord", (word) => {
+            guessWord = word;
+            checkGuess();
+        });
+
+        const timer = setTimeout(() => {
+            if (!guessWord) {
+                guessWord = "";
+                checkGuess();
+            }
+        }, guessTime);
+
+        function checkGuess() {
+            clearTimeout(timer);
+            fakeArtistSocket.removeAllListeners("guessWord");
+
+            const curWord = GameRoomStatus.getSubject().subject;
+            const isCorrect = guessWord === curWord;
+
+            io.to(GameRoomStatus.gameRoomTitle).emit("fakeArtistGuessResult", {
+                fakeArtistName: fakeArtist.nickName,
+                guessedWord: guessWord,
+                correctWord: curWord,
+                isCorrect: isCorrect,
+            });
+
+            const winner = isCorrect ? "fake_artist" : "artist";
             resolve(winner);
         }
     });
