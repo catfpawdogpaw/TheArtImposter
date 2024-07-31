@@ -12,14 +12,17 @@ const {
 const chatHandler = require("./chatHandler"); //chatHandler 추가
 
 async function joinHandler(io, socket) {
-  socket.on("joinRoom", async (roomTitle, userId, refreshToken) => {
+  socket.on("joinRoom", async (roomTitle, refreshToken, userId) => {
     // redis jwt토큰 있는지 검증후 해당유저정보 가져오기
+
     //강훈 슬라이스 에러나서 주석한 부분 아래
     //console.log(roomTitle + "  " + userId + " " + refreshToken.slice(-10));
 
     //위가 진짜 데이터, 아래가 더미 데이터
      const player = await validateToken(userId, refreshToken, socket);
      //const player = testPlayerDTO();
+
+    console.log(roomTitle + "  " + userId + " " + refreshToken + "유저 ID: " + userId);
 
     if (!player) {
       return;

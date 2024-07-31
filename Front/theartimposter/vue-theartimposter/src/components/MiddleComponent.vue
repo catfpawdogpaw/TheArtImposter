@@ -19,21 +19,49 @@
 </template>
 
 <script>
+import socketHandler from '@/components/chatting/socketHandler';
+
 export default {
     name: 'MiddleComponent',
     data() {
         return {
-            room: '',
+          room: '',
+          socket: null,
         };
     },
-    methods: {
-        joinRoom() {
-            if (this.room.trim() !== '') {
-                this.$root.$emit('joinRoom', this.room);
-                console.log(this.room);
-            }
-        },
+  computed: {
+    userId() {
+      const user = this.$store.getters.getUser;
+      return user ? user.userId : null;
     },
+  },
+  methods: {
+    joinRoom() {
+      const refreshToken = this.$store.getters.refreshToken;
+      if (this.room.trim() !== '' && refreshToken) {
+        if (!this.socket) {
+          this.socket = socketHandler.connectToServer('http://localhost:3000'); // 서버 URL을 적절히 변경
+        }
+        socketHandler.joinRoom(this.socket, this.room, refreshToken, this.userId);
+        console.log(`Joining room: ${this.room} with userId: ${this.userId}`);
+      } else {
+        console.error('Room name or refresh token is missing');
+      }
+    },
+  },
+  provide() {
+    return {
+      socket: () => this.socket,
+    };
+  },
+  created() {
+    if (!this.socket) {
+      this.socket = socketHandler.connectToServer('http://localhost:3000'); // 서버 URL을 적절히 변경
+    }
+    this.$store.dispatch('fetchUser').then(() => {
+      console.log('User fetched:', this.userId);
+    });
+  },
 };
 </script>
 

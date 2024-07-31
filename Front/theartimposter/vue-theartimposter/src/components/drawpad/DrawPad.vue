@@ -1,10 +1,5 @@
 <template>
     <div>
-<!--        <div>-->
-<!--            <label for="room">Room:</label>-->
-<!--            <input v-model="room" id="room" placeholder="Enter room name" />-->
-<!--            <button @click="joinRoom">Join Room</button>-->
-<!--        </div>-->
         <canvas
             ref="canvas"
             @mousedown="startDrawing"
@@ -37,9 +32,11 @@
 
 <script>
 import drawpad from "./drawpad.js";
-import drawsocket from "./drawsocket.js";
+import socketHandler from "@/components/chatting/socketHandler";
 
 export default {
+  name: 'DrawingComponent',
+  inject: ['socket'],
     data() {
         return {
             socket: null,
@@ -63,82 +60,79 @@ export default {
     },
   mounted() {
     this.setupCanvas();
-    this.$root.$on('joinRoom', this.joinRoom);
+    this.setupListeners();
   },
-    methods: {
-        setupCanvas() {
-            this.canvas = this.$refs.canvas;
-            this.context = drawpad.setupCanvas(this.canvas);
-        },
-        connectToServer() {
-            this.socket = drawsocket.connectToServer("http://localhost:3000");
-            drawsocket.setupDrawingListeners(
-                this.socket,
-                this.drawFromServer,
-                this.initDrawingFromServer,
-                this.clearCanvasLocal
-            );
-        },
-        joinRoom() {
-            this.connectToServer();
-            if (this.socket) {
-                drawsocket.joinRoom(this.socket, this.room, null);
-            }
-        },
-        startDrawing(e) {
-            this.isDrawing = true;
-            this.prevPoint = drawpad.startDrawing(e, this.context, this.canvas);
-        },
-        stopDrawing() {
-            this.isDrawing = false;
-            this.prevPoint = null;
-        },
-        draw(e) {
-            if (!this.isDrawing) return;
-            const newPoint = drawpad.draw(
-                e,
-                this.context,
-                this.canvas,
-                this.prevPoint,
-                this.color,
-                this.lineWidth
-            );
-            if (this.socket) {
-                drawsocket.emitDraw(this.socket, {
-                    prevX: this.prevPoint.x,
-                    prevY: this.prevPoint.y,
-                    x: newPoint.x,
-                    y: newPoint.y,
-                    color: this.color,
-                    lineWidth: this.lineWidth,
-                });
-            }
-            this.prevPoint = newPoint;
-        },
-        drawFromServer(data) {
-            drawpad.drawFromServer(this.context, data);
-        },
-        initDrawingFromServer(data) {
-            data.forEach(this.drawFromServer);
-        },
-        clearCanvas() {
-            if (this.socket) {
-                drawsocket.emitClearCanvas(this.socket);
-            }
-            this.clearCanvasLocal();
-        },
-        clearCanvasLocal() {
-            drawpad.clearCanvas(this.context, this.canvas);
-        },
-        selectColor(color) {
-            this.color = color;
-        },
-        setLineWidth(width) {
-            this.lineWidth = width;
-        },
-        saveCanvasAsImage() {
-            drawpad.saveCanvasAsImage(this.canvas);
-        },
+  methods: {
+      setupCanvas() {
+        this.canvas = this.$refs.canvas;
+        this.context = drawpad.setupCanvas(this.canvas);
+      },
+      setupListeners() {
+        if (this.socket) {
+          socketHandler.setupDrawingListeners(
+              this.socket(),
+              this.drawFromServer,
+              this.initDrawingFromServer,
+              this.clearCanvasLocal
+          );
+        } else {
+          console.error('Socket is not available');
+        }
+      },
+      startDrawing(e) {
+          this.isDrawing = true;
+          this.prevPoint = drawpad.startDrawing(e, this.context, this.canvas);
+      },
+      stopDrawing() {
+          this.isDrawing = false;
+          this.prevPoint = null;
+      },
+      draw(e) {
+          if (!this.isDrawing) return;
+          const newPoint = drawpad.draw(
+              e,
+              this.context,
+              this.canvas,
+              this.prevPoint,
+              this.color,
+              this.lineWidth
+          );
+          if (this.socket) {
+            socketHandler.emitDraw(this.socket, {
+                  prevX: this.prevPoint.x,
+                  prevY: this.prevPoint.y,
+                  x: newPoint.x,
+                  y: newPoint.y,
+                  color: this.color,
+                  lineWidth: this.lineWidth,
+              });
+          }
+          this.prevPoint = newPoint;
+      },
+      drawFromServer(data) {
+          drawpad.drawFromServer(this.context, data);
+      },
+      initDrawingFromServer(data) {
+          data.forEach(this.drawFromServer);
+      },
+      clearCanvas() {
+          if (this.socket) {
+            socketHandler.emitClearCanvas(this.socket);
+          }
+          this.clearCanvasLocal();
+      },
+      clearCanvasLocal() {
+          drawpad.clearCanvas(this.context, this.canvas);
+      },
+      selectColor(color) {
+          this.color = color;
+      },
+      setLineWidth(width) {
+          this.lineWidth = width;
+      },
+      saveCanvasAsImage() {
+          drawpad.saveCanvasAsImage(this.canvas);
+      },
     },
 };
 </script>

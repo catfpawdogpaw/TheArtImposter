@@ -38,7 +38,7 @@ export default [
                 },
             },
             {
-                path: 'login',
+                path: '/login',
                 components: {
                     main: DrawPad,
                     side: LoginCompo,

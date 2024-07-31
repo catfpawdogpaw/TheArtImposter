@@ -1,4 +1,3 @@
-P
 <template>
     <div class="profile-image">
         <img :src="profileImageUrl" alt="Profile Image" />
@@ -6,6 +5,8 @@ P
 </template>
 
 <script>
+// import { mapGetters } from 'vuex';
+
 export default {
     name: 'ProfileImageComponent',
     computed: {

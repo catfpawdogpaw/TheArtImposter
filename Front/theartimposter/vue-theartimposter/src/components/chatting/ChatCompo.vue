@@ -1,66 +1,69 @@
 <template>
-    <div id="chat">
-        <div v-for="message in messages" :key="message.timestamp">
-            {{ message.user.nickname }}: {{ message.message }}
-        </div>
-        <input v-model="newMessage" @keyup.enter="sendMessage" placeholder="Enter message" />
+  <div id="chat">
+    <div v-for="message in messages" :key="message.timestamp">
+      {{ message.user.nickname }}: {{ message.message }}
     </div>
+    <input v-model="newMessage" @keyup.enter="sendMessage" placeholder="Enter message" />
+  </div>
 </template>
 
 <script>
-import ChatSocket from '@/components/chatting/ChatSocket.js';
-import { mapState } from 'vuex';
+import socketHandler from "@/components/chatting/socketHandler";
 
 export default {
-    name: 'ChatCompo',
-    data() {
-        return {
-            socket: null,
-            messages: [],
-            newMessage: '',
-            room: 'TestRoom',
-        };
+  name: 'ChatCompo',
+  inject: ['socket'],
+  data() {
+    return {
+      messages: [],
+      newMessage: '',
+    };
+  },
+  mounted() {
+    const socket = this.socket();
+    if (this.socket) {
+      socketHandler.setupChatListeners(
+          socket,
+          this.receiveMessage,
+          this.userJoined,
+          this.userLeft
+      );
+    } else {
+      console.error('Socket is not available');
+    }
+  },
+  methods: {
+    sendMessage() {
+      const socket = this.socket();
+      if (this.newMessage.trim() !== '') {
+        socketHandler.sendMessage(socket, this.newMessage);
+        this.newMessage = '';
+      }
     },
-    computed: {
-        ...mapState(['user']),
+    receiveMessage(message) {
+      console.log('Received message:', message); // 메시지 구조 확인용 로그 출력
+      if (message && message.user && message.user.nickname) {
+        this.messages.push(message);
+      } else {
+        console.error('Received message with missing user information:', message);
+      }
     },
-    mounted() {
-        this.$root.$on('joinRoom', (room) => {
-            this.joinRoom(room);
-        });
+    userJoined(user) {
+      if (user && user.nickname) {
+        this.messages.push({ user: { nickname: 'System' }, message: `${user.nickname} joined the room`, timestamp: Date.now() });
+      } else {
+        console.error('User joined event with missing user information:', user);
+      }
     },
-    methods: {
-        connectToServer() {
-            this.socket = ChatSocket.connectToServer('http://localhost/3000');
-            ChatSocket.setupChatListeners(this.socket, this.handleMessage, this.handleUserJoined, this.handleUserLeft);
-        },
-        joinRoom(room) {
-            this.connectToServer();
-            if (this.socket && room) {
-                ChatSocket.joinRoom(this.socket, room, null);
-            }
-        },
-        handleMessage(message) {
-            this.messages.push(message);
-        },
-        handleUserJoined(user) {
-            this.messages.push({ user, message: `${user.nickname} joined the room` });
-        },
-        handleUserLeft(user) {
-            this.messages.push({ user, message: `${user.nickname} left the room` });
-        },
-        sendMessage() {
-            if (this.newMessage.trim() !== '') {
-                const messageData = {
-                    user: this.user, // 유저 정보를 포함
-                    message: this.newMessage,
-                };
-                ChatSocket.sendMessage(this.socket, messageData);
-                this.newMessage = '';
-            }
-        },
+    userLeft(user) {
+      if (user && user.nickname) {
+        this.messages.push({ user: { nickname: 'System' }, message: `${user.nickname} left the room`, timestamp: Date.now() });
+      } else {
+        console.error('User left event with missing user information:', user);
+      }
     },
-};
+  },
+}
 </script>
 
 <style scoped></style>
