@@ -12,6 +12,8 @@ import GameSideComponent from '@/components/game/middle/side/GameSideComponent.v
 import GameMiddleComponent from '@/components/game/middle/GameMiddleComponent.vue';
 import HeaderComponent from '@/components/HeaderComponent.vue';
 
+
+
 export default [
     {
         //메인경로마다 상태

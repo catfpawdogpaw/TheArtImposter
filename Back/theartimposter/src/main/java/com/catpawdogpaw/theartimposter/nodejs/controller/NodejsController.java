@@ -27,4 +27,7 @@ public class NodejsController {
         STNDTO stndto = nodejsService.createSTNDTO();
         nodejsService.sendToNode(stndto);
     }
+    
+//    @PostMapping("/result")
+  
 }

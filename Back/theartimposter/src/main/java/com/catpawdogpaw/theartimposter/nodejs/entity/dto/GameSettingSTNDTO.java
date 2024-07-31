@@ -11,4 +11,8 @@ public class GameSettingSTNDTO {
 	Integer turnTimeLimit;
 	Integer roundTimeLimit;
 	Integer minPeople;
+	Integer maxPeople;
+	Integer round;
+	
+	
 }

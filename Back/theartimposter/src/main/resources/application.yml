@@ -4,20 +4,14 @@ spring:
         name: theartimposter
     profiles:
         active: secrets
-    datasource:
-        url: ${db.url}
-        username: ${db.username}
-        password: ${db.password}
-        driver-class-name: oracle.jdbc.OracleDriver
-
     jpa:
         database-platform: org.hibernate.dialect.OracleDialect
         hibernate:
             ddl-auto: update
             show_sql: true
-            use_sql_comments: true
-          
-        
+            use_sql_comments: true  
+mybatis:
+  mapper-locations: classpath:config/*.xml
 
 
 

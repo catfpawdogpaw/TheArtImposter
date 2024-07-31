@@ -17,7 +17,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class RedisConfig {
 
     @Value("${spring.data.redis.host}")
-	private String redisHost;
+    private String redisHost;
 
     @Value("${spring.data.redis.port}")
     private int redisPort;
@@ -32,13 +32,12 @@ public class RedisConfig {
         redisStandaloneConfiguration.setPort(redisPort);
         redisStandaloneConfiguration.setPassword(redisPassword);
 
-        LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(redisStandaloneConfiguration);
-        return lettuceConnectionFactory;
+        return new LettuceConnectionFactory(redisStandaloneConfiguration);
     }
 
-    @Bean
+    @Bean(name= "redisTemplate")
     public RedisTemplate<String, Object> redisTemplate() {
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<String, Object>();
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
@@ -46,7 +45,7 @@ public class RedisConfig {
     }
 
     @Primary
-    @Bean
+    @Bean(name = "customStringRedisTemplate")
     public RedisTemplate<String, String> customStringRedisTemplate() {
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<String,String>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
