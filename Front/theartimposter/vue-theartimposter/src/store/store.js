@@ -13,6 +13,8 @@ export default new Vuex.Store({
         gameRoomStatus: null, // 게임 룸 상태 필드
         players: [], // 유저 목록 필드 추가
         turnPlayer: null,
+        myInfo: null,
+        otherPlayers: [],
     },
     mutations: {
         setAccessToken(state, token) {
@@ -44,6 +46,19 @@ export default new Vuex.Store({
             // setTurnPlayer 뮤테이션 추가
             state.turnPlayer = player;
             EventBus.$emit('turnPlayerChanged', player); // turnPlayer 변경 시 이벤트 발행
+        },
+        setGameInfo(state, gameInfo) {
+            // state.myInfo = gameInfo.myInfo;
+            // state.otherPlayers = gameInfo.otherPlayers;
+
+            // turn 값을 1씩 증가시킴
+            const incrementTurn = (player) => ({
+                ...player,
+                turn: player.turn + 1,
+            });
+            state.myInfo = incrementTurn(gameInfo.myInfo);
+            state.otherPlayers = gameInfo.otherPlayers.map(incrementTurn);
+            EventBus.$emit('settingGamePlayers', state); // gameInfo 변경 시 이벤트 발행
         },
     },
     actions: {
@@ -104,6 +119,10 @@ export default new Vuex.Store({
             // updateTurnPlayer 액션 추가
             commit('setTurnPlayer', player);
         },
+        updateGameInfo({ commit }, gameInfo) {
+            // updateGameInfo 액션 추가
+            commit('setGameInfo', gameInfo);
+        },
     },
     getters: {
         getUser: (state) => state.user,
@@ -112,5 +131,6 @@ export default new Vuex.Store({
         getPlayers: (state) => state.players, // 플레이어 목록 getter 추가
         getTurnPlayer: (state) => state.turnPlayer, // getTurnPlayer getter 추가
         refreshToken: () => getCookie('refresh_token'),
+        getMyInfo: (state) => state.myInfo,
     },
 });

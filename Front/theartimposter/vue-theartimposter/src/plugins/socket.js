@@ -26,6 +26,11 @@ export default {
             store.dispatch('addPlayer', data); // Vuex 스토어에 유저 추가
         });
 
+        socket.on('gameInfo', (data) => {
+            console.log('gameInfo:', data);
+            store.dispatch('updateGameInfo', data);
+        });
+
         socket.on('turnStart', (data) => {
             console.log('turnStart:', data);
             store.dispatch('updateTurnPlayer', data);

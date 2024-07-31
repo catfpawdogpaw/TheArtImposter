@@ -1,16 +1,44 @@
 <template>
     <div class="my-turn">
-        <span class="turn-number">{{ turnNumber }}</span>
+        <span class="turn-number" :style="userNumberStyle">{{ userTurnNumber }}</span>
     </div>
 </template>
 
 <script>
+import { EventBus } from '@/utils/eventBus';
+
 export default {
     name: 'MyTurnComponent',
     data() {
         return {
-            turnNumber: 2, // 예시 값
+            userTurnNumber: '?',
+            userNumberStyle: {
+                backgroundColor: '#404040',
+            },
         };
+    },
+    methods: {
+        updateUserInfo(myInfo) {
+            if (myInfo) {
+                this.userTurnNumber = myInfo.turn;
+                this.userNumberStyle = {
+                    backgroundColor: myInfo.color,
+                };
+            } else {
+                this.userTurnNumber = '?';
+                this.userNumberStyle = {
+                    backgroundColor: '#404040',
+                };
+            }
+        },
+    },
+    mounted() {
+        EventBus.$on('settingGamePlayers', (state) => {
+            this.updateUserInfo(state.myInfo);
+        });
+    },
+    beforeDestroy() {
+        EventBus.$off('settingGamePlayers');
     },
 };
 </script>
@@ -26,7 +54,7 @@ export default {
 .turn-number {
     width: 40px;
     height: 40px;
-    background-color: magenta;
+    background-color: #404040;
     color: white;
     border-radius: 50%;
     display: flex;

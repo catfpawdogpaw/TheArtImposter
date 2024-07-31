@@ -33,7 +33,7 @@ export default {
         },
         onCountdownEnd() {
             console.log('Countdown ended');
-            this.$soket.emit('turnEnd');
+            this.$socket.emit('turnEnd');
         },
     },
     created() {

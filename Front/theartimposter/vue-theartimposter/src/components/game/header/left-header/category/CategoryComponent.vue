@@ -1,12 +1,19 @@
 <template>
     <div class="category-component">
-        <span class="category-span"><strong>만화 캐릭터</strong></span>
+        <span class="category-span"
+            ><strong>{{ category }}</strong></span
+        >
     </div>
 </template>
 
 <script>
 export default {
     name: 'CategoryComponent',
+    computed: {
+        category() {
+            return this.$store.getters.getMyInfo ? this.$store.getters.getMyInfo.category : '?';
+        },
+    },
 };
 </script>
 
