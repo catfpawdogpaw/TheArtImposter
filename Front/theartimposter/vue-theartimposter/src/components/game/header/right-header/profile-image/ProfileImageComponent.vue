@@ -1,3 +1,4 @@
+P
 <template>
     <div class="profile-image">
         <img :src="profileImageUrl" alt="Profile Image" />
@@ -7,10 +8,16 @@
 <script>
 export default {
     name: 'ProfileImageComponent',
-    data() {
-        return {
-            profileImageUrl: require('@/assets/user/image/profile/u1.png'), // 프로필 이미지 경로
-        };
+    computed: {
+        // ...mapGetters(['getUser']), // Vuex의 getUser getter를 계산된 속성으로 가져옵니다.
+        profileImageUrl() {
+            // 콘솔에 getUser 결과를 출력하여 확인합니다.
+            console.log(this.getUser);
+            // getUser 결과가 존재하고 profileImageUrl 속성이 있는 경우 해당 값을 사용합니다.
+            return this.$store.getters.getUser && this.$store.getters.getUser.profileImageUrl
+                ? this.$store.getters.getUser.profileImageUrl
+                : require('@/assets/user/image/profile/u1.png');
+        },
     },
 };
 </script>

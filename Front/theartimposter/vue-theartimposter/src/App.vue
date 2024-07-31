@@ -4,7 +4,6 @@
         <router-view name="header"></router-view>
         <router-view name="middle"></router-view>
         <footer-component></footer-component>
-        <!--<test-data-render-component></test-data-render-component>-->
     </div>
 </template>
 
@@ -16,7 +15,6 @@ export default {
     name: 'App',
     components: {
         FooterComponent,
-        //TestDataRenderComponent,
     },
 };
 </script>

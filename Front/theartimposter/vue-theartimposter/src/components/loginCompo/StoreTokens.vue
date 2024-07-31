@@ -26,17 +26,17 @@ export default {
 
             // 쿠키에 refresh token 저장
             document.cookie = `refresh_token=${refreshToken};`;
-
-            // 유저 정보 가져오기
-            this.$store
-                .dispatch('fetchUser')
-                .then(() => {
-                    // 리다이렉트
-                    this.$router.push('/');
-                })
-                .catch((error) => {
-                    console.error('Failed to fetch user:', error);
-                });
+            this.$router.push('/');
+            // // 유저 정보 가져오기
+            // this.$store
+            //     .dispatch('fetchUser')
+            //     .then(() => {
+            //         // 리다이렉트
+            //         this.$router.push('/');
+            //     })
+            //     .catch((error) => {
+            //         console.error('Failed to fetch user:', error);
+            //     });
         } else {
             console.error('Tokens not found in URL');
         }

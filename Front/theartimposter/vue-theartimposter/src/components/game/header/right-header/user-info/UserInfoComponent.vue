@@ -8,9 +8,14 @@
 <script>
 export default {
     name: 'UserInfoComponent',
+    computed: {
+        nickname() {
+            return this.$store.getters.getUser ? this.$store.getters.getUser.nickname : '';
+        },
+    },
+
     data() {
         return {
-            nickname: '닉네임', // 예시 값
             wins: 10, // 예시 값
             losses: 5, // 예시 값
             get winRate() {

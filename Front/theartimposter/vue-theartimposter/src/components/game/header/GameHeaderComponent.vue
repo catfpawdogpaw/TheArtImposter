@@ -10,7 +10,13 @@
 </template>
 
 <script>
-export default {};
+export default {
+    created() {
+        this.$store.dispatch('fetchUser').then((user) => {
+            this.$socket.emit('joinRoom', 'TestRoom', user.userId, user.token);
+        });
+    },
+};
 </script>
 
 <style scoped>

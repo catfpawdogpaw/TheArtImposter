@@ -1,12 +1,13 @@
 <template>
     <div class="user-card">
         <div class="profile-picture">
-            <img :src="user.profilePicture" alt="Profile Picture" />
+            <!-- <img :src="user.profilePicture" alt="Profile Picture" /> -->
+            <img :src="user.profileImage" @error="onImageError" alt="Profile Image" />
             <div v-if="user.isMe" class="user-number">{{ user.number }}</div>
         </div>
         <div class="user-info">
-            <div class="nickname">{{ user.nickname }}</div>
-            <div class="score">{{ user.score }}</div>
+            <div class="nickname">{{ user.nickName }}</div>
+            <div class="score">{{ formattedScore }}</div>
         </div>
     </div>
 </template>
@@ -18,6 +19,19 @@ export default {
         user: {
             type: Object,
             required: true,
+        },
+    },
+    computed: {
+        formattedScore() {
+            // user.curScore가 존재하는지 확인하고, 없으면 0으로 설정
+            const score = this.user.curScore || 0;
+            return `${score}점`;
+        },
+    },
+    methods: {
+        onImageError(event) {
+            console.log('이미지 로드 실패:', event.target.src);
+            event.target.src = require('@/assets/user/image/profile/u1.png');
         },
     },
 };
