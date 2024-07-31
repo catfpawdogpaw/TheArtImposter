@@ -17,9 +17,9 @@ async function joinHandler(io, socket) {
     console.log(
       roomTitle + "  " + userId + " " + refreshToken + "유저 ID: " + userId
     );
-    // const player = await validateToken(userId, refreshToken, socket);
+    const player = await validateToken(userId, refreshToken, socket);
 
-    const player = testPlayerDTO();
+    // const player = testPlayerDTO();
     if (!player) {
       return;
     }
@@ -35,11 +35,12 @@ async function joinHandler(io, socket) {
     socket.emit("initDrawing", gameRoomStatus.drawingData);
     socket.join(roomTitle);
 
+    // 이후 chatHandler에서 사용하기 위해 유저 정보를 소켓에 저장합니다.
+    socket.playerInfo = player.nickName;
+
     //턴, 게임관리
     gameStatusHandler(io, socket, gameRoomStatus);
 
-    //그림관리
-    drawingHandler(io, socket, gameRoomStatus);
     //턴, 게임관리
     gameStatusHandler(io, socket, gameRoomStatus);
     /* chatHandler 추가*/
@@ -109,6 +110,7 @@ function checkRoomStatus(socket, roomTitle) {
 }
 
 function sendGameRoomStatus(socket, gameRoomStatus) {
+
   socket.on("GameRoomStatus", () => {
     socket.emit("GameRoomStatus", getRoomStatus(gameRoomStatus));
   });

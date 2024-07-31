@@ -1,7 +1,7 @@
 <template>
   <div id="chat">
     <div v-for="message in messages" :key="message.timestamp">
-      {{ message.user.nickname }}: {{ message.message }}
+      {{ message.user }}: {{ message.message }}
     </div>
     <input v-model="newMessage" @keyup.enter="sendMessage" placeholder="Enter message" />
   </div>
@@ -12,29 +12,41 @@ import socketHandler from "@/components/chatting/socketHandler";
 
 export default {
   name: 'ChatCompo',
-  inject: ['socket'],
+  inject: ['socket'], // 부모로부터 소켓 인스턴스 수신
   data() {
     return {
       messages: [],
       newMessage: '',
+      socketInstance: null,
     };
   },
   mounted() {
-    const socket = this.socket();
-    if (this.socket) {
-      socketHandler.setupChatListeners(
-          socket,
-          this.receiveMessage,
-          this.userJoined,
-          this.userLeft
-      );
-    } else {
-      console.error('Socket is not available');
+    console.log('⭐⭐⭐',this.socket());
+    this.setupSocket();
+  },
+  watch: {
+    socket(newSocket) {
+      if (newSocket) {
+        this.setupSocket();
+      }
     }
   },
   methods: {
+    setupSocket() {
+      this.socketInstance = this.socket();
+      if (this.socketInstance) {
+        socketHandler.setupChatListeners(
+            this.socketInstance,
+            this.receiveMessage,
+            this.userJoined,
+            this.userLeft
+        );
+      } else {
+        console.error('Socket is not available');
+      }
+    },
     sendMessage() {
-      const socket = this.socket();
+      const socket = this.socketInstance;
       if (this.newMessage.trim() !== '') {
         socketHandler.sendMessage(socket, this.newMessage);
         this.newMessage = '';
@@ -42,22 +54,22 @@ export default {
     },
     receiveMessage(message) {
       console.log('Received message:', message); // 메시지 구조 확인용 로그 출력
-      if (message && message.user && message.user.nickname) {
+      if (message && message.user && message.message) {
         this.messages.push(message);
       } else {
         console.error('Received message with missing user information:', message);
       }
     },
     userJoined(user) {
-      if (user && user.nickname) {
-        this.messages.push({ user: { nickname: 'System' }, message: `${user.nickname} joined the room`, timestamp: Date.now() });
+      if (user && user.nickName) {
+        this.messages.push({ user: { nickName: 'System' }, message: `${user.nickName} joined the room`, timestamp: Date.now() });
       } else {
         console.error('User joined event with missing user information:', user);
       }
     },
     userLeft(user) {
-      if (user && user.nickname) {
-        this.messages.push({ user: { nickname: 'System' }, message: `${user.nickname} left the room`, timestamp: Date.now() });
+      if (user && user.nickName) {
+        this.messages.push({ user: { nickName: 'System' }, message: `${user.nickName} left the room`, timestamp: Date.now() });
       } else {
         console.error('User left event with missing user information:', user);
       }
