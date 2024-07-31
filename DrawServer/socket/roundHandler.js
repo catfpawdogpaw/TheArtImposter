@@ -58,6 +58,7 @@ async function startTurns(io, socket, GameRoomStatus) {
             io.to(GameRoomStatus.gameRoomTitle).emit("turnStart", {
                 userId: currentPlayer.userId,
                 nickname: currentPlayer.nickName,
+                turn: currentPlayerIndex + 1,
                 timeLimit: GameRoomStatus.gameSetting.turnTimeLimit,
             });
             console.log(`${currentPlayer.nickName}님의 차례 시작. (턴 ${currentPlayerIndex + 1} / ${players.length} )`);
