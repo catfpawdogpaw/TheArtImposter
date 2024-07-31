@@ -4,6 +4,8 @@ import StoreTokens from "@/components/loginCompo/StoreTokens.vue";
 import MiddleComponent from "@/components/MiddleComponent.vue";
 import SideComponent from "@/components/SideComponent.vue";
 
+
+
 export default [
     {
         //메인경로마다 상태

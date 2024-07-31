@@ -6,23 +6,29 @@
 <mapper namespace="com.catpawdogpaw.theartimposter.gameroom.mapper.GameRoomMapper">
 
     <!-- 방 생성 -->
-    <insert id="createRoom" useGeneratedKeys="true" keyProperty="gameRoomId">
-        INSERT INTO game_room (game_setting_id, created_at, destroy_at)
-        VALUES (#{gameSettingId}, SYSTIMESTAMP, #{destroyAt})
+       <insert id="createGameRoom" parameterType="com.catpawdogpaw.theartimposter.gameroom.model.GameRoom" useGeneratedKeys="true" keyProperty="gameRoomId" keyColumn="game_room_id">
+        INSERT INTO gameroom (game_setting_id, title, created_at, destroy_at)
+        VALUES (#{gameSettingId}, #{title}, SYSTIMESTAMP, #{destroyAt, jdbcType=TIMESTAMP})
     </insert>
-
+    
+    <!-- 마지막 데이터 id 가져옴 -->
+ 	<select id="selectLastInsertId" resultType="Long">
+        SELECT gameroom_seq.CURRVAL FROM dual
+    </select>
+    
     <!-- 방 삭제 -->
-    <delete id="deleteRoom">
-        DELETE FROM game_room WHERE game_room_id = #{gameRoomId}
+    <delete id="deleteGameRoom" parameterType="java.lang.Long">
+        DELETE FROM gameroom WHERE game_room_id = #{gameRoomId}
     </delete>
 
     <!-- 방 조회 -->
     <select id="getGameRoomById" resultType="com.catpawdogpaw.theartimposter.gameroom.model.GameRoom">
         SELECT game_room_id AS gameRoomId, 
                game_setting_id AS gameSettingId, 
+               title,
                created_at AS createdAt, 
                destroy_at AS destroyAt
-        FROM game_room
+        FROM gameroom
         WHERE game_room_id = #{gameRoomId}
     </select>
 
