@@ -1,11 +1,14 @@
 <template>
     <div class="middle">
         <div class="header">
-            <div class="room-input">
-                <label for="room">Room:</label>
-                <input v-model="room" id="room" placeholder="Enter room name" />
-                <button @click="joinRoom">Join Room</button>
-            </div>
+          <div class="room-input" v-if="isAuthenticated">
+            <label for="room">Room:</label>
+            <input v-model="room" id="room" placeholder="Enter room name" />
+            <button @click="joinRoom">Join Room</button>
+          </div>
+          <div v-else>
+            <p>Please log in to join a room.</p>
+          </div>
         </div>
         <div class="content">
             <div class="main-content">
@@ -34,6 +37,9 @@ export default {
       const user = this.$store.getters.getUser;
       return user ? user.userId : null;
     },
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated;
+    },
   },
   methods: {
     joinRoom() {
@@ -51,16 +57,33 @@ export default {
   },
   provide() {
     return {
-      socket: () => this.socket,
+      socket: () => this.socket, // 소켓 인스턴스를 제공
     };
+  },
+  watch: {
+    socket(newSocket) {
+      if (newSocket) {
+        this.$forceUpdate(); // 소켓이 생성되면 컴포넌트를 강제로 업데이트
+      }
+    }
   },
   created() {
     if (!this.socket) {
       this.socket = socketHandler.connectToServer('http://localhost:3000'); // 서버 URL을 적절히 변경
     }
-    this.$store.dispatch('fetchUser').then(() => {
-      console.log('User fetched:', this.userId);
-    });
+    const accessToken = this.$store.getters.refreshToken;
+    if (accessToken) {
+      this.$store.dispatch('fetchUser').then(() => {
+        console.log('User fetched:', this.userId);
+        if (!this.socket) {
+          this.socket = socketHandler.connectToServer('http://localhost:3000'); // 서버 URL을 적절히 변경
+        }
+      }).catch(() => {
+        console.error('Failed to fetch user information');
+      });
+    } else {
+      console.error('Access token is missing');
+    }
   },
 };
 </script>

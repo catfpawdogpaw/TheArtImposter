@@ -15,7 +15,6 @@ export default {
         },
     },
     mounted() {
-        console.log('StoreTokens');
         const urlParams = new URLSearchParams(window.location.search);
         const accessToken = urlParams.get('access');
         const refreshToken = urlParams.get('refresh');
@@ -26,17 +25,17 @@ export default {
 
             // 쿠키에 refresh token 저장
             document.cookie = `refresh_token=${refreshToken};`;
-            this.$router.push('/');
-            // // 유저 정보 가져오기
-            // this.$store
-            //     .dispatch('fetchUser')
-            //     .then(() => {
-            //         // 리다이렉트
-            //         this.$router.push('/');
-            //     })
-            //     .catch((error) => {
-            //         console.error('Failed to fetch user:', error);
-            //     });
+
+            // 유저 정보 가져오기
+            this.$store
+                .dispatch('fetchUser')
+                .then(() => {
+                    // 리다이렉트
+                  this.$router.push({ path: '/' }).catch(() => {});
+                })
+                .catch((error) => {
+                    console.error('Failed to fetch user:', error);
+                });
         } else {
             console.error('Tokens not found in URL');
         }

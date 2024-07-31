@@ -86,15 +86,16 @@ function checkRoomStatus(socket, roomTitle) {
 }
 
 function sendGameRoomStatus(socket, gameRoomStatus) {
-    socket.on("GameRoomStatus", () => {
-        socket.emit("GameRoomStatus", getRoomStatus(gameRoomStatus));
-    });
-    socket.emit("GameRoomStatus", getRoomStatus(gameRoomStatus));
 
-    function getRoomStatus(gameRoomStatus) {
-        const { roundResults, drawingData, ...status } = gameRoomStatus;
-        return status;
-    }
+  socket.on("GameRoomStatus", () => {
+    socket.emit("GameRoomStatus", getRoomStatus(gameRoomStatus));
+  });
+  socket.emit("GameRoomStatus", getRoomStatus(gameRoomStatus));
+
+  function getRoomStatus(gameRoomStatus) {
+    const { roundResults, drawingData, ...status } = gameRoomStatus;
+    return status;
+  }
 }
 
 module.exports = joinHandler;
