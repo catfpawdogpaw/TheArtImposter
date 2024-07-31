@@ -15,7 +15,6 @@ export default {
         },
     },
     mounted() {
-        console.log('StoreTokens');
         const urlParams = new URLSearchParams(window.location.search);
         const accessToken = urlParams.get('access');
         const refreshToken = urlParams.get('refresh');
@@ -32,7 +31,7 @@ export default {
                 .dispatch('fetchUser')
                 .then(() => {
                     // 리다이렉트
-                    this.$router.push('/');
+                  this.$router.push({ path: '/' }).catch(() => {});
                 })
                 .catch((error) => {
                     console.error('Failed to fetch user:', error);

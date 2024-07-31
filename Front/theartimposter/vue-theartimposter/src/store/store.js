@@ -73,7 +73,7 @@ export default new Vuex.Store({
     },
     getters: {
         getUser: state => state.user,
-        isAuthenticated: state => state.isAuthenticated,
+        isAuthenticated: state => !!state.user,
         refreshToken: () => getCookie('refresh_token')
     }
 });
