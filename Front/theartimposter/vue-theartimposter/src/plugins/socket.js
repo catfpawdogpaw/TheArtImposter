@@ -2,6 +2,7 @@ import io from 'socket.io-client';
 
 export default {
     install(Vue, { store }) {
+        console.log('소켓 저장');
         const socket = io('http://localhost:3000');
         Vue.prototype.$socket = socket;
 

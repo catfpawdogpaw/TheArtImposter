@@ -6,6 +6,8 @@
 </template>
 
 <script>
+import { EventBus } from '@/utils/eventBus';
+
 export default {
     name: 'CountComponent',
     data() {
@@ -16,6 +18,10 @@ export default {
     },
     methods: {
         startCountdown() {
+            if (this.timer) {
+                clearInterval(this.timer); // 이전 타이머가 있다면 제거
+            }
+            this.count = 30; // 카운트 초기화
             this.timer = setInterval(() => {
                 if (this.count > 0) {
                     this.count--;
@@ -26,14 +32,17 @@ export default {
             }, 1000);
         },
         onCountdownEnd() {
-            // 다른 함수 호출
             console.log('Countdown ended');
-            // 여기에 원하는 함수를 호출하세요
+            this.$soket.emit('turnEnd');
         },
     },
-    destroyed() {
+    created() {
+        EventBus.$on('turnPlayerChanged', this.startCountdown); // 이벤트 수신 및 핸들러 등록
+    },
+    beforeDestroy() {
+        EventBus.$off('turnPlayerChanged', this.startCountdown); // 이벤트 핸들러 해제
         if (this.timer) {
-            clearInterval(this.timer);
+            clearInterval(this.timer); // 컴포넌트가 파괴되기 전 타이머 제거
         }
     },
 };

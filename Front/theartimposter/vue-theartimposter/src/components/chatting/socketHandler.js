@@ -8,7 +8,8 @@ export default {
     },
 
     joinRoom(socket, room, accessToken, userId) {
-        socket.emit('joinRoom', room, accessToken, userId);
+        socket.emit('joinRoom', room, userId, accessToken);
+        console.log('joinRoom 에밋 함');
     },
 
     // 채팅 기능 설정
@@ -17,9 +18,9 @@ export default {
             console.error('Socket is not available');
             return;
         }
-        socket.on("receiveMessage", messageCallback);
-        socket.on("userJoined", userJoinedCallback);
-        socket.on("userLeft", userLeftCallback);
+        socket.on('receiveMessage', messageCallback);
+        socket.on('userJoined', userJoinedCallback);
+        socket.on('userLeft', userLeftCallback);
     },
 
     sendMessage(socket, messageData) {
