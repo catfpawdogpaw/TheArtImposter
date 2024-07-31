@@ -13,10 +13,9 @@
 export default {
     created() {
         this.$store.dispatch('fetchUser').then((user) => {
-            console.log('내가 원하는 순서 2');
-            console.log(user.userId);
-            console.log('소켓' + this.$socket);
-            this.$socket.emit('joinRoom', 'TestRoom', user.userId, this.$store.getters.refreshToken);
+            console.log('user' + user);
+            //this.$socket.emit('joinRoom', 'TestRoom', user.userId, this.$store.getters.refreshToken);
+            this.$socket.emit('joinRoom', 'TestRoom', 23432, 'sadafafaf');
         });
     },
 };

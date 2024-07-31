@@ -2,6 +2,7 @@ import Vue from 'vue';
 import axios from '@/plugins/axios';
 import { eraseCookie, getCookie } from '@/utils/cookie';
 import Vuex from 'vuex'; // 쿠키 유틸리티 함수 가져오기
+import { EventBus } from '@/utils/eventBus'; // 이벤트 버스 가져오기
 
 Vue.use(Vuex);
 export default new Vuex.Store({
@@ -42,6 +43,7 @@ export default new Vuex.Store({
         setTurnPlayer(state, player) {
             // setTurnPlayer 뮤테이션 추가
             state.turnPlayer = player;
+            EventBus.$emit('turnPlayerChanged', player); // turnPlayer 변경 시 이벤트 발행
         },
     },
     actions: {

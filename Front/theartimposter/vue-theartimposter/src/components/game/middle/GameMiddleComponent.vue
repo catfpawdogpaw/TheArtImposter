@@ -28,10 +28,7 @@ export default {
     },
     methods: {
         joinRoom() {
-            if (this.room.trim() !== '') {
-                this.$root.$emit('joinRoom', this.room);
-                console.log(this.room);
-            }
+            this.$socket.emit('joinRoom', 'TestRoom', 23432, 'sadafafaf');
         },
     },
 };
