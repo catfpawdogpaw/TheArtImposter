@@ -35,9 +35,9 @@ async function endGame(io, socket, GameRoomStatus) {
     // 최종 점수 계산
     const finalScores = GameRoomStatus.players
         .map((player) => ({
-            id: player.id,
-            nickname: player.nickname,
-            score: player.score,
+            userId: player.userId,
+            nickname: player.nickName,
+            score: player.curScore,
         }))
         .sort((a, b) => b.score - a.score);
 
@@ -66,7 +66,7 @@ async function resultStatistics(io, socket, GameRoomStatus) {
 
     //방 삭제
     console.log(`${GameRoomStatus.gameRoomTitle} 방 게임 종료 및 정리 완료`);
-    deleteGameRoomStatus(GameRoomStatus);
+    deleteGameRoomStatus(GameRoomStatus.gameRoomTitle);
 }
 
 module.exports = { gameStatusHandler };
