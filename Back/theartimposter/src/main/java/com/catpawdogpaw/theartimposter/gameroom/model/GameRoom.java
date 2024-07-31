@@ -9,10 +9,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@RedisHash("GameRoom")
+@RedisHash
 public class GameRoom {
     private Long gameRoomId;
     private Long gameSettingId;
+    private String title;
     private LocalDateTime createdAt;
     private LocalDateTime destroyAt;
 

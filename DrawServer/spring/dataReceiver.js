@@ -1,5 +1,4 @@
-// dataReceiver.js
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 const { GameRoomStatus } = require("../model/gameDTO.js");
 const {
@@ -8,8 +7,11 @@ const {
 } = require("../socket/roomHandler.js");
 const { updateRedisRoomStatus } = require("../config/redisConfig.js");
 
-router.post("/receive-data", (req, res) => {
+
+module.exports = (io) => {
+  router.post('/receive-data', (req, res) => {
     const data = req.body;
+
     console.log(data);
     const gameRoom = data.gameRoom;
     const settings = data.gameSetting;
@@ -27,4 +29,5 @@ router.post("/receive-data", (req, res) => {
     updateRedisRoomStatus(gameRoomStatus);
 });
 
-module.exports = router;
+  return router;
+};
