@@ -9,12 +9,13 @@ const instance = axios.create({
     },
     withCredentials: true // 모든 요청에 쿠키를 포함하도록 설정
 });
+
 // axios 인터셉터 ( 서버의 모든 요청 헤더에 access 토큰을 포함시킵니다. )
 instance.interceptors.request.use(
     config => {
         const token = localStorage.getItem('access_token');
         if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+            config.headers.Authorization = `Bearer ${token}`;
         }
     return config;
     },

@@ -1,13 +1,10 @@
 function chatHandler(io, socket, GameRoomStatus) {
     socket.on("sendMessage", (messageData) => {
-        // messageData.user가 없는 경우 기본 사용자 정보 설정
-        // const user = this.userId || { nickname: 'Unknown' };
-
         // 소켓에 저장된 플레이어 정보를 사용합니다.
-        const user = socket.playerInfo || { nickName: 'Unknown' };
+        const player = GameRoomStatus.players.find(p => p.socketId === socket.id);
+        const user = player ? player.nickName : 'Unknown';
 
-        console.log(user);
-        console.log(messageData);
+        console.log(`[${user}]: ${messageData}`);
         const chatMessage = {
             user: user,
             message: messageData,

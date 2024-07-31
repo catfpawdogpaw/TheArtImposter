@@ -1,9 +1,13 @@
 <template>
   <div id="chat">
-    <div v-for="message in messages" :key="message.timestamp">
-      {{ message.user }}: {{ message.message }}
+    <div class="message-list">
+      <div v-for="message in messages" :key="message.timestamp" class="message">
+        <span class="user">{{ message.user }}</span>: <span class="text">{{ message.message }}</span>
+      </div>
     </div>
-    <input v-model="newMessage" @keyup.enter="sendMessage" placeholder="Enter message" />
+    <div class="message-input">
+      <input v-model="newMessage" @keyup.enter="sendMessage" placeholder="Enter message" />
+    </div>
   </div>
 </template>
 
@@ -77,5 +81,51 @@ export default {
   },
 }
 </script>
+<style scoped>
+#chat {
+  display: flex;
+  flex-direction: column;
+  height: 60vh;
+  max-width: 600px;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+}
 
-<style scoped></style>
+.message-list {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  background-color: #f9f9f9;
+}
+
+.message {
+  margin-bottom: 10px;
+}
+
+.user {
+  font-weight: bold;
+  color: #333;
+}
+
+.text {
+  color: #555;
+}
+
+.message-input {
+  display: flex;
+  border-top: 1px solid #ccc;
+  background-color: #fff;
+  padding: 10px;
+}
+
+.message-input input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+</style>
+

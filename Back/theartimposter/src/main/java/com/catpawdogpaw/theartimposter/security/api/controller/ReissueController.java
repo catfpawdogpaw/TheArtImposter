@@ -9,6 +9,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -29,6 +31,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ReissueController {
 
+    private static final Logger log = LoggerFactory.getLogger(ReissueController.class);
     private final JwtUtil jwtUtil;
     private final RefreshRepository refreshRepository;
     private final CacheService cacheService;
@@ -40,20 +43,21 @@ public class ReissueController {
 
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
+        log.debug("Reissue token request received");
+        log.debug("Received reissue request with method: {}", request.getMethod());
         //get refresh token
         String refresh = null;
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
 
-            if (cookie.getName().equals("refresh")) {
+            if (cookie.getName().equals("refresh_token")) {
 
                 refresh = cookie.getValue();
             }
         }
 
         if (refresh == null) {
-
+            log.warn("Refresh token is null");
             //response status code
             return new ResponseEntity<>(RESPONSE_MESSAGE_REFRESH_TOKEN_NULL, HttpStatus.BAD_REQUEST);
         }
@@ -62,7 +66,7 @@ public class ReissueController {
         try {
             jwtUtil.isExpired(refresh);
         } catch (ExpiredJwtException e) {
-
+            log.warn("Refresh token expired: {}", e.getMessage());
             //response status code
             return new ResponseEntity<>(RESPONSE_MESSAGE_REFRESH_TOKEN_EXPIRED, HttpStatus.BAD_REQUEST);
         }
@@ -71,7 +75,7 @@ public class ReissueController {
 //        String category = jwtUtil.getCategory(refresh);
 
         if (!"refresh".equals(jwtUtil.getCategory(refresh))) {
-
+            log.warn("Invalid refresh token category");
             //response status code
             return new ResponseEntity<>(RESPONSE_MESSAGE_INVALID_REFRESH_TOKEN, HttpStatus.BAD_REQUEST);
         }
@@ -81,6 +85,7 @@ public class ReissueController {
         String storedRefreshToken = cacheService.getRefreshToken(userId);
         if (storedRefreshToken == null || !storedRefreshToken.equals(refresh)) {
             // 레디스에 토큰값이 저장되어 있지 않다면 로그아웃 처리됨(Vue에서 처리)
+            log.warn("Refresh token does not match stored token");
             return new ResponseEntity<>(RESPONSE_MESSAGE_INVALID_REFRESH_TOKEN, HttpStatus.BAD_REQUEST);
         }
 
@@ -96,12 +101,14 @@ public class ReissueController {
 //        refreshRepository.deleteByRefresh(refresh);
 //        addRefreshEntity(username, newRefresh, 86400000L);
         cacheService.saveRefreshToken(Long.parseLong(userId), newRefresh, 86400000L);
+        log.debug("New tokens created and stored for user: {}", userId);
 
         //response as parameters
         Map<String, String> tokens = new HashMap<>();
         tokens.put("access", newAccess);
         tokens.put("refresh", newRefresh);
 
+        log.debug("Token reissue process completed successfully for user: {}", userId);
         return new ResponseEntity<>(tokens, HttpStatus.OK);
     }
 

@@ -84,7 +84,7 @@ public class SecurityConfig {
 
 		// 경로별 인가 작업
 		http.authorizeHttpRequests((auth) -> auth.requestMatchers("/","/login","/*", "/api/user/logout").permitAll()
-				.requestMatchers("/reissue").permitAll()
+				.requestMatchers("/api/reissue").permitAll()
 				.requestMatchers("/api/*").permitAll()
 				.requestMatchers("/wait-service/wait-websocket/**", "/waitroom/**").permitAll() // WebSocket
 				.requestMatchers("/ws/**").permitAll()
