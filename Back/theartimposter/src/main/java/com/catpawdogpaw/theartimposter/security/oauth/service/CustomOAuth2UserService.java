@@ -46,7 +46,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         ProviderType providerType = ProviderType.valueOf(userRequest.getClientRegistration().getRegistrationId().toUpperCase());
         OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
         UserEntity savedUserEntity = userRepository.findById(userInfo.getId()).orElse(null);
-        log.info("⭐⭐⭐⭐Saved user: " + savedUserEntity.toString());
+        log.info("⭐⭐⭐⭐Saved user: " + userInfo.getAttributes());
         if (savedUserEntity != null) {
             if (providerType != savedUserEntity.getSocialProviderType()) {
                 throw new OAuthProviderMissMatchException(

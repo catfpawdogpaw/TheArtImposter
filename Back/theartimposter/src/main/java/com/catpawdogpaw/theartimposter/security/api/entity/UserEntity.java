@@ -41,7 +41,7 @@ public class UserEntity {
     @Size(max = 100)
     private String nickname;
 
-    @Column(name = "socialId", length = 512, unique = true)
+    @Column(name = "socialId", length = 512)
     @NotNull
     @Size(max = 512)
     private String socialId;

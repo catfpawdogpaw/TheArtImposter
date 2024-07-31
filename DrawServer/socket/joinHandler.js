@@ -29,7 +29,7 @@ async function joinHandler(io, socket) {
 
         //턴, 게임관리
         gameStatusHandler(io, socket, gameRoomStatus);
-
+        chatHandler(io, socket, gameRoomStatus);
         loadGameRoomInfo(gameRoomStatus);
         updateRedisRoomStatus(gameRoomStatus);
         sendGameRoomStatus(socket, gameRoomStatus);
