@@ -3,9 +3,10 @@ package com.catpawdogpaw.theartimposter.nodejs.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.UnknownContentTypeException;
 
 import com.catpawdogpaw.theartimposter.nodejs.entity.dto.GameRoomSTNDTO;
 import com.catpawdogpaw.theartimposter.nodejs.entity.dto.GameSettingSTNDTO;
@@ -13,10 +14,13 @@ import com.catpawdogpaw.theartimposter.nodejs.entity.dto.PlayerSTNDTO;
 import com.catpawdogpaw.theartimposter.nodejs.entity.dto.STNDTO;
 import com.catpawdogpaw.theartimposter.nodejs.entity.dto.SubjectSTNDTO;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class NodejsService {
 
-	@Autowired
+
 	private RestTemplate restTemplate;
 
 	private PlayerSTNDTO createPlayerSTNDTO() {
@@ -90,12 +94,26 @@ public class NodejsService {
 		
 		return sTNDTO;
 	}
-	
+	/*
     public void sendToNode(STNDTO stndto) {
         String nodeServerUrl = "http://localhost:3000/receive-data"; // Node.js  URL
         restTemplate.postForObject(nodeServerUrl, stndto, Void.class);
     }
-
-
+*/
+	public void sendToNode(STNDTO stndto) {
+        String nodeServerUrl = "http://localhost:3000/receive-data"; // Node.js  URL
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
+        
+        try {
+            restTemplate.postForObject(nodeServerUrl, stndto, String.class);
+        } catch (UnknownContentTypeException e) {
+            // Handle the exception if the content type is unknown
+            System.err.println("Error: Unknown content type received. " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+	
+	}
 	
 }

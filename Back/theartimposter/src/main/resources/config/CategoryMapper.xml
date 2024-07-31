@@ -6,23 +6,23 @@
 <mapper namespace="com.catpawdogpaw.theartimposter.category.mapper.CategoryMapper">
 
     <!-- 단일 카테고리 조회 -->
-    <select id="getCategoryById" resultType="com.catpawdogpaw.theartimposter.category.model.Category">
-        SELECT category_id, category FROM category WHERE category_id = #{id}
+    <select id="getCategoryById" parameterType="Long" resultType="com.catpawdogpaw.theartimposter.category.model.Category">
+        SELECT category_id as categoryId, category FROM category WHERE category_id = #{categoryId}
     </select>
 
     <!-- 모든 카테고리 조회 -->
     <select id="getAllCategories" resultType="com.catpawdogpaw.theartimposter.category.model.Category">
-        SELECT category_id, category FROM category
+        SELECT category_id as categoryId, category FROM category
     </select>
 
     <!-- 카테고리 삽입 -->
-    <insert id="insertCategory" parameterType="com.catpawdogpaw.theartimposter.category.model.Category" useGeneratedKeys="true" keyProperty="categoryId">
+    <insert id="insertCategory" parameterType="com.catpawdogpaw.theartimposter.category.model.Category" useGeneratedKeys="true" keyProperty="categoryId"  keyColumn="category_id">
         INSERT INTO category (category) VALUES (#{category})
     </insert>
 
     <!-- 카테고리 삭제 -->
     <delete id="deleteCategory" parameterType="java.lang.Long">
-        DELETE FROM category WHERE category_id = #{id}
+        DELETE FROM category WHERE category_id = #{categoryId}
     </delete>
 
 </mapper>

@@ -10,7 +10,7 @@ import com.catpawdogpaw.theartimposter.gameroom.model.GameRoom;
 @Mapper
 public interface GameRoomMapper {
 
-    void createGameRoom(GameRoom gameRoom);
+    Long createGameRoom(GameRoom gameRoom);
 
     void deleteGameRoom(@Param("gameRoomId") Long gameRoomId);
 
@@ -18,6 +18,7 @@ public interface GameRoomMapper {
 
 	List<GameRoom> findAll();
 
+	Long selectLastInsertId();
 
 }
 

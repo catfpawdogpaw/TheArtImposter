@@ -29,10 +29,11 @@ public class MatchController {
 	    @SendTo("/wait-service/waitroom")
 	    public String join(@Payload String message, SimpMessageHeaderAccessor headerAccessor) {
 	    	 logHeaders(headerAccessor);
-//	    	 
+	    	 
 	    	 String sessionId = (String) headerAccessor.getSessionId();  	
 	         if (sessionId != null) {
-	             matchHandler.addUser(sessionId);
+	        	 matchHandler.addUser(sessionId);
+	             log.info("User with sessionId {} joined", sessionId);
 	         } else {
 	             log.warn("No sessionId found in headers");
 	         }

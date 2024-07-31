@@ -5,20 +5,26 @@
 <mapper namespace="com.catpawdogpaw.theartimposter.subject.mapper.SubjectMapper">
 
     
-    <select id="getSubjectById" parameterType="long" resultType="com.catpawdogpaw.theartimposter.subject.model.Subject">
-        SELECT * FROM subject WHERE subject_id = #{id}
+    <select id="getSubjectById" parameterType="Long" resultType="com.catpawdogpaw.theartimposter.subject.model.Subject">
+        SELECT subject_id as subjectId,
+        	subject ,
+        	category_id as categoryId 
+        FROM subject WHERE subject_id = #{id}
     </select>
 
     <select id="getAllSubjects" resultType="com.catpawdogpaw.theartimposter.subject.model.Subject">
-        SELECT * FROM subject
+        SELECT subject_id as subjectId,
+        	subject,
+        	category_id as categoryId  
+        FROM subject
     </select>
 
-    <insert id="createSubject" parameterType="com.catpawdogpaw.theartimposter.subject.model.Subject">
-        INSERT INTO subject (subject_name, category_id)
-        VALUES (#{subjectName}, #{categoryId})
+    <insert id="createSubject" parameterType="com.catpawdogpaw.theartimposter.subject.model.Subject" useGeneratedKeys="true" keyProperty="subjectId"  keyColumn="SUBJECT_ID">
+        INSERT INTO subject (subject, category_id)
+        VALUES (#{subject}, #{categoryId})
     </insert>
 
-    <delete id="deleteSubject" parameterType="long">
+    <delete id="deleteSubject" parameterType="Long">
         DELETE FROM subject WHERE subject_id = #{id}
     </delete>
 

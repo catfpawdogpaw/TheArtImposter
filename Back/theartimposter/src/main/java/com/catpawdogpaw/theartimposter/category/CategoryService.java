@@ -8,7 +8,9 @@ import com.catpawdogpaw.theartimposter.category.mapper.CategoryMapper;
 import com.catpawdogpaw.theartimposter.category.model.Category;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CategoryService {
@@ -16,15 +18,21 @@ public class CategoryService {
     private final CategoryMapper categoryMapper;
 
     public Category getCategoryById(Long id) {
-        return categoryMapper.getCategoryById(id);
+    	Category category = categoryMapper.getCategoryById(id);
+    	log.info(category.getCategory() + " : " + "id :  "+ id + " categoryId"  + category.getCategoryId());
+    	return category;
+    	
     }
 
     public List<Category> getAllCategories() {
-        return categoryMapper.getAllCategories();
+    	 List<Category> categories = categoryMapper.getAllCategories();
+         System.out.println("Retrieved Categories: " + categories);
+         return categories;
     }
 
     public void insertCategory(Category category) {
         categoryMapper.insertCategory(category);
+        log.info(category.getCategory() + " : " +" categoryId"  + category.getCategoryId());
     }
 
 

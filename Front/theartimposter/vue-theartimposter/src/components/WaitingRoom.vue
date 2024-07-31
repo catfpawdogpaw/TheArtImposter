@@ -6,6 +6,10 @@
 
         <button @click="startSubject">주제 모달</button>
         <subject-modal :show="showSubject" :subject="subject" :word="word" />
+
+<!-- 삭제할 것 -->
+
+        <button @click="getCurrentSessions">Get Current Sessions</button>
     </div>
 </template>
 
@@ -30,6 +34,38 @@ export default {
         };
     },
     methods: {
+        connect() {
+            const socket = new SockJS('http://localhost:8080/wait-websocket');
+            this.stompClient = new Client({
+                webSocketFactory: () => socket,
+                onConnect: (frame) => {
+                    this.connected = true;
+                    console.log('Connected: ' + frame);
+
+                    this.stompClient.subscribe('/wait-service/waitroom/sessions', (message) => {
+                        this.showMessage(JSON.parse(message.body));
+                    });
+                },
+            });
+            this.stompClient.activate();
+        },
+        showMessage(message) {
+            const output = document.getElementById('output');
+            output.innerHTML = '';
+            message.forEach((session) => {
+                const p = document.createElement('p');
+                p.appendChild(document.createTextNode(session));
+                output.appendChild(p);
+            });
+        },
+        getCurrentSessions() {
+            if (this.stompClient && this.connected) {
+        this.stompClient.publish({ destination: "/app/waitroom/sessions", body: "{}" });
+        console.log("get current session");
+    } else {
+        console.error('stompClient is not connected');
+    }
+        },
         startMatching() {
             // 여기에 매칭 로직을 구현합니다.
 
@@ -50,7 +86,7 @@ export default {
                         }
                     });
 
-                    this.sendMessage('User connected');
+                    this.sendMessage('------User connected-------');
                 },
             });
             this.stompClient.activate();

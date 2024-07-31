@@ -1,5 +1,6 @@
 package com.catpawdogpaw.theartimposter.gameroom;
 
+
 import org.springframework.stereotype.Service;
 
 import com.catpawdogpaw.theartimposter.config.CacheService;
@@ -7,7 +8,9 @@ import com.catpawdogpaw.theartimposter.gameroom.mapper.GameRoomMapper;
 import com.catpawdogpaw.theartimposter.gameroom.model.GameRoom;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GameRoomService {
@@ -15,9 +18,17 @@ public class GameRoomService {
 	private final CacheService cacheService;
 
 	public Long createGameRoom(GameRoom gameRoom) {
-        gameRoomMapper.createGameRoom(gameRoom);
-        return gameRoom.getGameRoomId();
-    }
+		gameRoomMapper.createGameRoom(gameRoom);
+        Long gameRoomId = gameRoomMapper.selectLastInsertId();
+        gameRoom.setGameRoomId(gameRoomId);
+        
+        if (gameRoomId == null) {
+            log.error("Failed to retrieve generated gameRoomId");
+        } else {
+            log.info("Generated gameRoomId: {}", gameRoomId);
+        }
+        return gameRoomId;
+	}
 	
 	public void deleteGameRoom(Long gameRoomId) {
 		gameRoomMapper.deleteGameRoom(gameRoomId);

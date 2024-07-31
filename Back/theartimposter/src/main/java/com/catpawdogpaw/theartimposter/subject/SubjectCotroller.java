@@ -26,12 +26,12 @@ public class SubjectCotroller {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteSubject(@PathVariable Long id) {
+    public void deleteSubject(@PathVariable("id") Long id) {
     	subjectService.deleteSubject(id);
     }
 
     @GetMapping("/{id}")
-    public Subject getSubjectById(@PathVariable Long id) {
+    public Subject getSubjectById(@PathVariable("id") Long id) {
         return subjectService.getSubjectById(id);
     }
 

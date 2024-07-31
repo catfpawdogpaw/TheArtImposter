@@ -9,4 +9,5 @@ public class SubjectSTNDTO {
 	Integer subjectId;
 	String category;
 	String subject;
+
 }

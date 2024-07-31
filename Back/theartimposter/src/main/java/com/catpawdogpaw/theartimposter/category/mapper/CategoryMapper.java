@@ -9,12 +9,12 @@ import com.catpawdogpaw.theartimposter.category.model.Category;
 
 @Mapper
 public interface CategoryMapper {
-    Category getCategoryById(@Param("id") Long id);
+    Category getCategoryById(@Param("categoryId") Long categoryId);
 
     List<Category> getAllCategories();
 
 
     void insertCategory(Category category);
 
-    void deleteCategory(@Param("id") Long id);
+    void deleteCategory(@Param("categoryId") Long categoryId);
 }
