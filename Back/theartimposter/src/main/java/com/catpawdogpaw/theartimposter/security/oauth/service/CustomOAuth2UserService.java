@@ -9,6 +9,7 @@ import com.catpawdogpaw.theartimposter.security.dto.info.OAuth2UserInfoFactory;
 import com.catpawdogpaw.theartimposter.security.oauth.exception.OAuthProviderMissMatchException;
 import com.catpawdogpaw.theartimposter.security.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
@@ -44,7 +46,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         ProviderType providerType = ProviderType.valueOf(userRequest.getClientRegistration().getRegistrationId().toUpperCase());
         OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
         UserEntity savedUserEntity = userRepository.findById(userInfo.getId()).orElse(null);
-
+        log.info("⭐⭐⭐⭐Saved user: " + savedUserEntity.toString());
         if (savedUserEntity != null) {
             if (providerType != savedUserEntity.getSocialProviderType()) {
                 throw new OAuthProviderMissMatchException(
