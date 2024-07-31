@@ -22,10 +22,9 @@ async function joinHandler(io, socket) {
 
         gameRoomStatus.addPlayer(player);
         io.to(roomTitle).emit("playerJoined", player);
+        socket.emit("initDrawing", gameRoomStatus.drawingData);
         socket.join(roomTitle);
 
-        //그림관리
-        drawingHandler(io, socket, gameRoomStatus);
         //턴, 게임관리
         gameStatusHandler(io, socket, gameRoomStatus);
 
@@ -89,6 +88,11 @@ function sendGameRoomStatus(socket, gameRoomStatus) {
         socket.emit("GameRoomStatus", getRoomStatus(gameRoomStatus));
     });
     socket.emit("GameRoomStatus", getRoomStatus(gameRoomStatus));
+
+    function getRoomStatus(gameRoomStatus) {
+        const { roundResults, drawingData, ...status } = gameRoomStatus;
+        return status;
+    }
 }
 
 module.exports = joinHandler;

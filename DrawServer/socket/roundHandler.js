@@ -1,17 +1,21 @@
 const { updateRedisRoomStatus } = require("../config/redisConfig");
+const { addDrawListeners, removeDrawListeners } = require("./drawingHandler");
 const { defaultGameSet } = require("./roomHandler");
-const { RoundResult } = require("../model/gameDTO");
+const { createCanvas } = require("canvas");
+const fs = require("fs");
 
 const roundHandler = {
     async startRound(io, socket, GameRoomStatus) {
         while (GameRoomStatus.currentRound <= GameRoomStatus.gameSetting.round) {
+            //그림판 초기화
+            io.to(GameRoomStatus.gameRoomTitle).emit("clearCanvas");
             //색, 역할, 순서 정하기
             randomRole(GameRoomStatus);
             // 각 플레이어에게 정보 전송
             sendRoletoPlayers(io, GameRoomStatus);
             GameRoomStatus.roundStartTime = new Date();
 
-            console.log(`라운드 ${GameRoomStatus.currentRound} 시작`);
+            roundStartlog(GameRoomStatus);
 
             // 턴 시작
             await startTurns(io, socket, GameRoomStatus);
@@ -35,7 +39,7 @@ const roundHandler = {
 
 async function startTurns(io, socket, GameRoomStatus) {
     return new Promise((resolve) => {
-        const players = GameRoomStatus.players;
+        const players = GameRoomStatus.players.filter((player) => player.gameRole);
         const turnOrder = players.sort((a, b) => a.turn - b.turn);
         let currentPlayerIndex = 0;
 
@@ -56,12 +60,21 @@ async function startTurns(io, socket, GameRoomStatus) {
                 nickname: currentPlayer.nickName,
                 timeLimit: GameRoomStatus.gameSetting.turnTimeLimit,
             });
+            console.log(`${currentPlayer.nickName}님의 차례 시작. (턴 ${currentPlayerIndex + 1} / ${players.length} )`);
 
             let turnTimer = setTimeout(
                 () => endTurn(),
-                // GameRoomStatus.gameSetting.turnTimeLimit * 1000
-                100
+                GameRoomStatus.gameSetting.turnTimeLimit * 1000
+                // 100
             );
+
+            const playerSocket = io.sockets.sockets.get(currentPlayer.socketId);
+
+            // 리스너 추가
+            if (playerSocket) {
+                addDrawListeners(io, playerSocket, GameRoomStatus);
+                playerSocket.on("drawEnd", handleDrawEnd);
+            }
 
             function handleDrawEnd() {
                 clearTimeout(turnTimer);
@@ -73,21 +86,13 @@ async function startTurns(io, socket, GameRoomStatus) {
                     userId: currentPlayer.userId,
                     nickname: currentPlayer.nickName,
                 });
-
-                // 턴 종료 후 리스너 제거
-                const playerSocket = io.sockets.sockets.get(currentPlayer.socketId);
                 if (playerSocket) {
+                    removeDrawListeners(playerSocket);
                     playerSocket.removeListener("drawEnd", handleDrawEnd);
                 }
 
                 currentPlayerIndex++;
                 nextTurn();
-            }
-
-            // 현재 플레이어에게 종료 이벤트 리스너 추가
-            const playerSocket = io.sockets.sockets.get(currentPlayer.socketId);
-            if (playerSocket) {
-                playerSocket.on("drawEnd", handleDrawEnd);
             }
         }
 
@@ -245,23 +250,11 @@ async function finalizeRound(io, GameRoomStatus, winner) {
     }
 
     // 라운드 결과 저장
-    const playerInfo = GameRoomStatus.players.filter((player) => player.gameRole);
-    const currentSubject = GameRoomStatus.subjects[GameRoomStatus.currentRound - 1];
-    const roundResult = new RoundResult(
-        GameRoomStatus.currentRound,
-        playerInfo,
-        currentSubject,
-        winner,
-        //이미지
-        [],
-        GameRoomStatus.roundStartTime
-    );
-
-    GameRoomStatus.roundResults.push(roundResult);
+    const roundImage = await createRoundImage(GameRoomStatus.drawingData);
+    GameRoomStatus.addRoundResult(winner, roundImage);
 
     console.log(`Round ${GameRoomStatus.currentRound} finalized. Winner: ${winner}`);
     console.log("Updated scores:", GameRoomStatus.players.map((p) => `${p.nickName}: ${p.curScore}`).join(", "));
-    console.log("Current subject:", currentSubject);
 }
 
 function randomRole(GameRoomStatus) {
@@ -324,6 +317,38 @@ async function stepInterval() {
     return new Promise((resolve) => {
         setTimeout(resolve, defaultGameSet.STEP_INTERVAL * 1000);
     });
+}
+
+async function createRoundImage(drawingData) {
+    width = defaultGameSet.CANVAS_WIDTH;
+    height = defaultGameSet.CANVAS_HEIGHT;
+
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = defaultGameSet.CANVAS_FILLSTYLE;
+    ctx.fillRect(0, 0, width, height);
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    // 그림 그리기
+    drawingData.forEach((data) => {
+        ctx.strokeStyle = data.color;
+        ctx.lineWidth = data.lineWidth;
+        ctx.beginPath();
+        ctx.moveTo(data.prevX, data.prevY);
+        ctx.lineTo(data.x, data.y);
+        ctx.stroke();
+    });
+
+    return canvas.toDataURL("image/png");
+}
+
+function roundStartlog(GameRoomStatus) {
+    const round = GameRoomStatus.currentRound;
+    const subject = GameRoomStatus.getSubject();
+    const category = subject.category;
+    const word = subject.subject;
+    console.log(`라운드 ${round} 시작. 단어:${word} 주제:${category}`);
 }
 
 module.exports = { roundHandler };
