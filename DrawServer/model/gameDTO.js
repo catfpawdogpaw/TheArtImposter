@@ -12,30 +12,20 @@ class GameRoomStatus {
         this.currentTurnIndex = 0;
         this.drawingData = [];
 
-        this.subjects = subjects.map(
-            (subj) => new Subject(subj.subjectId, subj.category, subj.subject)
-        );
+        this.subjects = subjects.map((subj) => new Subject(subj.subjectId, subj.category, subj.subject));
 
         this.gameSetting = settings;
         this.startTime = new Date();
+        this.endTime = null;
         this.roundStartTime = new Date();
     }
 
     addRoundResult(winRole, image) {
-        const activePlayers = this.players.filter(
-            (player) => player.gameRole !== null
-        );
+        const activePlayers = this.players.filter((player) => player.gameRole !== null);
         const currentSubject = this.subjects[this.currentRound - 1];
 
         this.roundResults.push(
-            new RoundResult(
-                this.currentRound,
-                activePlayers,
-                currentSubject,
-                winRole,
-                image,
-                this.roundStartTime
-            )
+            new RoundResult(this.currentRound, activePlayers, currentSubject, winRole, image, this.roundStartTime)
         );
         this.drawingData = [];
         this.roundStartTime = new Date();
@@ -50,9 +40,7 @@ class GameRoomStatus {
         this.playerCount++;
     }
     leavePlayer(socketId) {
-        this.players = this.players.filter(
-            (player) => player.socketId !== socketId
-        );
+        this.players = this.players.filter((player) => player.socketId !== socketId);
         this.playerCount--;
     }
     getSubject() {
@@ -73,14 +61,7 @@ class RoundResult {
 }
 
 class GameSetting {
-    constructor(
-        version,
-        turnTimeLimit,
-        roundTimeLimit,
-        minPeople,
-        maxPeople,
-        round = 3
-    ) {
+    constructor(version, turnTimeLimit, roundTimeLimit, minPeople, maxPeople, round = 3) {
         this.version = version;
         this.turnTimeLimit = turnTimeLimit;
         this.roundTimeLimit = roundTimeLimit;

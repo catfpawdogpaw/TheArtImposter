@@ -30,7 +30,8 @@ app.use("/", dataReceiver(io));
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`서버가 시작되었습니다. http://localhost:${PORT}`);
+
+    console.log(`서버가 시작되었습니다. http://${process.env.HOST}:${PORT}`);
 });
 
 app.post("/set-data", (req, res) => {

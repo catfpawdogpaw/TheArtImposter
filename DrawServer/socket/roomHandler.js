@@ -20,14 +20,26 @@ function getAllRoomIds() {
     return Array.from(Rooms.keys());
 }
 
+function getRoomStatus(gameRoomStatus) {
+    return (({ subjects, ...rest }) => rest)(gameRoomStatus);
+}
+
 const defaultGameSet = {
-    GAME_START_DELAY: 3000,
+    CANVAS_WIDTH: 800,
+    CANVAS_HEIGHT: 600,
+    CANVAS_FILLSTYLE: "ivory",
+    REDIS_EXPIRE_TIME: 1800, //30분
+    GAME_START_DELAY: 3,
+    STEP_INTERVAL: 3,
+    VOTE_TIME: 0.2,
     COLORS: ["red", "blue", "green", "yellow", "orange", "purple"],
 };
+
 module.exports = {
     getGameRoomStatus,
     addGameRoomStatus,
     deleteGameRoomStatus,
     getAllRoomIds,
+    getRoomStatus,
     defaultGameSet,
 };
