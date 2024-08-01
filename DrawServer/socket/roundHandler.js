@@ -63,12 +63,14 @@ async function startTurns(io, socket, GameRoomStatus) {
             });
             console.log(`${currentPlayer.nickName}님의 차례 시작. (턴 ${currentPlayerIndex + 1} / ${players.length} )`);
 
-            let turnTimer = setTimeout(
-                () => {
-                    endTurn();
-                },
-                (GameRoomStatus.gameSetting.turnTimeLimit * 1000) + (3000)
-            );
+            const turnDelay = defaultGameSet.SKIP_TURN
+                ? 100
+                : (GameRoomStatus.gameSetting.turnTimeLimit + defaultGameSet.TURN_DELAY) * 1000;
+
+            let turnTimer = setTimeout(() => {
+                endTurn();
+            }, turnDelay);
+
             const playerSocket = io.sockets.sockets.get(currentPlayer.socketId);
 
             // 리스너 추가
@@ -107,10 +109,15 @@ async function voteStep(io, socket, GameRoomStatus) {
         let votedCount = 0;
         // 투표 시간 제한
         let timeoutOccurred = false;
+
+        const voteDelay = defaultGameSet.SKIP_VOTE
+            ? 100
+            : (defaultGameSet.VOTE_TIME + defaultGameSet.TURN_DELAY) * 1000;
+
         const voteTimeout = setTimeout(() => {
             timeoutOccurred = true;
             checkVotesComplete();
-        }, defaultGameSet.VOTE_TIME * 1000);
+        }, voteDelay);
 
         console.log("투표 단계 시작");
         io.to(GameRoomStatus.gameRoomTitle).emit("voteStart", {
@@ -237,7 +244,7 @@ async function announceRoundResult(io, GameRoomStatus, voteResult) {
 
 async function startFakeArtistGuess(io, GameRoomStatus, mostVotedPlayer) {
     return new Promise((resolve) => {
-        const guessTime = defaultGameSet.GUESS_TIME * 1000;
+        const guessTime = (defaultGameSet.GUESS_TIME + defaultGameSet.TURN_DELAY) * 1000;
         let guessWord = null;
 
         const fakeArtist = GameRoomStatus.players.find((player) => player.userId === mostVotedPlayer.userId);
