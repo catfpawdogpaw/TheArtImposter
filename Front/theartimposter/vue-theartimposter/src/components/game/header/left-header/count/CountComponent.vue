@@ -21,29 +21,51 @@ export default {
             if (this.timer) {
                 clearInterval(this.timer); // 이전 타이머가 있다면 제거
             }
-            this.count = 30; // 카운트 초기화
+            console.log('getGameInfo :' + this.$store.getters.getGameRoomStatus);
+            this.count = this.$store.getters.getGameRoomStatus
+                ? this.$store.getters.getGameRoomStatus.gameSetting.turnTimeLimit
+                : 30; // 카운트 초기화
+            this.count = 1;
             this.timer = setInterval(() => {
                 if (this.count > 0) {
                     this.count--;
                 } else {
-                    clearInterval(this.timer);
                     this.onCountdownEnd();
+                    clearInterval(this.timer);
                 }
             }, 1000);
         },
         onCountdownEnd() {
             console.log('Countdown ended');
-            this.$socket.emit('turnEnd');
+            this.$socket.emit('drawEnd');
+        },
+        turnEnd() {
+            this.onCountdownEnd();
+            clearInterval(this.timer);
         },
     },
     created() {
         EventBus.$on('turnPlayerChanged', this.startCountdown); // 이벤트 수신 및 핸들러 등록
+        EventBus.$on('turnEnd', this.turnEnd); // 이벤트 수신 및 핸들러 등록
+        EventBus.$on('voteStart', (time) => {
+            this.count = time.timeLimit;
+            this.timer = setInterval(() => {
+                if (this.count > 0) {
+                    this.count--;
+                } else {
+                    this.onCountdownEnd();
+                    clearInterval(this.timer);
+                }
+            }, 1000);
+        }); // 이벤트 수신 및 핸들러 등록
     },
     beforeDestroy() {
         EventBus.$off('turnPlayerChanged', this.startCountdown); // 이벤트 핸들러 해제
         if (this.timer) {
             clearInterval(this.timer); // 컴포넌트가 파괴되기 전 타이머 제거
         }
+        EventBus.$off('turnEnd', this.turnEnd); // 이벤트 수신 및 핸들러 해제
+        EventBus.$off('voteStart'); // 이벤트 수신 및 핸들러 해제
     },
 };
 </script>

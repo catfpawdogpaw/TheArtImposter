@@ -4,8 +4,8 @@
             ref="canvas"
             @mousedown="startDrawing"
             @mousemove="draw"
-            @mouseup="stopDrawing"
-            @mouseleave="stopDrawing"
+            @mouseup="stopUpDrawing"
+            @mouseleave="stopLeaveDrawing"
         ></canvas>
         <!-- <div>
             <button @click="clearCanvas">지우기</button>
@@ -83,7 +83,16 @@ export default {
             this.isDrawing = true;
             this.prevPoint = drawpad.startDrawing(e, this.context, this.canvas);
         },
-        stopDrawing() {
+        stopUpDrawing() {
+            this.isDrawing = false;
+            this.prevPoint = null;
+
+            if (this.myTurn == true) {
+                this.myTurn = false;
+                EventBus.$emit('turnEnd'); // turnPlayer 변경 시 이벤트 발행
+            }
+        },
+        stopLeaveDrawing() {
             this.isDrawing = false;
             this.prevPoint = null;
         },

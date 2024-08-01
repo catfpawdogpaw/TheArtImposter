@@ -2,7 +2,6 @@ import DrawPad from '@/components/drawpad/DrawPad.vue';
 import StoreTokens from '@/components/loginCompo/StoreTokens.vue';
 import MiddleComponent from '@/components/MiddleComponent.vue';
 import SideComponent from '@/components/SideComponent.vue';
-import ChatCompo from '@/components/chatting/ChatCompo.vue';
 import LoginCompo from '@/components/loginCompo/LoginCompo.vue';
 import GameHeaderComponent from '@/components/game/header/GameHeaderComponent.vue';
 // import LoginCompo from '@/components/loginCompo/LoginCompo.vue';
@@ -11,8 +10,8 @@ import RightGameHeaderComponent from '@/components/game/header/right-header/Righ
 import GameSideComponent from '@/components/game/middle/side/GameSideComponent.vue';
 import GameMiddleComponent from '@/components/game/middle/GameMiddleComponent.vue';
 import HeaderComponent from '@/components/HeaderComponent.vue';
-
-
+import ChatComponent from '@/components/chatting/ChatCompo.vue';
+import VoteComponent from '@/components/game/middle/main/VoteComponent.vue';
 
 export default [
     {
@@ -28,7 +27,7 @@ export default [
                 components: {
                     //위에 띄워지는 투표 화면도 생각해야함
                     main: DrawPad,
-                    side: ChatCompo,
+                    side: SideComponent,
                 },
             },
             {
@@ -66,8 +65,10 @@ export default [
             {
                 path: '',
                 components: {
-                    main: DrawPad,
+                    draw: DrawPad,
+                    vote: VoteComponent,
                     side: GameSideComponent,
+                    side_chat: ChatComponent,
                     left_game_header: LeftGameHeaderComponent,
                     right_game_header: RightGameHeaderComponent,
                 },

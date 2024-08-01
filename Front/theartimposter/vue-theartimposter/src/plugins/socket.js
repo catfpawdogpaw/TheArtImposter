@@ -1,4 +1,5 @@
 import io from 'socket.io-client';
+import { EventBus } from '@/utils/eventBus';
 
 export default {
     install(Vue, { store }) {
@@ -34,6 +35,11 @@ export default {
         socket.on('turnStart', (data) => {
             console.log('turnStart:', data);
             store.dispatch('updateTurnPlayer', data);
+        });
+
+        socket.on('voteStart', (data) => {
+            console.log('voteStart:', data);
+            EventBus.$emit('voteStart', data);
         });
 
         socket.on('disconnect', () => {

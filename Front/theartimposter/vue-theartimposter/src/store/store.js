@@ -132,5 +132,6 @@ export default new Vuex.Store({
         getTurnPlayer: (state) => state.turnPlayer, // getTurnPlayer getter 추가
         refreshToken: () => getCookie('refresh_token'),
         getMyInfo: (state) => state.myInfo,
+        getOtherPlayers: (state) => state.otherPlayers,
     },
 });

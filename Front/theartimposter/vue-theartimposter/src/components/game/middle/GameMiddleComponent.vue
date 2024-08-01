@@ -9,26 +9,39 @@
         </div>
         <div class="content">
             <div class="main-content">
-                <router-view name="main"></router-view>
+                <router-view v-if="!isVoteComponent" name="draw"></router-view>
+                <router-view v-else name="vote"></router-view>
             </div>
             <div class="side-content">
-                <router-view name="side"></router-view>
+                <router-view v-if="!isChatSideComponent" name="side"></router-view>
+                <router-view v-else name="side_chat"></router-view>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import { EventBus } from '@/utils/eventBus';
+
 export default {
     name: 'MiddleComponent',
     data() {
         return {
             room: '',
+            isChatSideComponent: false,
+            isVoteComponent: false,
         };
+    },
+    created() {
+        EventBus.$on('voteStart', this.changeSideComponent);
     },
     methods: {
         joinRoom() {
             this.$socket.emit('joinRoom', 'TestRoom', 23432, 'sadafafaf');
+        },
+        changeSideComponent() {
+            // this.isChatSideComponent = true;
+            this.isVoteComponent = true;
         },
     },
 };
