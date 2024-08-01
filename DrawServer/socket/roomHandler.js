@@ -38,7 +38,7 @@ const defaultGameSet = {
     COLORS: ["red", "blue", "green", "aqua", "orange", "purple", "grey", "hotpink", "saddlebrown"],
 
     SKIP_TURN: false,
-    SKIP_VOTE: true,
+    SKIP_VOTE: false,
 };
 
 module.exports = {

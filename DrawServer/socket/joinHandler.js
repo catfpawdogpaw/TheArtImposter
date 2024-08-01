@@ -1,7 +1,7 @@
 const drawingHandler = require("./drawingHandler");
 const { gameStatusHandler } = require("./gameStatusHandler");
 const { getGameRoomStatus, getRoomStatus, defaultGameSet, disconnectedPlayers } = require("./roomHandler");
-const { testPlayerDTO, GameRoomStatus } = require("../model/gameDTO");
+const { testPlayerDTO } = require("../model/gameDTO");
 const { validateToken, updateRedisRoomStatus } = require("../config/redisConfig");
 
 async function joinHandler(io, socket) {
