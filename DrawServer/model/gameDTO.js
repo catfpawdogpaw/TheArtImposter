@@ -43,6 +43,12 @@ class GameRoomStatus {
         this.players = this.players.filter((player) => player.socketId !== socketId);
         this.playerCount--;
     }
+    updatePlayer(player) {
+        const index = this.players.findIndex((p) => p.userId === player.userId);
+        if (index !== -1) {
+            this.players[index] = player;
+        }
+    }
     getSubject() {
         return this.subjects[this.currentRound - 1];
     }
