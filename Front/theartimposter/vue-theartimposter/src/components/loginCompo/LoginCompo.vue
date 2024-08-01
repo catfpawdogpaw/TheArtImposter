@@ -8,7 +8,31 @@
     <template v-else>
       <div class="login-header">
         <h1>The Art Imposter</h1>
-        <h1>Login</h1>
+        <h3>로그인 후 진행해주세요 </h3>
+      </div>
+      <div class="login-input-container">
+        <b-form>
+          <b-form-group
+              id="input-group-1"
+              label="Id address:"
+              label-for="input-1"
+          >
+            <b-form-input
+                id="input-1"
+                type="Id"
+                placeholder="ID"
+                required
+            ></b-form-input>
+            <b-form-group id="input-group-2" label="Your Name:" label-for="input-2">
+              <b-form-input
+                  id="input-2"
+                  type="password"
+                  placeholder="Password"
+                  required
+              ></b-form-input>
+            </b-form-group>
+          </b-form-group>
+        </b-form>
       </div>
       <div class="login-container">
         <button class="login-btn naver" @click="loginWithOAuth2('naver')">
@@ -20,6 +44,9 @@
         <button class="login-btn kakao" @click="loginWithOAuth2('kakao')">
           <img src="@/assets/kakaoBtn.png" alt="Login with Kakao">
         </button>
+      </div>
+      <div>
+        <button class="login-submit-btn">Login</button>
       </div>
     </template>
   </div>
@@ -54,13 +81,14 @@ export default {
 
 .login {
   border: solid black 1px;
-  width: auto;
+  width: max-content;
 }
 h1:first-child {
   font-size: 2em;
 }
 .login-header {
   border: solid black 1px;
+  max-width: 700px;
 }
 
 .login-container {
@@ -106,5 +134,12 @@ h1:first-child {
 
 .login-btn:hover {
   transform: scale(1.05);
+}
+#input-group-1{
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: space-around;
 }
 </style>

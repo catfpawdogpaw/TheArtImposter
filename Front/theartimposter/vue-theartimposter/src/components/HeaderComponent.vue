@@ -1,16 +1,15 @@
 <template>
     <div class="header">
+      <div></div>
       <div class="title">
-        <h1>The Art Imposter
-        </h1>
-        <div class="auth-button" v-if="user">
-          <button @click="logout">로그아웃</button>
-        </div>
-        <div v-else>
-          <button class="auth-button" @click="login">로그인</button>
-        </div>
+        <h1>The Art Imposter</h1>
       </div>
-
+      <div class="auth-button" v-if="user">
+        <button @click="logout">로그아웃</button>
+      </div>
+      <div v-else>
+        <button class="auth-button" @click="login">로그인</button>
+      </div>
     </div>
 </template>
 
@@ -24,7 +23,13 @@ export default {
     })
   },
   methods: {
-    ...mapActions(['logout','login']),
+    ...mapActions(['logout']),
+    login() {
+      // 같은 경로에 있을 때 다시 경로를 이동하면 버그가 생겨서 if 처리
+      if (this.$route.path !== '/login'){
+        this.$router.push('/login');
+      }
+    },
   },
 };
 </script>
@@ -37,7 +42,12 @@ export default {
   justify-content: center;
 }
 .auth-button {
-  margin-left: auto; /* 오른쪽 끝으로 밀어냄 */
-  align-self: flex-end; /* 아래쪽으로 정렬 */
+  display: flex;
+  margin-top: 100px;
+  transform: translate(-50px, -30px); /* 원하는 만큼 이동 */
+  padding: 10px;
+  color: #fff;
+  background-color: #273c75;
+  border: none;
 }
 </style>
