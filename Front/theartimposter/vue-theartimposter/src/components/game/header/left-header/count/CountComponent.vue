@@ -25,7 +25,7 @@ export default {
             this.count = this.$store.getters.getGameRoomStatus
                 ? this.$store.getters.getGameRoomStatus.gameSetting.turnTimeLimit
                 : 30; // 카운트 초기화
-            this.count = 1;
+            this.count = 5;
             this.timer = setInterval(() => {
                 if (this.count > 0) {
                     this.count--;

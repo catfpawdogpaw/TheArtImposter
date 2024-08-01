@@ -34,28 +34,29 @@ export default {
         };
     },
     provide() {
-      return {
-        socket: () => this.socket, // 소켓 인스턴스를 제공
-      };
+        return {
+            socket: () => this.socket, // 소켓 인스턴스를 제공
+        };
     },
     watch: {
-      socket(newSocket) {
-        if (newSocket) {
-          this.$forceUpdate(); // 소켓이 생성되면 컴포넌트를 강제로 업데이트
-        }
-      },
+        socket(newSocket) {
+            if (newSocket) {
+                this.$forceUpdate(); // 소켓이 생성되면 컴포넌트를 강제로 업데이트
+            }
+        },
     },
     created() {
         this.socket = this.$socket;
         EventBus.$on('voteStart', this.changeSideComponent);
+        EventBus.$on('roundEnd', this.changeSideComponent);
     },
     methods: {
         joinRoom() {
             this.$socket.emit('joinRoom', 'TestRoom', 23432, 'sadafafaf');
         },
         changeSideComponent() {
-            this.isChatSideComponent = true;
-            this.isVoteComponent = true;
+            this.isVoteComponent = !this.isVoteComponent;
+            this.isChatSideComponent = !this.isChatSideComponent;
         },
     },
 };

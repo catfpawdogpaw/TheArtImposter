@@ -32,7 +32,6 @@
 
 <script>
 import drawpad from './drawpad.js';
-import socketHandler from '@/components/chatting/socketHandler';
 import { EventBus } from '@/utils/eventBus';
 
 export default {
@@ -41,7 +40,7 @@ export default {
     data() {
         return {
             myTurn: false,
-            socketInstance: null,
+            socket: null,
             isDrawing: false,
             context: null,
             canvas: null,
@@ -54,14 +53,19 @@ export default {
     },
     created() {
         EventBus.$on('turnPlayerChanged', this.checkCanDraw); // 이벤트 수신 및 핸들러 등록
-        this.socketInstance = this.$socket;
+        EventBus.$on('settingGamePlayers', () => {
+            console.log('settingGamePlayers - 이벤트 버스 도착 - 드로우');
+            this.selectColor(this.$store.getters.getMyInfo.color);
+        });
+        this.socket = this.$socket;
+    },
+    beforeDestroy() {
+        EventBus.$off('settingGamePlayers');
+        EventBus.$off('turnPlayerChanged', this.checkCanDraw); // 이벤트 수신 및 핸들러 등록
     },
     mounted() {
         this.setupCanvas();
         this.setupListeners();
-        EventBus.$on('settingGamePlayers', (state) => {
-            this.selectColor(state.myInfo.color);
-        });
     },
     methods: {
         setupCanvas() {
@@ -70,8 +74,8 @@ export default {
         },
         setupListeners() {
             if (this.socket) {
-                socketHandler.setupDrawingListeners(
-                    this.socket(),
+                this.setupDrawingListeners(
+                    this.socket,
                     this.drawFromServer,
                     this.initDrawingFromServer,
                     this.clearCanvasLocal,
@@ -102,7 +106,7 @@ export default {
 
             const newPoint = drawpad.draw(e, this.context, this.canvas, this.prevPoint, this.color, this.lineWidth);
             if (this.socket) {
-                socketHandler.emitDraw(this.socket, {
+                this.emitDraw(this.socket, {
                     prevX: this.prevPoint.x,
                     prevY: this.prevPoint.y,
                     x: newPoint.x,
@@ -121,7 +125,7 @@ export default {
         },
         clearCanvas() {
             if (this.socket) {
-                socketHandler.emitClearCanvas(this.socket);
+                this.emitClearCanvas(this.socket);
             }
             this.clearCanvasLocal();
         },
@@ -147,6 +151,19 @@ export default {
                 console.log('못 그린다');
                 this.myTurn = false;
             }
+        },
+        setupDrawingListeners(socket, drawCallback, initDrawingCallback, clearCanvasCallback) {
+            socket.on('draw', drawCallback);
+            socket.on('initDrawing', initDrawingCallback);
+            socket.on('clearCanvas', clearCanvasCallback);
+        },
+
+        emitDraw(socket, drawingData) {
+            socket.emit('draw', drawingData);
+        },
+
+        emitClearCanvas(socket) {
+            socket.emit('clearCanvas');
         },
     },
 };

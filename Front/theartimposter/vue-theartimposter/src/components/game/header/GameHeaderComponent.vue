@@ -14,8 +14,8 @@ export default {
     created() {
         this.$store.dispatch('fetchUser').then((user) => {
             console.log('user' + user);
-            //this.$socket.emit('joinRoom', 'TestRoom', user.userId, this.$store.getters.refreshToken);
-            this.$socket.emit('joinRoom', 'TestRoom', 23432, 'sadafafaf');
+            this.$socket.emit('joinRoom', 'TestRoom', user.userId, this.$store.getters.refreshToken);
+            //this.$socket.emit('joinRoom', 'TestRoom', 23432, 'sadafafaf');
         });
     },
 };

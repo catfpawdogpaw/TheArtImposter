@@ -24,15 +24,25 @@ export default {
         playersToShow() {
             const players = this.getPlayers.length > 0 ? this.getPlayers : [];
 
-            if (this.isCheckMe == false && players.length > 0) {
-                players[players.length - 1] = {
-                    ...players[players.length - 1],
+            console.log('방 players 수 :' + players.length);
+
+            const storeMyRoomNumber = this.$store.getters.getMyRoomNumber;
+            console.log('내 방 번호 :' + storeMyRoomNumber);
+
+            //첫번째는 확정 안됨, 나머지는 간헐적 안됨
+            if (storeMyRoomNumber == null && players.length > 0) {
+                let myNumber = players.length - 1;
+                players[myNumber] = {
+                    ...players[myNumber],
                     isMe: true,
+                    color: this.myColor,
                 };
-                this.setCheckMe(players.length - 1);
-            } else if (this.isCheckMe == true) {
-                players[this.myNumber] = {
-                    ...players[this.myNumber],
+                console.log('저장 할 내 방 번호 :' + myNumber);
+                this.setMyNumber(myNumber);
+            } else if (storeMyRoomNumber != null) {
+                console.log('저장 된 내 방 번호 :' + storeMyRoomNumber);
+                players[storeMyRoomNumber] = {
+                    ...players[storeMyRoomNumber],
                     isMe: true,
                     color: this.myColor,
                 };
@@ -45,8 +55,6 @@ export default {
     },
     data() {
         return {
-            isCheckMe: false,
-            myNumber: null,
             myColor: null,
             dummyPlayers: [
                 {
@@ -98,16 +106,24 @@ export default {
         };
     },
     methods: {
-        setCheckMe(myNumber) {
-            this.isCheckMe = true;
-            this.myNumber = myNumber;
+        setMyNumber(myNumber) {
+            this.$store.dispatch('updateMyRoomNumber', myNumber);
+        },
+        addPlayer() {
+            this.playersToShow();
         },
     },
-    mounted() {
-        EventBus.$on('settingGamePlayers', (state) => {
-            this.myColor = state.myInfo.color;
+    created() {
+        EventBus.$on('settingGamePlayers', () => {
+            console.log('settingGamePlayers - 이벤트 버스 도착 - 사이드');
+            this.myColor = this.$store.getters.getMyInfo.color;
             this.playersToShow;
         });
+        EventBus.$on('addPlayer', this.addPlayer);
+    },
+    beforeDestroy() {
+        EventBus.$off('settingGamePlayers');
+        EventBus.$off('addPlayer');
     },
 };
 </script>

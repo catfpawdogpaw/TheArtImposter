@@ -59,7 +59,7 @@ export default {
     created() {
         EventBus.$on('voteTime', (timeLeft) => {
             if (timeLeft == -1) {
-                this.timeLeft = 20;
+                this.timeLeft = '집계중...';
                 this.$socket.emit('vote', this.selectedUserId);
                 console.log('선택 번호 :' + this.selectedOption + ' 선택 유저 아디: ' + this.selectedUserId);
                 return;

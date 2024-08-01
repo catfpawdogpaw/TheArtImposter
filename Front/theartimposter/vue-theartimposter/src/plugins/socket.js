@@ -22,14 +22,17 @@ export default {
             store.dispatch('updateGameRoomStatus', data);
         });
 
-        socket.on('userJoined', (data) => {
-            console.log('userJoined:', data);
+        socket.on('playerJoined', (data) => {
+            console.log('playerJoined:', data);
             store.dispatch('addPlayer', data); // Vuex 스토어에 유저 추가
         });
 
         socket.on('gameInfo', (data) => {
             console.log('gameInfo:', data);
             store.dispatch('updateGameInfo', data);
+            console.log('settingGamePlayers - 이벤트 버스 출발');
+            EventBus.$emit('settingGamePlayers'); // gameInfo 변경 시 이벤트 발행
+            EventBus.$emit('settingGamePlayers2'); // gameInfo 변경 시 이벤트 발행
         });
 
         socket.on('turnStart', (data) => {
@@ -44,6 +47,7 @@ export default {
 
         socket.on('roundEnd', (data) => {
             console.log('roundEnd:', data);
+            EventBus.$emit('roundEnd', data);
             socket.emit('GameRoomStatus');
         });
 

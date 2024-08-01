@@ -31,14 +31,16 @@ export default {
                 };
             }
         },
+        handleSettingGamePlayers() {
+            console.log('settingGamePlayers2 - 이벤트 버스 도착 - 마이 턴 컴포');
+            this.updateUserInfo(this.$store.getters.getMyInfo);
+        },
     },
-    mounted() {
-        EventBus.$on('settingGamePlayers', (state) => {
-            this.updateUserInfo(state.myInfo);
-        });
+    created() {
+        EventBus.$on('settingGamePlayers2', this.handleSettingGamePlayers);
     },
     beforeDestroy() {
-        EventBus.$off('settingGamePlayers');
+        EventBus.$off('settingGamePlayers2', this.handleSettingGamePlayers);
     },
 };
 </script>
@@ -48,7 +50,7 @@ export default {
     position: absolute;
     bottom: 0;
     left: 0;
-    transform: translate(100%, 50%); /* 적절히 조정 */
+    transform: translate(100%, 50%);
 }
 
 .turn-number {
