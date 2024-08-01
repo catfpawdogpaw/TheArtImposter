@@ -47,8 +47,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         // 회원 정보 가져오기
         UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
-        //토큰 생성
-        String access = jwtUtil.createJwt("access", username, id, role, 60000L);
+        //토큰 생성 ( accessToken 600sec )
+        String access = jwtUtil.createJwt("access", username, id, role, 600000L);
         String refresh = jwtUtil.createJwt("refresh", username, id, role, 86400000L);
 
 //        Refresh 토큰 DB 저장

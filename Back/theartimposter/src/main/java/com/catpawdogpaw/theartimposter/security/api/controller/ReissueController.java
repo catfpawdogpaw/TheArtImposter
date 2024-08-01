@@ -109,7 +109,7 @@ public class ReissueController {
         //Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
 //        refreshRepository.deleteByRefresh(refresh);
 //        addRefreshEntity(username, newRefresh, 86400000L);
-        cacheService.deleteUserData(userEntity.getUserId().toString());
+//        cacheService.deleteUserData(userEntity.getUserId().toString());
         cacheService.saveRefreshToken(userEntity.getUserId(), newRefresh, 86400000L);
         log.debug("New tokens created and stored for user: {}", userId);
 

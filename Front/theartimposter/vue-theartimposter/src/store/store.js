@@ -97,6 +97,7 @@ export default new Vuex.Store({
                 .post('/reissue', {}, { withCredentials: true })
                 .then((response) => {
                     const { access, refresh } = response.data;
+                    console.log(`accessToken: ${access}, refreshToken: ${refresh}`);
                     commit('setAccessToken', access);
                     // Optional: Set new refresh token as cookie if necessary
                     document.cookie = `refresh=${refresh};path=/;SameSite=Lax;`;

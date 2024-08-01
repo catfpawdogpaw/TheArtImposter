@@ -30,9 +30,23 @@ export default {
             room: '',
             isChatSideComponent: false,
             isVoteComponent: false,
+            socket: this.$socket,
         };
     },
+    provide() {
+      return {
+        socket: () => this.socket, // 소켓 인스턴스를 제공
+      };
+    },
+    watch: {
+      socket(newSocket) {
+        if (newSocket) {
+          this.$forceUpdate(); // 소켓이 생성되면 컴포넌트를 강제로 업데이트
+        }
+      },
+    },
     created() {
+        this.socket = this.$socket;
         EventBus.$on('voteStart', this.changeSideComponent);
     },
     methods: {
@@ -40,7 +54,7 @@ export default {
             this.$socket.emit('joinRoom', 'TestRoom', 23432, 'sadafafaf');
         },
         changeSideComponent() {
-            // this.isChatSideComponent = true;
+            this.isChatSideComponent = true;
             this.isVoteComponent = true;
         },
     },
