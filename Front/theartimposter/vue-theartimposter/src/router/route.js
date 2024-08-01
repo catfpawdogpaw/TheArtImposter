@@ -1,29 +1,30 @@
-import DrawPad from '@/components/drawpad/DrawPad.vue';
-import StoreTokens from '@/components/loginCompo/StoreTokens.vue';
-import MiddleComponent from '@/components/MiddleComponent.vue';
-import SideComponent from '@/components/SideComponent.vue';
-import LoginCompo from '@/components/loginCompo/LoginCompo.vue';
-import GameHeaderComponent from '@/components/game/header/GameHeaderComponent.vue';
+import DrawPad from "@/components/drawpad/DrawPad.vue";
+import GameHeaderComponent from "@/components/game/header/GameHeaderComponent.vue";
+import LoginCompo from "@/components/loginCompo/LoginCompo.vue";
+import StoreTokens from "@/components/loginCompo/StoreTokens.vue";
+import MiddleComponent from "@/components/MiddleComponent.vue";
+import SideComponent from "@/components/SideComponent.vue";
 // import LoginCompo from '@/components/loginCompo/LoginCompo.vue';
-import LeftGameHeaderComponent from '@/components/game/header/left-header/LeftGameHeaderComponent.vue';
-import RightGameHeaderComponent from '@/components/game/header/right-header/RightGameHeaderComponent.vue';
-import GameSideComponent from '@/components/game/middle/side/GameSideComponent.vue';
-import GameMiddleComponent from '@/components/game/middle/GameMiddleComponent.vue';
-import HeaderComponent from '@/components/HeaderComponent.vue';
-import ChatComponent from '@/components/chatting/ChatCompo.vue';
-import VoteComponent from '@/components/game/middle/main/VoteComponent.vue';
+import ChatComponent from "@/components/chatting/ChatCompo.vue";
+import LeftGameHeaderComponent from "@/components/game/header/left-header/LeftGameHeaderComponent.vue";
+import RightGameHeaderComponent from "@/components/game/header/right-header/RightGameHeaderComponent.vue";
+import GameMiddleComponent from "@/components/game/middle/GameMiddleComponent.vue";
+import VoteComponent from "@/components/game/middle/main/VoteComponent.vue";
+import GameSideComponent from "@/components/game/middle/side/GameSideComponent.vue";
+import HeaderComponent from "@/components/HeaderComponent.vue";
+import TestModalComponent from "@/components/test-vue/TestModalComponent.vue";
 
 export default [
     {
         //메인경로마다 상태
-        path: '/',
+        path: "/",
         components: {
             header: HeaderComponent,
             middle: MiddleComponent,
         },
         children: [
             {
-                path: '',
+                path: "",
                 components: {
                     //위에 띄워지는 투표 화면도 생각해야함
                     main: DrawPad,
@@ -31,15 +32,15 @@ export default [
                 },
             },
             {
-                path: '/lobby',
+                path: "/lobby",
 
                 components: {
-                    main: () => import('@/components/WaitingRoom.vue'),
+                    main: () => import("@/components/WaitingRoom.vue"),
                     side: SideComponent,
                 },
             },
             {
-                path: '/login',
+                path: "/login",
                 components: {
                     main: DrawPad,
                     side: LoginCompo,
@@ -47,7 +48,7 @@ export default [
             },
             {
                 // 서버에서 토큰을 쿼리스트링으로 전송한 것을 처리하는 path
-                path: '/store-tokens',
+                path: "/store-tokens",
                 components: {
                     main: StoreTokens,
                     side: LoginCompo,
@@ -56,14 +57,14 @@ export default [
         ],
     },
     {
-        path: '/game',
+        path: "/game",
         components: {
             header: GameHeaderComponent,
             middle: GameMiddleComponent,
         },
         children: [
             {
-                path: '',
+                path: "",
                 components: {
                     draw: DrawPad,
                     vote: VoteComponent,
@@ -74,5 +75,12 @@ export default [
                 },
             },
         ],
+    },
+    {
+        path: "/testmodal",
+        components: {
+            header: TestModalComponent,
+            middle: HeaderComponent,
+        },
     },
 ];
