@@ -1,4 +1,5 @@
 import io from 'socket.io-client';
+import { EventBus } from '@/utils/eventBus';
 
 export default {
     install(Vue, { store }) {
@@ -26,9 +27,19 @@ export default {
             store.dispatch('addPlayer', data); // Vuex 스토어에 유저 추가
         });
 
+        socket.on('gameInfo', (data) => {
+            console.log('gameInfo:', data);
+            store.dispatch('updateGameInfo', data);
+        });
+
         socket.on('turnStart', (data) => {
             console.log('turnStart:', data);
             store.dispatch('updateTurnPlayer', data);
+        });
+
+        socket.on('voteStart', (data) => {
+            console.log('voteStart:', data);
+            EventBus.$emit('voteStart', data);
         });
 
         socket.on('disconnect', () => {

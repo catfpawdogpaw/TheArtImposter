@@ -4,7 +4,7 @@
         <br />
         <br />
         <div class="game-side-bar">
-            <GameSideUserCardComponent v-for="user in playersToShow" :key="user.nickName" :user="user" />
+            <GameSideUserCardComponent v-for="user in playersToShow" :key="user.id" :user="user" />
         </div>
     </div>
 </template>
@@ -12,6 +12,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import GameSideUserCardComponent from './user-card/GameSideUserCardComponent.vue';
+import { EventBus } from '@/utils/eventBus';
 
 export default {
     name: 'GameSideComponent',
@@ -23,10 +24,17 @@ export default {
         playersToShow() {
             const players = this.getPlayers.length > 0 ? this.getPlayers : [];
 
-            if (players.length > 0) {
+            if (this.isCheckMe == false && players.length > 0) {
                 players[players.length - 1] = {
                     ...players[players.length - 1],
                     isMe: true,
+                };
+                this.setCheckMe(players.length - 1);
+            } else if (this.isCheckMe == true) {
+                players[this.myNumber] = {
+                    ...players[this.myNumber],
+                    isMe: true,
+                    color: this.myColor,
                 };
             }
 
@@ -37,13 +45,16 @@ export default {
     },
     data() {
         return {
+            isCheckMe: false,
+            myNumber: null,
+            myColor: null,
             dummyPlayers: [
                 {
                     id: 1,
                     profileImage: require('@/assets/user/image/profile/u1.png'),
                     // profilePicture: require('@/assets/user/image/profile/u1.png'),
-                    nickName: '바람처럼 스쳐가는',
-                    curScore: 1,
+                    nickName: 'Empty',
+                    curScore: 0,
                     isMe: false,
                     number: null,
                 },
@@ -51,8 +62,8 @@ export default {
                     id: 2,
                     profileImage: require('@/assets/user/image/profile/u1.png'),
                     // profilePicture: require('@/assets/user/image/profile/u1.png'),
-                    nickName: '정열과 낭만아',
-                    curScore: 1,
+                    nickName: 'Empty',
+                    curScore: 0,
                     isMe: false,
                     number: null,
                 },
@@ -60,7 +71,7 @@ export default {
                     id: 3,
                     profileImage: require('@/assets/user/image/profile/u1.png'),
                     // profilePicture: require('@/assets/user/image/profile/u1.png'),
-                    nickName: '아직도',
+                    nickName: 'Empty',
                     curScore: 0,
                     isMe: false,
                     number: null,
@@ -69,7 +80,7 @@ export default {
                     id: 4,
                     profileImage: require('@/assets/user/image/profile/u1.png'),
                     // profilePicture: require('@/assets/user/image/profile/u1.png'),
-                    nickName: '내겐',
+                    nickName: 'Empty',
                     curScore: 0,
                     isMe: false,
                     number: null,
@@ -78,13 +89,25 @@ export default {
                     id: 5,
                     profileImage: require('@/assets/user/image/profile/u1.png'),
                     // profilePicture: require('@/assets/user/image/profile/u1.png'),
-                    nickName: '거췬 꿈이 이쒀~',
-                    curScore: 2,
+                    nickName: 'Empty',
+                    curScore: 0,
                     isMe: false,
                     number: null,
                 },
             ],
         };
+    },
+    methods: {
+        setCheckMe(myNumber) {
+            this.isCheckMe = true;
+            this.myNumber = myNumber;
+        },
+    },
+    mounted() {
+        EventBus.$on('settingGamePlayers', (state) => {
+            this.myColor = state.myInfo.color;
+            this.playersToShow;
+        });
     },
 };
 </script>

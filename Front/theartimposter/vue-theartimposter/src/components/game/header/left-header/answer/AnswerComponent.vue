@@ -1,12 +1,19 @@
 <template>
     <div class="answer-component">
-        <span class="answer-span"><strong>가오나시</strong></span>
+        <span class="answer-span"
+            ><strong>{{ answer }}</strong></span
+        >
     </div>
 </template>
 
 <script>
 export default {
     name: 'AnswerComponent',
+    computed: {
+        answer() {
+            return this.$store.getters.getMyInfo ? this.$store.getters.getMyInfo.keyword : '?';
+        },
+    },
 };
 </script>
 

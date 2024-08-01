@@ -67,8 +67,7 @@ async function startTurns(io, socket, GameRoomStatus) {
                 () => {
                     endTurn();
                 },
-                100
-                // GameRoomStatus.gameSetting.turnTimeLimit * 1000
+                (GameRoomStatus.gameSetting.turnTimeLimit * 1000) + (3000)
             );
             const playerSocket = io.sockets.sockets.get(currentPlayer.socketId);
 

@@ -1,30 +1,65 @@
 <template>
     <div class="turn-component">
-        <div v-for="player in players" :key="player.id" :class="{ player: true, active: player.active }">
-            <div :style="{ backgroundColor: player.color }" class="player-number">{{ player.number }}</div>
-            <span v-if="!isLastPlayer(player)">→</span>
+        <div
+            v-for="(player, index) in displayedPlayers"
+            :key="player.id || index"
+            :class="{ player: true, active: player.turn === turnPlayerId }"
+        >
+            <div :style="{ backgroundColor: player.color }" class="player-number">{{ player.turn || index + 1 }}</div>
+            <span v-if="index < displayedPlayers.length - 1">→</span>
         </div>
     </div>
 </template>
 
 <script>
+import { mapState, mapGetters } from 'vuex';
+import { EventBus } from '@/utils/eventBus';
+
 export default {
     name: 'TurnComponent',
     data() {
         return {
-            players: [
-                { id: 1, number: 1, color: 'red', active: false },
-                { id: 2, number: 2, color: 'purple', active: true },
-                { id: 3, number: 3, color: 'green', active: false },
-                { id: 4, number: 4, color: 'cyan', active: false },
-                { id: 5, number: 5, color: 'orange', active: false },
-            ],
+            displayedPlayers: Array(5).fill({
+                turn: null,
+                color: '#808080', // 기본 회색
+            }),
         };
     },
-    methods: {
-        isLastPlayer(player) {
-            return player.id === this.players.length;
+    computed: {
+        ...mapState(['turnPlayer']),
+        ...mapGetters(['getTurnPlayer']),
+        turnPlayerId() {
+            return this.turnPlayer ? this.turnPlayer.turn : 1;
         },
+    },
+    methods: {
+        updatePlayers(myInfo, otherPlayers) {
+            const players = [...otherPlayers, myInfo];
+            const maxPlayers = 5;
+
+            // Set default color if color is null
+            players.forEach((player) => {
+                player.color = player.color || '#808080'; // 기본 회색
+            });
+
+            // Sort players by turn, with null values at the end
+            players.sort((a, b) => (a.turn === null ? 1 : b.turn === null ? -1 : a.turn - b.turn));
+
+            // Ensure we have at least maxPlayers, filling with default values if necessary
+            while (players.length < maxPlayers) {
+                players.push({
+                    turn: null,
+                    color: '#808080', // 기본 회색
+                });
+            }
+
+            this.displayedPlayers = players.slice(0, maxPlayers);
+        },
+    },
+    mounted() {
+        EventBus.$on('settingGamePlayers', (gameInfo) => {
+            this.updatePlayers(gameInfo.myInfo, gameInfo.otherPlayers);
+        });
     },
 };
 </script>
