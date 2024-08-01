@@ -2,13 +2,16 @@ package com.catpawdogpaw.theartimposter.security.api.controller;
 
 import com.catpawdogpaw.theartimposter.config.CacheService;
 import com.catpawdogpaw.theartimposter.security.api.entity.RefreshEntity;
+import com.catpawdogpaw.theartimposter.security.api.entity.UserEntity;
 import com.catpawdogpaw.theartimposter.security.api.repository.RefreshRepository;
+import com.catpawdogpaw.theartimposter.security.api.repository.UserRepository;
 import com.catpawdogpaw.theartimposter.security.jwt.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
@@ -24,17 +28,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
-@Controller
-@ResponseBody
+@RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class ReissueController {
 
     private static final Logger log = LoggerFactory.getLogger(ReissueController.class);
     private final JwtUtil jwtUtil;
-    private final RefreshRepository refreshRepository;
     private final CacheService cacheService;
+    private final UserRepository userRepository;
 
     private static final String RESPONSE_MESSAGE_REFRESH_TOKEN_NULL = "refresh token null";
     private static final String RESPONSE_MESSAGE_REFRESH_TOKEN_EXPIRED = "refresh token expired";
@@ -43,7 +47,6 @@ public class ReissueController {
 
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        log.debug("Reissue token request received");
         log.debug("Received reissue request with method: {}", request.getMethod());
         //get refresh token
         String refresh = null;
@@ -81,8 +84,14 @@ public class ReissueController {
         }
 
         String userId = jwtUtil.getId(refresh);
+        UserEntity userEntity =
+            userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("Invalid refresh token"));
+
+        log.info( "userId(social given): {}", userId);
+        log.info("Id: {}", userEntity.getUserId());
         //레디스에 refresh 토큰이 저장되어 있는지 확인
-        String storedRefreshToken = cacheService.getRefreshToken(userId);
+        String storedRefreshToken = cacheService.getRefreshToken(userEntity.getUserId().toString());
+        log.info("Stored refresh token: {}, receive refresh token: {}", storedRefreshToken, refresh);
         if (storedRefreshToken == null || !storedRefreshToken.equals(refresh)) {
             // 레디스에 토큰값이 저장되어 있지 않다면 로그아웃 처리됨(Vue에서 처리)
             log.warn("Refresh token does not match stored token");
@@ -100,7 +109,8 @@ public class ReissueController {
         //Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
 //        refreshRepository.deleteByRefresh(refresh);
 //        addRefreshEntity(username, newRefresh, 86400000L);
-        cacheService.saveRefreshToken(Long.parseLong(userId), newRefresh, 86400000L);
+//        cacheService.deleteUserData(userEntity.getUserId().toString());
+        cacheService.saveRefreshToken(userEntity.getUserId(), newRefresh, 86400000L);
         log.debug("New tokens created and stored for user: {}", userId);
 
         //response as parameters

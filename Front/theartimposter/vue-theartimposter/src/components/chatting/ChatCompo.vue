@@ -46,6 +46,7 @@ export default {
     methods: {
         setupSocket() {
             this.socketInstance = this.socket();
+            console.log(this.socketInstance);
             if (this.socketInstance) {
                 socketHandler.setupChatListeners(
                     this.socketInstance,

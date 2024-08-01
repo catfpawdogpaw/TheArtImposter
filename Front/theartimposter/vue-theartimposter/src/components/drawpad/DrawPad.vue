@@ -41,7 +41,7 @@ export default {
     data() {
         return {
             myTurn: false,
-            socket: null,
+            socketInstance: null,
             isDrawing: false,
             context: null,
             canvas: null,
@@ -54,6 +54,7 @@ export default {
     },
     created() {
         EventBus.$on('turnPlayerChanged', this.checkCanDraw); // 이벤트 수신 및 핸들러 등록
+        this.socketInstance = this.$socket;
     },
     mounted() {
         this.setupCanvas();

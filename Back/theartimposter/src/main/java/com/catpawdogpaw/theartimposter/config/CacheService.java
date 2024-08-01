@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -72,7 +73,9 @@ public class CacheService {
     }
 
     public String getRefreshToken(String userId) {
-        return customStringRedisTemplate.opsForValue().get("refreshToken:" + userId);
+//        return customStringRedisTemplate.opsForValue().get("userData:" + userId);
+        HashOperations<String, Object, Object> hashOperations = customStringRedisTemplate.opsForHash();
+        return (String) hashOperations.get("userData:" + userId, "refreshToken");
     }
 
     public void saveRefreshToken(Long userId, String refreshToken, Long duration) {
