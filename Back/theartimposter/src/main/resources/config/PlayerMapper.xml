@@ -6,7 +6,7 @@
 <mapper namespace="com.catpawdogpaw.theartimposter.player.mapper.PlayerMapper">
 
     <!-- Select a player by id -->
-    <select id="getPlayerById" resultType="com.catpawdogpaw.theartimposter.player.model.Player">
+    <select id="getPlayerById" parameterType="Long" resultType="com.catpawdogpaw.theartimposter.player.model.Player">
         SELECT PLAYER_ID AS id,
                USER_USER_ID AS userId,
                ROUND_GAME_ROUND_ID AS roundId,

@@ -1,5 +1,7 @@
 package com.catpawdogpaw.theartimposter.nodejs.controller;
 
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -8,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.catpawdogpaw.theartimposter.nodejs.entity.dto.GameRoomResultDTO;
 import com.catpawdogpaw.theartimposter.nodejs.entity.dto.STNDTO;
 import com.catpawdogpaw.theartimposter.nodejs.service.GameResultService;
 import com.catpawdogpaw.theartimposter.nodejs.service.NodejsService;
@@ -38,8 +39,11 @@ public class NodejsController {
     }
     
     @PostMapping("/result")
-    public ResponseEntity<String> saveResult(@RequestBody GameRoomResultDTO gameRoomResultDTO) {	
-    	gameResultService.saveGameResult(gameRoomResultDTO);
+    public ResponseEntity<String> saveResult(@RequestBody Map<String, Object> gameRoomResultMap) {	
+    	
+    	gameResultService.logGameRoomResultDTO(gameRoomResultMap);
+
+    	gameResultService.saveGameResult(gameRoomResultMap);
     	return new ResponseEntity<>("Game result received successfully", HttpStatus.OK);
     
     }

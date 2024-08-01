@@ -1,6 +1,7 @@
 package com.catpawdogpaw.theartimposter.player;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -39,6 +40,11 @@ public class PlayerService {
         player.setGameRole(GameRole.valueOf(playerNTSDTO.getGameRole().toUpperCase())); 
         savePlayer(player);
     }
+
+	public Object savePlayerFromMap(Map<String, Object> playerMap) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	
 }

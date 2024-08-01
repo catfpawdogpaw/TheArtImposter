@@ -29,6 +29,13 @@ export default [
                     side: SideComponent,
                 },
             },
+            {
+                path: "/game",
+                components: {
+                    main: DrawPad,
+                    side: SideComponent,
+                },
+            },
         ],
     },
     {   // 서버에서 토큰을 쿼리스트링으로 전송한 것을 처리하는 path

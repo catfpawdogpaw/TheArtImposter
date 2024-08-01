@@ -1,7 +1,7 @@
 <template>
     <div v-if="show" class="modal-overlay">
         <div class="modal-content">
-            <h2>매칭이 잡혔습니다!</h2>
+            <h2>매칭중</h2>
             <p>잠시 후 게임이 시작됩니다.</p>
         </div>
     </div>

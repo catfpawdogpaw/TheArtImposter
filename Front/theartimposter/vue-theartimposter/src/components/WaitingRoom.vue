@@ -4,18 +4,18 @@
         <button @click="startMatching">매칭 시작 버튼</button>
         <match-modal :show="showMatch" />
 
-        <button @click="startSubject">주제 모달</button>
-        <subject-modal :show="showSubject" :subject="subject" :word="word" />
+        <!-- <button @click="startSubject">주제 모달</button>
+        <subject-modal :show="showSubject" :subject="subject" :word="word" /> -->
 
 <!-- 삭제할 것 -->
 
-        <button @click="getCurrentSessions">Get Current Sessions</button>
+        <!-- <button @click="getCurrentSessions">Get Current Sessions</button> -->
     </div>
 </template>
 
 <script>
 import MatchModal from "@/components/modal/MatchModal.vue";
-import SubjectModal from "@/components/modal/SubjectModal.vue";
+// import SubjectModal from "@/components/modal/SubjectModal.vue";
 
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
@@ -23,7 +23,7 @@ import { Client } from '@stomp/stompjs';
 export default {
     components: {
         MatchModal,
-        SubjectModal,
+        // SubjectModal,
     },
     data() {
         return {
@@ -112,7 +112,7 @@ export default {
         startGame() {
             this.showMatch = false;
             // 게임화면으로 전환
-            // this.$router.push("/game");
+            this.$router.push("/");
         },
         startSubject() {
             this.showSubject = true;

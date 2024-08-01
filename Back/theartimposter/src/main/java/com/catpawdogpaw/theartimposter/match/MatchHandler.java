@@ -68,9 +68,9 @@ public class MatchHandler {
 	private void checkAndMatchUsers() throws Exception {
 		log.info("checkAndMatchUsers");
 		synchronized (waitingUsers) {
-			while (waitingUsers.size() >= 5) { // 5로 변경하기
+			while (waitingUsers.size() >= 1) { // 5로 변경하기
 				WebSocketSession[] matchedUsers = new WebSocketSession[5];
-				for (int i = 0; i < 5; i++) {
+				for (int i = 0; i < 1; i++) {
 					matchedUsers[i] = waitingUsers.poll();
 				}
 				createAndAssignGameRoom(matchedUsers);
@@ -98,12 +98,14 @@ public class MatchHandler {
 
 		GameSetting gameSetting = gameSettingService.getGameSettingById(gameRoom.getGameSettingId());
 		gameSettingStnDto.setMaxPeople(gameSetting.getMaxPeople());
-		gameSettingStnDto.setMinPeople(gameSetting.getMaxPeople());
+		gameSettingStnDto.setMinPeople(gameSetting.getMinPeople());
 		gameSettingStnDto.setRound(gameSetting.getRound());
 		gameSettingStnDto.setRoundTimeLimit(gameSetting.getRoundTimeLimit());
 		gameSettingStnDto.setTurnTimeLimit(gameSetting.getTurnTimeLimit());
 		gameSettingStnDto.setVersion(gameSetting.getVersion());
 
+		
+		
 		stnDTO.setGameSetting(gameSettingStnDto);
 
 		// 주제 랜덤

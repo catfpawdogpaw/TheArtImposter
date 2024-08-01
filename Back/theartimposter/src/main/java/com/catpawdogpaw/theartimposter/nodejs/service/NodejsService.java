@@ -93,12 +93,8 @@ public class NodejsService {
 		
 		return sTNDTO;
 	}
-	/*
-    public void sendToNode(STNDTO stndto) {
-        String nodeServerUrl = "http://localhost:3000/receive-data"; // Node.js  URL
-        restTemplate.postForObject(nodeServerUrl, stndto, Void.class);
-    }
-*/
+
+
 	public void sendToNode(STNDTO stndto) {
         String nodeServerUrl = "http://localhost:3000/receive-data"; // Node.js  URL
         RestTemplate restTemplate = new RestTemplate();

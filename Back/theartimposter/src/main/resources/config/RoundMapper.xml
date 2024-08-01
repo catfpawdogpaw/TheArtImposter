@@ -3,11 +3,11 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.catpawdogpaw.theartimposter.round.mapper">
+<mapper namespace="com.catpawdogpaw.theartimposter.round.mapper.RoundMapper">
 
     <!-- Select a round by id -->
     <select id="getRoundById" resultType="com.catpawdogpaw.theartimposter.round.model.Round">
-        SELECT GAME_ROUND_ID AS id,
+        SELECT GAME_ROUND_ID AS roundId,
                GAMEROOM_GAME_ROOM_ID AS roomId,
                SUBJECT_SUBJECT_ID AS subjectId,
                ROUND_NUM AS roundNum,

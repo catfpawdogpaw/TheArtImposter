@@ -48,29 +48,33 @@ public class S3Service {
 		
 		return url;
     }
-    
+
     public String uploadBase64Image(String base64Image) {
-        String[] parts = base64Image.split(",");
-        String imageString = parts[1];
-        String fileExtension = parts[0].split("/")[1].split(";")[0];
+    	  try {
+    	        // Base64 문자열이 "data:image/png;base64," 형태인지 확인하고 분리
+    	        String[] parts = base64Image.split(",");
+    	        if (parts.length < 2) {
+    	            throw new IllegalArgumentException("Invalid base64 image data");
+    	        }
+    	        byte[] decodedBytes = Base64.getDecoder().decode(parts[1]);
+    	        ByteArrayInputStream inputStream = new ByteArrayInputStream(decodedBytes);
+    	        String fileExtension = ".png"; // 기본 확장자 설정
+    	        UUID uuid = UUID.randomUUID();
+    	        String savedFileName = uuid.toString() + fileExtension;
 
-        byte[] imageBytes = Base64.getDecoder().decode(imageString);
+    	        String filePath = UPLOAD_PATH + savedFileName;
+    	        ObjectMetadata metadata = new ObjectMetadata();
+    	        metadata.setContentLength(decodedBytes.length);
+    	        metadata.setContentType("image/png");
 
-        UUID uuid = UUID.randomUUID();
-        String savedFileName = uuid.toString() + "." + fileExtension;
-        String filePath = UPLOAD_PATH + savedFileName;
+    	        s3Client.putObject(new PutObjectRequest(bucketName, filePath, inputStream, metadata));
 
-        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(imageBytes)) {
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(imageBytes.length);
-            metadata.setContentType("image/" + fileExtension);
-            s3Client.putObject(new PutObjectRequest(bucketName, filePath, inputStream, metadata));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        String url = "https://" + cloudfrontDomain + "/" + filePath;
-
-        return url;
+    	        String url = "https://" + cloudfrontDomain + "/" + filePath;
+    	        return url;
+    	    } catch (Exception e) {
+    	        e.printStackTrace();
+    	        throw new IllegalArgumentException("Error uploading image: " + e.getMessage());
+    	    }
     }
+    
 }

@@ -16,5 +16,5 @@ public class GameRoom {
     private String title;
     private LocalDateTime createdAt;
     private LocalDateTime destroyAt;
-
+	
 }

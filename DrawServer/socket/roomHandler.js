@@ -37,8 +37,8 @@ const defaultGameSet = {
     RECONNECT_TIMEOUT: 60,
     COLORS: ["red", "blue", "green", "aqua", "orange", "purple", "grey", "hotpink", "saddlebrown"],
 
-    SKIP_TURN: false,
-    SKIP_VOTE: false,
+    SKIP_TURN: true,
+    SKIP_VOTE: true,
 };
 
 module.exports = {
