@@ -48,11 +48,13 @@ export default {
         EventBus.$on('turnPlayerChanged', this.startCountdown); // 이벤트 수신 및 핸들러 등록
         EventBus.$on('turnEnd', this.turnEnd); // 이벤트 수신 및 핸들러 등록
         EventBus.$on('voteStart', (time) => {
+            EventBus.$emit('voteTime', time.timeLimit);
             this.count = time.timeLimit;
             this.timer = setInterval(() => {
                 if (this.count > 0) {
-                    this.count--;
+                    EventBus.$emit('voteTime', --this.count);
                 } else {
+                    EventBus.$emit('voteTime', -1);
                     this.onCountdownEnd();
                     clearInterval(this.timer);
                 }

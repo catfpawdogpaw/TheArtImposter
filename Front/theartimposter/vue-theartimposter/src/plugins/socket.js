@@ -42,6 +42,11 @@ export default {
             EventBus.$emit('voteStart', data);
         });
 
+        socket.on('roundEnd', (data) => {
+            console.log('roundEnd:', data);
+            socket.emit('GameRoomStatus');
+        });
+
         socket.on('disconnect', () => {
             console.log('Socket disconnected');
         });
