@@ -12,20 +12,20 @@
 </template>
 
 <script>
-import { EventBus } from "@/utils/eventBus";
+import { EventBus } from '@/utils/eventBus';
 
 export default {
-    name: "GuessWatingModal",
+    name: 'GuessWatingModal',
     data() {
         return {
             showModal: false,
         };
     },
     created() {
-        EventBus.$on("fakeArtistGuessStart1", this.HandleModal);
+        EventBus.$on('fakeArtistGuessStart', this.HandleModal);
     },
     beforeDestroy() {
-        EventBus.$off("fakeArtistGuessStart1", this.HandleModal);
+        EventBus.$off('fakeArtistGuessStart', this.HandleModal);
     },
     mounted() {
         if (!this.socket) {
@@ -34,7 +34,9 @@ export default {
     },
     methods: {
         HandleModal() {
-            this.showModal = true;
+            if (this.$store.getters.getMyInfo.keyword != '???') {
+                this.showModal = true;
+            }
         },
         closeModal() {
             this.showModal = false;

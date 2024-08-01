@@ -50,6 +50,10 @@ export default {
         EventBus.$on('voteStart', this.changeSideComponent);
         EventBus.$on('roundEnd', this.changeSideComponent);
     },
+    beforeDestroy() {
+        EventBus.$off('voteStart', this.changeSideComponent);
+        EventBus.$off('roundEnd', this.changeSideComponent);
+    },
     methods: {
         joinRoom() {
             this.$socket.emit('joinRoom', 'TestRoom', 23432, 'sadafafaf');

@@ -30,6 +30,9 @@ const roundHandler = {
             // 라운드 마무리
             await finalizeRound(io, GameRoomStatus, winner);
 
+            // 3초 대기
+            await sleep(defaultGameSet.NOMAL_DELAY * 1000);
+
             // 다음 라운드 준비
             GameRoomStatus.currentRound++;
             updateRedisRoomStatus(GameRoomStatus);
@@ -133,6 +136,7 @@ async function voteStep(io, socket, GameRoomStatus) {
         });
 
         function handleVote(votedForId) {
+            console.log('투표 대상 :' + votedForId);
             player = GameRoomStatus.players.find((player) => player.socketId === socket.id);
             if (player.userId !== votedForId && !votes[player.userId]) {
                 votes[player.userId] = votedForId;
@@ -236,6 +240,7 @@ async function announceRoundResult(io, GameRoomStatus, voteResult) {
             io.to(GameRoomStatus.gameRoomTitle).emit("roundEnd", {
                 winner: winner,
             });
+            
             console.log("라운드 종료 승리 역할:" + winner);
             resolve(winner);
         }
@@ -403,6 +408,11 @@ function roundStartlog(GameRoomStatus) {
     const category = subject.category;
     const word = subject.subject;
     console.log(`라운드 ${round} 시작. 단어:${word} 주제:${category}`);
+}
+
+// sleep 함수를 정의합니다.
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 module.exports = { roundHandler };

@@ -20,12 +20,23 @@
                 </div>
             </div>
         </div>
+        <VoteResultModal ref="voteResultModal" />
+        <GuessWaitingModal ref="guessWaitingModal" />
+        <FakeArtistGuessModal ref="fakeArtistGuessModal" />
     </div>
 </template>
 
 <script>
+import FakeArtistGuessModal from '@/components/modal/FakeArtistGuessModal.vue';
+import GuessWaitingModal from '@/components/modal/GuessWatingModal.vue';
+import VoteResultModal from '@/components/modal/VoteResultModal.vue';
 import { EventBus } from '@/utils/eventBus';
 export default {
+    components: {
+        VoteResultModal,
+        GuessWaitingModal,
+        FakeArtistGuessModal,
+    },
     data() {
         return {
             timeLeft: 20,

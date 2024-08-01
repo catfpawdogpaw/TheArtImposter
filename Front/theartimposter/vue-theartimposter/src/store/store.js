@@ -16,6 +16,7 @@ export default new Vuex.Store({
         myInfo: null,
         otherPlayers: [],
         myRoomNumber: null,
+        voteResult: null,
     },
     mutations: {
         setAccessToken(state, token) {
@@ -63,6 +64,9 @@ export default new Vuex.Store({
         },
         setMyRoomNumber(state, myRoomNumber) {
             state.myRoomNumber = myRoomNumber;
+        },
+        setVoteResult(state, voteResult) {
+            state.voteResult = voteResult;
         },
     },
     actions: {
@@ -132,6 +136,10 @@ export default new Vuex.Store({
             // setMyRoomNumber 액션 추가
             commit('setMyRoomNumber', myRoomNumber);
         },
+        updateVoteResult({ commit }, voteResult) {
+            // setMyRoomNumber 액션 추가
+            commit('setVoteResult', voteResult);
+        },
     },
     getters: {
         getUser: (state) => state.user,
@@ -143,5 +151,6 @@ export default new Vuex.Store({
         getMyInfo: (state) => state.myInfo,
         getOtherPlayers: (state) => state.otherPlayers,
         getMyRoomNumber: (state) => state.myRoomNumber,
+        getVoteResult: (state) => state.voteResult,
     },
 });

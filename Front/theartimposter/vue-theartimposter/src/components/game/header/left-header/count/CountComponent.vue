@@ -18,6 +18,8 @@ export default {
     },
     methods: {
         startCountdown() {
+            console.log('시간초 흐르기 시작!');
+
             if (this.timer) {
                 clearInterval(this.timer); // 이전 타이머가 있다면 제거
             }
@@ -25,7 +27,7 @@ export default {
             this.count = this.$store.getters.getGameRoomStatus
                 ? this.$store.getters.getGameRoomStatus.gameSetting.turnTimeLimit
                 : 30; // 카운트 초기화
-            this.count = 5;
+            this.count = 8;
             this.timer = setInterval(() => {
                 if (this.count > 0) {
                     this.count--;

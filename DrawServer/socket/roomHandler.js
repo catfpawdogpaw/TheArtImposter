@@ -33,6 +33,7 @@ const defaultGameSet = {
     TURN_DELAY: 3,
     STEP_INTERVAL: 3,
     VOTE_TIME: 20,
+    NOMAL_DELAY:4,
     GUESS_TIME: 20,
     RECONNECT_TIMEOUT: 60,
     COLORS: ["red", "blue", "green", "aqua", "orange", "purple", "grey", "hotpink", "saddlebrown"],

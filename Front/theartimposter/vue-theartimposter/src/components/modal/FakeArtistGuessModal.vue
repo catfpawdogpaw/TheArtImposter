@@ -17,22 +17,22 @@
 </template>
 
 <script>
-import { EventBus } from "@/utils/eventBus";
+import { EventBus } from '@/utils/eventBus';
 
 export default {
-    name: "FakeArtistGuessModal",
+    name: 'FakeArtistGuessModal',
     data() {
         return {
             showModal: false,
-            userInput: "",
+            userInput: '',
             socket: null,
         };
     },
     created() {
-        EventBus.$on("fakeArtistGuessStart", this.handleModal);
+        EventBus.$on('fakeArtistGuessStart', this.handleModal);
     },
     beforeDestroy() {
-        EventBus.$off("fakeArtistGuessStart", this.handleModal);
+        EventBus.$off('fakeArtistGuessStart', this.handleModal);
     },
     mounted() {
         if (!this.socket) {
@@ -41,7 +41,9 @@ export default {
     },
     methods: {
         handleModal() {
-            this.showModal = true;
+            if (this.$store.getters.getMyInfo.keyword == '???') {
+                this.showModal = true;
+            }
         },
         closeModal() {
             this.showModal = false;
@@ -49,8 +51,8 @@ export default {
         },
         sendText() {
             if (this.userInput.trim()) {
-                this.socket.emit("guessWord", this.userInput);
-                this.userInput = "";
+                this.socket.emit('guessWord', this.userInput);
+                this.userInput = '';
                 this.closeModal();
             }
         },

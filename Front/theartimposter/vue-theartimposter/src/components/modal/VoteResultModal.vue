@@ -16,10 +16,10 @@
 </template>
 
 <script>
-import { EventBus } from "@/utils/eventBus";
+import { EventBus } from '@/utils/eventBus';
 
 export default {
-    name: "VoteResultModal",
+    name: 'VoteResultModal',
     data() {
         return {
             showModal: false,
@@ -30,23 +30,26 @@ export default {
     },
     computed: {
         winRoleText() {
-            return this.winRole === "fake_artist" ? "가짜예술가" : "예술가";
+            return this.winRole === 'fake_artist' ? '가짜예술가' : '예술가';
         },
     },
     created() {
-        EventBus.$on("voteResult", this.handleVoteResult);
-        EventBus.$on("roundEnd", this.handleRoundEnd);
+        EventBus.$on('waitRoundEnd', this.handleRoundEnd);
+        EventBus.$on('voteResult', this.handleVoteResult);
     },
     beforeDestroy() {
-        EventBus.$off("voteResult", this.handleVoteResult);
-        EventBus.$off("roundEnd", this.handleRoundEnd);
+        EventBus.$off('waitRoundEnd', this.handleRoundEnd);
+        EventBus.$off('voteResult', this.handleVoteResult);
     },
     methods: {
         handleVoteResult(data) {
             this.voteResults = data.voteResults;
             this.abstentionCount = data.abstentionCount;
 
-            this.showModal = true;
+            console.log('받은 투표 결과 :' + data.voteResults);
+            console.log('받은 기권 결과 :' + data.abstentionCount);
+
+            //this.showModal = true;
             // setTimeout(() => {
             //     this.showSubject = false;
             // }, 3000);
@@ -54,6 +57,14 @@ export default {
         handleRoundEnd(data) {
             this.winRole = data.winner;
             this.showModal = true;
+
+            setTimeout(() => {
+                this.showModal = false;
+                //다음 라운드로 넘어가기
+                EventBus.$emit('roundEnd', data);
+                console.log('다음 라운드로 넘어가자!');
+                this.$socket.emit('GameRoomStatus');
+            }, 3000);
         },
         closeModal() {
             this.showModal = false;
