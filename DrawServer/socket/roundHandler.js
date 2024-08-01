@@ -67,8 +67,8 @@ async function startTurns(io, socket, GameRoomStatus) {
                 () => {
                     endTurn();
                 },
-                100
-                // GameRoomStatus.gameSetting.turnTimeLimit * 1000
+                // 100
+                (GameRoomStatus.gameSetting.turnTimeLimit + defaultGameSet.TURN_DELAY) * 1000
             );
             const playerSocket = io.sockets.sockets.get(currentPlayer.socketId);
 
@@ -111,7 +111,7 @@ async function voteStep(io, socket, GameRoomStatus) {
         const voteTimeout = setTimeout(() => {
             timeoutOccurred = true;
             checkVotesComplete();
-        }, defaultGameSet.VOTE_TIME * 1000);
+        }, (defaultGameSet.VOTE_TIME + defaultGameSet.TURN_DELAY) * 1000);
 
         console.log("투표 단계 시작");
         io.to(GameRoomStatus.gameRoomTitle).emit("voteStart", {
@@ -238,7 +238,7 @@ async function announceRoundResult(io, GameRoomStatus, voteResult) {
 
 async function startFakeArtistGuess(io, GameRoomStatus, mostVotedPlayer) {
     return new Promise((resolve) => {
-        const guessTime = defaultGameSet.GUESS_TIME * 1000;
+        const guessTime = (defaultGameSet.GUESS_TIME + defaultGameSet.TURN_DELAY) * 1000;
         let guessWord = null;
 
         const fakeArtist = GameRoomStatus.players.find((player) => player.userId === mostVotedPlayer.userId);

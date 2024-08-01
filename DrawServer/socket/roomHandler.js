@@ -30,10 +30,11 @@ const defaultGameSet = {
     CANVAS_FILLSTYLE: "ivory",
     REDIS_EXPIRE_TIME: 1800, //30분
     GAME_START_DELAY: 3,
+    TURN_DELAY: 3,
     STEP_INTERVAL: 3,
     VOTE_TIME: 20,
     GUESS_TIME: 20,
-    COLORS: ["red", "blue", "green", "yellow", "orange", "purple"],
+    COLORS: ["red", "blue", "green", "aqua", "orange", "purple", "grey", "hotpink", "saddlebrown"],
 };
 
 module.exports = {
