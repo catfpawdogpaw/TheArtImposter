@@ -34,6 +34,7 @@ export default {
     },
 
     drawFromServer(context, data) {
+        console.log('그림 데이터 : ' + data);
         context.save();
         context.strokeStyle = data.color;
         context.lineWidth = data.lineWidth;

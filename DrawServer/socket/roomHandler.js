@@ -3,7 +3,7 @@
  * @type {Object.<string, GameRoomStatus>}
  */
 const Rooms = new Map(); // 방 상태를 관리
-
+const disconnectedPlayers = new Map();
 function getGameRoomStatus(roomId) {
     return Rooms.get(roomId);
 }
@@ -30,10 +30,15 @@ const defaultGameSet = {
     CANVAS_FILLSTYLE: "ivory",
     REDIS_EXPIRE_TIME: 1800, //30분
     GAME_START_DELAY: 3,
+    TURN_DELAY: 3,
     STEP_INTERVAL: 3,
     VOTE_TIME: 20,
     GUESS_TIME: 20,
-    COLORS: ["red", "blue", "green", "yellow", "orange", "purple"],
+    RECONNECT_TIMEOUT: 60,
+    COLORS: ["red", "blue", "green", "aqua", "orange", "purple", "grey", "hotpink", "saddlebrown"],
+
+    SKIP_TURN: false,
+    SKIP_VOTE: false,
 };
 
 module.exports = {
@@ -43,4 +48,5 @@ module.exports = {
     getAllRoomIds,
     getRoomStatus,
     defaultGameSet,
+    disconnectedPlayers,
 };

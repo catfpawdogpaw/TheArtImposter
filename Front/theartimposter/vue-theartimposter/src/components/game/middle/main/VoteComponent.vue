@@ -11,7 +11,7 @@
                 :key="option.id"
                 :class="['option', { selected: selectedOption === option.id, hovered: hoveredOption === option.id }]"
                 :style="{ borderColor: option.color, color: option.color }"
-                @click="selectOption(option.id)"
+                @click="selectOption(option.id, option.userId)"
                 @mouseover="hoverOption(option.id)"
                 @mouseleave="hoverOption(null)"
             >
@@ -28,10 +28,10 @@ import { EventBus } from '@/utils/eventBus';
 export default {
     data() {
         return {
-            timeLeft: '00',
-            timer: null,
+            timeLeft: 20,
             selectedOption: null,
             hoveredOption: null,
+            selectedUserId: null,
         };
     },
     computed: {
@@ -40,10 +40,10 @@ export default {
             if (!players || players.length === 0) {
                 // 플레이어 데이터가 없을 경우 더미 데이터를 반환
                 return [
-                    { id: 1, number: '?', color: 'gray' },
-                    { id: 2, number: '?', color: 'gray' },
-                    { id: 3, number: '?', color: 'gray' },
-                    { id: 4, number: '?', color: 'gray' },
+                    { id: 1, number: '?', color: 'gray', userId: 999 },
+                    { id: 2, number: '?', color: 'gray', userId: 999 },
+                    { id: 3, number: '?', color: 'gray', userId: 999 },
+                    { id: 4, number: '?', color: 'gray', userId: 999 },
                 ];
             }
             return players
@@ -52,28 +52,28 @@ export default {
                     id: index + 1,
                     number: player.turn,
                     color: player.color,
+                    userId: player.userId,
                 }));
         },
     },
     created() {
-        EventBus.$on('voteStart', (time) => {
-            this.timeLeft = time;
-            this.timer = setInterval(() => {
-                if (this.timeLeft > 0) {
-                    this.timeLeft--;
-                } else {
-                    clearInterval(this.timer);
-                    this.timeLeft = '00';
-                }
-            }, 1000);
-        }); // 이벤트 수신 및 핸들러 등록
+        EventBus.$on('voteTime', (timeLeft) => {
+            if (timeLeft == -1) {
+                this.timeLeft = '집계중...';
+                this.$socket.emit('vote', this.selectedUserId);
+                console.log('선택 번호 :' + this.selectedOption + ' 선택 유저 아디: ' + this.selectedUserId);
+                return;
+            }
+            this.timeLeft = timeLeft;
+        }); // 이벤트 수신 및 핸들러 할당
     },
     beforeDestroy() {
-        EventBus.$off('voteStart'); // 이벤트 수신 및 핸들러 해제
+        EventBus.$off('voteTime'); // 이벤트 수신 및 핸들러 해제
     },
     methods: {
-        selectOption(id) {
+        selectOption(id, userId) {
             this.selectedOption = id;
+            this.selectedUserId = userId;
         },
         hoverOption(id) {
             this.hoveredOption = id;

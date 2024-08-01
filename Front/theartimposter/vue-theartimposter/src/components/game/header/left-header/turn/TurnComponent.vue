@@ -21,7 +21,7 @@ export default {
         return {
             displayedPlayers: Array(5).fill({
                 turn: null,
-                color: '#808080', // 기본 회색
+                color: '#808080',
             }),
         };
     },
@@ -37,29 +37,31 @@ export default {
             const players = [...otherPlayers, myInfo];
             const maxPlayers = 5;
 
-            // Set default color if color is null
             players.forEach((player) => {
-                player.color = player.color || '#808080'; // 기본 회색
+                player.color = player.color || '#808080';
             });
 
-            // Sort players by turn, with null values at the end
             players.sort((a, b) => (a.turn === null ? 1 : b.turn === null ? -1 : a.turn - b.turn));
 
-            // Ensure we have at least maxPlayers, filling with default values if necessary
             while (players.length < maxPlayers) {
                 players.push({
                     turn: null,
-                    color: '#808080', // 기본 회색
+                    color: '#808080',
                 });
             }
 
-            this.displayedPlayers = players.slice(0, maxPlayers);
+            this.displayedPlayers = [...players.slice(0, maxPlayers)];
+        },
+        handleSettingGamePlayers() {
+            console.log('settingGamePlayers2 - 이벤트 버스 도착 - 턴 컴포');
+            this.updatePlayers(this.$store.getters.getMyInfo, this.$store.getters.getOtherPlayers);
         },
     },
-    mounted() {
-        EventBus.$on('settingGamePlayers', (gameInfo) => {
-            this.updatePlayers(gameInfo.myInfo, gameInfo.otherPlayers);
-        });
+    created() {
+        EventBus.$on('settingGamePlayers2', this.handleSettingGamePlayers);
+    },
+    beforeDestroy() {
+        EventBus.$off('settingGamePlayers2', this.handleSettingGamePlayers);
     },
 };
 </script>
