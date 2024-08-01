@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="lobby">
         <h1>대기실</h1>
         <button @click="startMatching">매칭 시작 버튼</button>
         <match-modal :show="showMatch" />
@@ -123,3 +123,11 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+.lobby {
+  min-height: 700px;
+  border: 1px solid black;
+  min-width: 650px;
+}
+</style>

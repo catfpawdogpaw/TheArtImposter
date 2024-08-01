@@ -1,10 +1,8 @@
 import DrawPad from '@/components/drawpad/DrawPad.vue';
 import StoreTokens from '@/components/loginCompo/StoreTokens.vue';
-import MiddleComponent from '@/components/MiddleComponent.vue';
-import SideComponent from '@/components/SideComponent.vue';
+// import SideComponent from '@/components/SideComponent.vue';
 import LoginCompo from '@/components/loginCompo/LoginCompo.vue';
 import GameHeaderComponent from '@/components/game/header/GameHeaderComponent.vue';
-// import LoginCompo from '@/components/loginCompo/LoginCompo.vue';
 import LeftGameHeaderComponent from '@/components/game/header/left-header/LeftGameHeaderComponent.vue';
 import RightGameHeaderComponent from '@/components/game/header/right-header/RightGameHeaderComponent.vue';
 import GameSideComponent from '@/components/game/middle/side/GameSideComponent.vue';
@@ -12,6 +10,8 @@ import GameMiddleComponent from '@/components/game/middle/GameMiddleComponent.vu
 import HeaderComponent from '@/components/HeaderComponent.vue';
 import ChatComponent from '@/components/chatting/ChatCompo.vue';
 import VoteComponent from '@/components/game/middle/main/VoteComponent.vue';
+import MiddleComponent from "@/components/MiddleComponent.vue";
+import UserCompo from "@/components/loginCompo/UserCompo.vue";
 
 export default [
     {
@@ -25,9 +25,9 @@ export default [
             {
                 path: '',
                 components: {
-                    //위에 띄워지는 투표 화면도 생각해야함
+                    // 메인 화면에 띄우는 컴포넌트 변경하기
                     main: DrawPad,
-                    side: SideComponent,
+                    side: LoginCompo,
                 },
             },
             {
@@ -35,7 +35,7 @@ export default [
 
                 components: {
                     main: () => import('@/components/WaitingRoom.vue'),
-                    side: SideComponent,
+                    side: UserCompo,
                 },
             },
             {

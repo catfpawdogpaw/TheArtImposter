@@ -62,12 +62,13 @@ instance.interceptors.response.use(
                 store.dispatch('refreshToken')
                     .then(accessToken => {
                         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-                        resolve(instance(originalRequest));
                         onAccessTokenFetched(accessToken);
+                        resolve(instance(originalRequest));
                     })
                     .catch(error => {
                         reject(error);
-                        store.dispatch('logout');
+                        // 로그아웃 된 이후에 추가 행동 구현 가능 ( then()을 붙여서 가능하다)
+                        store.dispatch('logout').then(() => alert('로그인을 다시 해주세요'));
                     })
                     .finally(() => {
                         isRefreshing = false;

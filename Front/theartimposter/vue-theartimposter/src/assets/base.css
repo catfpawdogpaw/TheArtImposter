@@ -7,10 +7,11 @@
 
 #app {
     font-family: Avenir, Helvetica, Arial, sans-serif;
+    font-weight: 600;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
-    color: #2c3e50;
+    color: #ffffff;
     width: 100%;
     margin: 0 auto;
 }
@@ -20,7 +21,11 @@
     max-width: var(--max-width);
     height: 130px;
     border: 1px solid navy;
-    /* margin-top: 100px; */
+    margin: 10px auto 0;
+    font-weight: bold;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
 }
 
 .game-header {
@@ -42,4 +47,9 @@
     height: 150px;
     border: 1px solid black;
     margin-top: 20px;
+    background-color: #0097e6;
+}
+
+.background-image {
+    background-image: url('https://skribbl.io/img/background.png');
 }

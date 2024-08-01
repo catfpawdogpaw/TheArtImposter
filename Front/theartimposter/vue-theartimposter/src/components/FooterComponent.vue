@@ -44,13 +44,14 @@ export default {};
 <style scoped>
 .footer {
     width: 100%;
-    background-color: #ebebeb;
+    background-color: #273c75;
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     border-top: 1px solid #444;
     padding: 20px 0;
+    margin-left: 20px;
 }
 
 .footer-content {
