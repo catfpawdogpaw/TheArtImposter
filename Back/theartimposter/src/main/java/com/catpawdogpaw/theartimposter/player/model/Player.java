@@ -2,8 +2,6 @@ package com.catpawdogpaw.theartimposter.player.model;
 
 
 
-import com.catpawdogpaw.theartimposter.domain.GameRole;
-
 import lombok.Getter;
 import lombok.Setter;
 

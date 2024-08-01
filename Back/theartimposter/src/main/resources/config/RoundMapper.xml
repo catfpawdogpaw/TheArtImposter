@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.catpawdogpaw.theartimposter.round.mapper">
+
+    <!-- Select a round by id -->
+    <select id="getRoundById" resultType="com.catpawdogpaw.theartimposter.round.model.Round">
+        SELECT GAME_ROUND_ID AS id,
+               GAMEROOM_GAME_ROOM_ID AS roomId,
+               SUBJECT_SUBJECT_ID AS subjectId,
+               ROUND_NUM AS roundNum,
+               WIN_ROLE AS winRole,
+               IMAGE AS imageUrl,
+               STARTED_AT AS startedAt,
+               FINISHED_AT AS finishedAt
+        FROM ROUND
+        WHERE GAME_ROUND_ID = #{roundId}
+    </select>
+
+    <!-- Select all rounds -->
+    <select id="getAllRound" resultType="com.catpawdogpaw.theartimposter.round.model.Round">
+        SELECT GAME_ROUND_ID AS id,
+               GAMEROOM_GAME_ROOM_ID AS roomId,
+               SUBJECT_SUBJECT_ID AS subjectId,
+               ROUND_NUM AS roundNum,
+               WIN_ROLE AS winRole,
+               IMAGE AS imageUrl,
+               STARTED_AT AS startedAt,
+               FINISHED_AT AS finishedAt
+        FROM ROUND
+    </select>
+
+    <!-- Insert a new round -->
+    <insert id="insertRound" useGeneratedKeys="true" keyProperty="id" keyColumn="GAME_ROUND_ID">
+        INSERT INTO ROUND (GAMEROOM_GAME_ROOM_ID, SUBJECT_SUBJECT_ID, ROUND_NUM, WIN_ROLE, IMAGE, STARTED_AT, FINISHED_AT)
+        VALUES (#{roomId}, #{subjectId}, #{roundNum}, #{winRole}, #{imageUrl}, #{startedAt}, #{finishedAt})
+    </insert>
+
+    <!-- Delete a round by id -->
+    <delete id="deleteRound">
+        DELETE FROM ROUND WHERE GAME_ROUND_ID = #{roundId}
+    </delete>
+
+</mapper>

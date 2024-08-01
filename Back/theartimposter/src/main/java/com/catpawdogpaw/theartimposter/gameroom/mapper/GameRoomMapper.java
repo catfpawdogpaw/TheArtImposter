@@ -16,9 +16,12 @@ public interface GameRoomMapper {
 
     GameRoom getGameRoomById(@Param("gameRoomId") Long gameRoomId);
 
-	List<GameRoom> findAll();
+	List<GameRoom> findAllGameRoom();
 
 	Long selectLastInsertId();
+	
+	void updateGameRoom( GameRoom gameRoom);
+	
 
 }
 

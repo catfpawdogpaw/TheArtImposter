@@ -1,6 +1,8 @@
-package com.catpawdogpaw.theartimposter.domain;
+package com.catpawdogpaw.theartimposter.round.model;
 
 import java.time.LocalDateTime;
+
+import com.catpawdogpaw.theartimposter.player.model.GameRole;
 
 import lombok.Getter;
 import lombok.Setter;

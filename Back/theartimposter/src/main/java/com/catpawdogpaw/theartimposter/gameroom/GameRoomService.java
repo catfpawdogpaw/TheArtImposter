@@ -1,6 +1,8 @@
 package com.catpawdogpaw.theartimposter.gameroom;
 
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.catpawdogpaw.theartimposter.config.CacheService;
@@ -32,6 +34,18 @@ public class GameRoomService {
 	
 	public void deleteGameRoom(Long gameRoomId) {
 		gameRoomMapper.deleteGameRoom(gameRoomId);
+	}
+	
+	public GameRoom getGameRoom(Long gameRoomId) {
+		return gameRoomMapper.getGameRoomById(gameRoomId);
+	}
+	
+	public void updateGameRoom(GameRoom gameRoom) {
+		gameRoomMapper.updateGameRoom(gameRoom);
+	}
+
+	public List<GameRoom> findAllGameRoom() {
+		return gameRoomMapper.findAllGameRoom();
 	}
 	
 	/*

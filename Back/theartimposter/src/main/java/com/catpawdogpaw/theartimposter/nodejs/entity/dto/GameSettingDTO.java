@@ -6,7 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GameSettingDTO {
-
 	String version;
 	Integer turnTimeLimit;
 	Integer roundTimeLimit;

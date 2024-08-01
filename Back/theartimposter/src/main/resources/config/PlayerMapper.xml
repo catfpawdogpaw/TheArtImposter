@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.catpawdogpaw.theartimposter.player.mapper.PlayerMapper">
+
+    <!-- Select a player by id -->
+    <select id="getPlayerById" resultType="com.catpawdogpaw.theartimposter.player.model.Player">
+        SELECT PLAYER_ID AS id,
+               USER_USER_ID AS userId,
+               ROUND_GAME_ROUND_ID AS roundId,
+               GAME_ROLE AS gameRole,
+               TURN AS turn,
+               COLOR AS color
+        FROM PLAYER
+        WHERE PLAYER_ID = #{id}
+    </select>
+
+    <!-- Select all players -->
+    <select id="getAllPlayers" resultType="com.catpawdogpaw.theartimposter.player.model.Player">
+        SELECT PLAYER_ID AS id,
+               USER_USER_ID AS userId,
+               ROUND_GAME_ROUND_ID AS roundId,
+               GAME_ROLE AS gameRole,
+               TURN AS turn,
+               COLOR AS color
+        FROM PLAYER
+    </select>
+
+    <!-- Insert a new player -->
+    <insert id="insertPlayer" useGeneratedKeys="true" keyProperty="id" keyColumn="PLAYER_ID">
+        INSERT INTO PLAYER (TURN, GAME_ROLE, COLOR, USER_USER_ID, ROUND_GAME_ROUND_ID)
+        VALUES (#{turn}, #{gameRole}, #{color}, #{userId}, #{roundId})
+    </insert>
+
+    <!-- Delete a player by id -->
+    <delete id="deletePlayer">
+        DELETE FROM PLAYER WHERE PLAYER_ID = #{id}
+    </delete>
+
+    <!-- Update a player by id -->
+    <update id="updatePlayer">
+        UPDATE PLAYER
+        SET TURN = #{turn},
+            GAME_ROLE = #{gameRole},
+            COLOR = #{color},
+            USER_USER_ID = #{userId},
+            ROUND_GAME_ROUND_ID = #{roundId}
+        WHERE PLAYER_ID = #{id}
+    </update>
+
+</mapper>

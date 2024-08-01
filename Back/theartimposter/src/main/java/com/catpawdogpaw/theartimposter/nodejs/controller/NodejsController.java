@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.catpawdogpaw.theartimposter.gameroom.GameRoomService;
 import com.catpawdogpaw.theartimposter.nodejs.entity.dto.GameRoomResultDTO;
 import com.catpawdogpaw.theartimposter.nodejs.entity.dto.STNDTO;
+import com.catpawdogpaw.theartimposter.nodejs.service.GameResultService;
 import com.catpawdogpaw.theartimposter.nodejs.service.NodejsService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,9 +22,8 @@ import lombok.RequiredArgsConstructor;
 public class NodejsController {
 
 	private final NodejsService nodejsService;
-	private final GameRoomService gameRoomService;
+	private final GameResultService gameResultService;
 
-	
 	
 	@GetMapping("/test-data")
     public void testSendToNode() {
@@ -40,7 +39,7 @@ public class NodejsController {
     
     @PostMapping("/result")
     public ResponseEntity<String> saveResult(@RequestBody GameRoomResultDTO gameRoomResultDTO) {	
-    	//nodejsService.saveGameResult(gameRoomResultDTO);
+    	gameResultService.saveGameResult(gameRoomResultDTO);
     	return new ResponseEntity<>("Game result received successfully", HttpStatus.OK);
     
     }

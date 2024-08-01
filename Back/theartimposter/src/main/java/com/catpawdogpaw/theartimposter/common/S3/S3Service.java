@@ -1,6 +1,8 @@
 package com.catpawdogpaw.theartimposter.common.S3;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
 @Service
@@ -29,7 +32,7 @@ public class S3Service {
     	String originalFileName = file.getOriginalFilename();
         String fileExtension = "";
         if (originalFileName != null && originalFileName.contains(".")) {
-            fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
+            fileExtension =a originalFileName.substring(originalFileName.lastIndexOf("."));
         }
         UUID uuid = UUID.randomUUID();
         String savedFileName = uuid.toString() + fileExtension;
@@ -44,5 +47,30 @@ public class S3Service {
 		String url = "https://" + cloudfrontDomain + "/" + filePath;
 		
 		return url;
+    }
+    
+    public String uploadBase64Image(String base64Image) {
+        String[] parts = base64Image.split(",");
+        String imageString = parts[1];
+        String fileExtension = parts[0].split("/")[1].split(";")[0];
+
+        byte[] imageBytes = Base64.getDecoder().decode(imageString);
+
+        UUID uuid = UUID.randomUUID();
+        String savedFileName = uuid.toString() + "." + fileExtension;
+        String filePath = UPLOAD_PATH + savedFileName;
+
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(imageBytes)) {
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(imageBytes.length);
+            metadata.setContentType("image/" + fileExtension);
+            s3Client.putObject(new PutObjectRequest(bucketName, filePath, inputStream, metadata));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String url = "https://" + cloudfrontDomain + "/" + filePath;
+
+        return url;
     }
 }

@@ -1,14 +1,19 @@
 package com.catpawdogpaw.theartimposter.nodejs.entity.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class PlayerNTSDTO {
-    private int userId;
+    private Long userId;
     private String nickName;
     private String profileImage;
     private int vicCnt;
     private int gameCnt;
-    private int curScore = 0;
-    private String color = null;
-    private String turn = null;
-    private String gameRole = null;
-    private String socketId = null;
+    private int curScore;
+    private String color ;
+    private String turn;
+    private String gameRole;
+    private String socketId;
 }

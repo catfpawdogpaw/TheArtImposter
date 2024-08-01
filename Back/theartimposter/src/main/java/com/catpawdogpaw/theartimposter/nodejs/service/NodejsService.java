@@ -19,10 +19,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class NodejsService {
-
-
+	
 	private RestTemplate restTemplate;
-
+	
 	private PlayerSTNDTO createPlayerSTNDTO() {
 		PlayerSTNDTO playerSTNDTO = new PlayerSTNDTO();
 		playerSTNDTO.setPlayerId(1000);
@@ -116,7 +115,4 @@ public class NodejsService {
 	
 	}
 
-	
-	
-	
 }
