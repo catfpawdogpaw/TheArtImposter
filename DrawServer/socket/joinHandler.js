@@ -1,7 +1,7 @@
 const drawingHandler = require("./drawingHandler");
 const { gameStatusHandler } = require("./gameStatusHandler");
-const { getGameRoomStatus, getRoomStatus } = require("./roomHandler");
-const { testPlayerDTO } = require("../model/gameDTO");
+const { getGameRoomStatus, getRoomStatus, defaultGameSet, disconnectedPlayers } = require("./roomHandler");
+const { testPlayerDTO, GameRoomStatus } = require("../model/gameDTO");
 const { validateToken, updateRedisRoomStatus } = require("../config/redisConfig");
 
 async function joinHandler(io, socket) {
@@ -20,7 +20,9 @@ async function joinHandler(io, socket) {
             return;
         }
 
+        //재연결 확인
         gameRoomStatus.addPlayer(player);
+
         io.to(roomTitle).emit("playerJoined", player);
         socket.emit("initDrawing", gameRoomStatus.drawingData);
         socket.join(roomTitle);
@@ -34,11 +36,7 @@ async function joinHandler(io, socket) {
 
         socket.on("disconnect", () => {
             console.log(`${player.nickName}님이 게임을 떠났습니다.`);
-            if (gameRoomStatus) {
-                gameRoomStatus.leavePlayer(player.socketId);
-                io.to(roomTitle).emit("playerDisconnected", player);
-                updateRedisRoomStatus(gameRoomStatus);
-            }
+            handleDisconnect(io, gameRoomStatus, player, roomTitle);
         });
 
         return gameRoomStatus;
@@ -93,6 +91,29 @@ function sendGameRoomStatus(socket, gameRoomStatus) {
         const { roundResults, drawingData, ...status } = gameRoomStatus;
         return status;
     }
+}
+
+function handleDisconnect(io, gameRoomStatus, player, roomTitle) {
+    const timeoutId = setTimeout(() => {
+        if (disconnectedPlayers.has(player.userId)) {
+            if (gameRoomStatus) {
+                console.log(`${player.nickName}님이 게임을 완전히 떠났습니다.`);
+                gameRoomStatus.leavePlayer(player.socketId);
+                io.to(roomTitle).emit("playerDisconnected", player);
+                updateRedisRoomStatus(gameRoomStatus);
+            }
+            disconnectedPlayers.delete(player.userId);
+        }
+    }, defaultGameSet.RECONNECT_TIMEOUT * 1000);
+
+    disconnectedPlayers.set(player.userId, {
+        player: player,
+        roomTitle: roomTitle,
+        timeoutId: timeoutId,
+    });
+
+    // 임시 연결 끊김 알림
+    io.to(roomTitle).emit("playerTemporarilyDisconnected", player);
 }
 
 module.exports = joinHandler;
