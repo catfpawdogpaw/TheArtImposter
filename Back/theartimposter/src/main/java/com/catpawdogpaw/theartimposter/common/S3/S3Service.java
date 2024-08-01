@@ -32,7 +32,7 @@ public class S3Service {
     	String originalFileName = file.getOriginalFilename();
         String fileExtension = "";
         if (originalFileName != null && originalFileName.contains(".")) {
-            fileExtension =a originalFileName.substring(originalFileName.lastIndexOf("."));
+            fileExtension =originalFileName.substring(originalFileName.lastIndexOf("."));
         }
         UUID uuid = UUID.randomUUID();
         String savedFileName = uuid.toString() + fileExtension;
