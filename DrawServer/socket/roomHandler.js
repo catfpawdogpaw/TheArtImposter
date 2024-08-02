@@ -31,9 +31,9 @@ const defaultGameSet = {
     REDIS_EXPIRE_TIME: 1800, //30분
     GAME_START_DELAY: 3,
     TURN_DELAY: 3,
-    STEP_INTERVAL: 3,
+    STEP_INTERVAL: 4,
     VOTE_TIME: 20,
-    NOMAL_DELAY:4,
+    NOMAL_DELAY: 4,
     GUESS_TIME: 20,
     RECONNECT_TIMEOUT: 60,
     COLORS: ["red", "blue", "green", "aqua", "orange", "purple", "grey", "hotpink", "saddlebrown"],

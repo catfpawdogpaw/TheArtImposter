@@ -16,9 +16,7 @@ const roundHandler = {
             GameRoomStatus.roundStartTime = new Date();
 
             roundStartlog(GameRoomStatus);
-
-            // 3초 대기
-            await sleep(defaultGameSet.NOMAL_DELAY * 1000);
+            await stepInterval();
             
             // 턴 시작
             await startTurns(io, socket, GameRoomStatus);
@@ -34,7 +32,7 @@ const roundHandler = {
             await finalizeRound(io, GameRoomStatus, winner);
 
             // 3초 대기
-            await sleep(defaultGameSet.NOMAL_DELAY * 1000);
+            await stepInterval();
 
             // 다음 라운드 준비
             GameRoomStatus.currentRound++;
@@ -134,15 +132,15 @@ async function voteStep(io, socket, GameRoomStatus) {
         GameRoomStatus.players.forEach((player) => {
             const playerSocket = io.sockets.sockets.get(player.socketId);
             if (playerSocket) {
-                playerSocket.on("vote", (votedForId) => handleVote(votedForId));
+                playerSocket.on("vote", (votedForId) => handleVote(player.userId, votedForId));
             }
         });
 
-        function handleVote(votedForId) {
-            console.log('투표 대상 :' + votedForId);
+        function handleVote(voterId, votedForId) {
+            console.log(`투표: ${voterId}가 ${votedForId}에게 투표`);
             player = GameRoomStatus.players.find((player) => player.socketId === socket.id);
-            if (player.userId !== votedForId && !votes[player.userId]) {
-                votes[player.userId] = votedForId;
+            if (!votes[voterId]) {
+                votes[voterId] = votedForId;
                 votedCount++;
                 checkVotesComplete();
             }
@@ -243,7 +241,7 @@ async function announceRoundResult(io, GameRoomStatus, voteResult) {
             io.to(GameRoomStatus.gameRoomTitle).emit("roundEnd", {
                 winner: winner,
             });
-            
+
             console.log("라운드 종료 승리 역할:" + winner);
             resolve(winner);
         }
@@ -415,7 +413,7 @@ function roundStartlog(GameRoomStatus) {
 
 // sleep 함수를 정의합니다.
 function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 module.exports = { roundHandler };
