@@ -74,7 +74,7 @@ export default {};
     margin: 0 20px;
     text-align: left;
     font-size: 16px;
-    color: #444;
+    color: #ccc;
     text-align: center;
 }
 
@@ -135,7 +135,7 @@ export default {};
     margin: 0;
     font-size: 12px;
     line-height: 1.5;
-    color: #444;
+    color: #ccc;
     margin-right: 100px;
     scale: 1.25;
 }

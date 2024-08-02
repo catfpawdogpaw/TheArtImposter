@@ -13,6 +13,7 @@ import VoteComponent from "@/components/game/middle/main/VoteComponent.vue";
 import MiddleComponent from "@/components/MiddleComponent.vue";
 import UserCompo from "@/components/loginCompo/UserCompo.vue";
 import TestModalComponent from "@/components/test-vue/TestModalComponent.vue";
+import MainCompo from "@/components/websocket/MainCompo.vue";
 
 export default [
   {
@@ -27,7 +28,7 @@ export default [
         path: "",
         components: {
           // 메인 화면에 띄우는 컴포넌트 변경하기
-          main: DrawPad,
+          main: MainCompo,
           side: LoginCompo,
         },
       },
