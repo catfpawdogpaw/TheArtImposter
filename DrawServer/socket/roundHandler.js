@@ -17,7 +17,7 @@ const roundHandler = {
 
             roundStartlog(GameRoomStatus);
             await stepInterval();
-
+            
             // 턴 시작
             await startTurns(io, socket, GameRoomStatus);
 

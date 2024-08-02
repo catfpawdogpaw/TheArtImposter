@@ -23,52 +23,43 @@ export default {
 
 <style scoped>
 .subject {
-    font-size: 60px;
+    margin: 10px;
+    font-size: 50px;
 }
 
 .word {
-    margin: 100px;
-    font-size: 100px;
+    margin: 20px;
+    font-size: 80px;
 }
 
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
+    margin-left: 79px;
+    margin-top: 121px;
+    width: 800px;
+    height: 580px;
+    background-color: rgba(0, 0, 0, 0.1);
     justify-content: center;
     align-items: center;
+    border: #000000 solid 1px;
 }
 
 .modal-content {
+    border: #000000 solid 3px;
     background-color: white;
-    width: 90%;
+    width: 600px;
+    height: 300px;
     opacity: 0.8;
-    padding: 20px;
-    border-radius: 5px;
+    margin: 120px auto;
+    border-radius: 50px;
     text-align: center;
     color: black;
-    font-family: "Questrial", sans-serif;
-    background-color: #ffec63;
-    background-image: linear-gradient(
-            45deg,
-            #ffd966 25%,
-            transparent 25%,
-            transparent 75%,
-            #ffd966 75%,
-            #ffd966
-        ),
-        linear-gradient(
-            -45deg,
-            #ffd966 25%,
-            transparent 25%,
-            transparent 75%,
-            #ffd966 75%,
-            #ffd966
-        );
+    font-family: 'Questrial', sans-serif;
+    background-color: #f6f6f6;
+    background-image: linear-gradient(45deg, #dedede 25%, transparent 25%, transparent 75%, #dedede 75%, #dedede),
+        linear-gradient(-45deg, #dedede 25%, transparent 25%, transparent 75%, #dedede 75%, #dedede);
     background-size: 60px 60px;
     background-position: 0 0;
     animation: slide 4s infinite linear;
@@ -84,6 +75,7 @@ export default {
     }
 }
 
+/* 
 .modal {
     position: absolute;
     left: 50%;
@@ -98,7 +90,7 @@ export default {
     border-radius: 5px;
     background: white;
     box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.2);
-}
+} */
 
 .btn {
     color: inherit;

@@ -1,50 +1,3 @@
-<!--
-<template>
-    <div class="left-game-header">
-        <div class="t">
-            <h1>왼쪽헤더</h1>
-            <div>
-                <count-component></count-component>
-            </div>
-            <div>
-                <turn-component></turn-component>
-            </div>
-            <div>
-                <category-component></category-component>
-            </div>
-            <div>
-                <answer-component></answer-component>
-            </div>
-        </div>
-    </div>
-</template>
-
-<script>
-import CountComponent from './count/CountComponent.vue';
-import TurnComponent from './turn/TurnComponent.vue';
-import CategoryComponent from './category/CategoryComponent.vue';
-import AnswerComponent from './answer/AnswerComponent.vue';
-
-export default {
-    components: { CountComponent, TurnComponent, CategoryComponent, AnswerComponent },
-};
-</script>
-
-<style scoped>
-.left-game-header {
-}
-
-.t {
-    width: var(--h-left-game-header-width);
-    margin: 0 auto;
-    height: var(--h-game-header-height);
-    margin-bottom: var(--h-game-header-margin-bottom);
-    border: 1px solid black;
-}
-</style>
-
--->
-
 <template>
     <div class="left-game-header">
         <div class="t">
@@ -52,6 +5,7 @@ export default {
             <turn-component></turn-component>
             <category-component></category-component>
             <answer-component></answer-component>
+            <subject-modal :show="showSubject" :subject="currentCategory" :word="currentAnswer" />
         </div>
     </div>
 </template>
@@ -61,9 +15,41 @@ import CountComponent from './count/CountComponent.vue';
 import TurnComponent from './turn/TurnComponent.vue';
 import CategoryComponent from './category/CategoryComponent.vue';
 import AnswerComponent from './answer/AnswerComponent.vue';
+import SubjectModal from '@/components/modal/SubjectModal.vue';
+import { EventBus } from '@/utils/eventBus';
 
 export default {
-    components: { CountComponent, TurnComponent, CategoryComponent, AnswerComponent },
+    components: { CountComponent, TurnComponent, CategoryComponent, AnswerComponent, SubjectModal },
+    data() {
+        return {
+            showSubject: false,
+        };
+    },
+    computed: {
+        currentCategory() {
+            return this.$store.getters.getMyInfo ? this.$store.getters.getMyInfo.category : '?';
+        },
+        currentAnswer() {
+            return this.$store.getters.getMyInfo ? this.$store.getters.getMyInfo.keyword : '?';
+        },
+    },
+    created() {
+        EventBus.$on('settingGame', this.setSubjectModalOn);
+    },
+    beforeDestroy() {
+        EventBus.$off('settingGame', this.setSubjectModalOn);
+    },
+    methods: {
+        setSubjectModalOn() {
+            this.showSubject = true;
+            setTimeout(() => {
+                this.setSubjectModalOff();
+            }, 3000);
+        },
+        setSubjectModalOff() {
+            this.showSubject = false;
+        },
+    },
 };
 </script>
 

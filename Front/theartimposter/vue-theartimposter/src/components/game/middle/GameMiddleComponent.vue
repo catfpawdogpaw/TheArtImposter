@@ -1,12 +1,12 @@
 <template>
     <div class="middle">
-        <div class="header">
+        <!-- <div class="header">
             <div class="room-input">
                 <label for="room">Room:</label>
                 <input v-model="room" id="room" placeholder="Enter room name" />
                 <button @click="joinRoom">Join Room</button>
             </div>
-        </div>
+        </div> -->
         <div class="content">
             <div class="main-content">
                 <router-view v-if="!isVoteComponent" name="draw"></router-view>
