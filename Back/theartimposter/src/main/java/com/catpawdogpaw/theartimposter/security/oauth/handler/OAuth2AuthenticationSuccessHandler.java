@@ -12,6 +12,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -31,10 +33,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final RefreshRepository refreshRepository;
     private final UserRepository userRepository;
     private final CacheService cacheService;
-
+	@Value("${vueServer}")
+	private String vueServer;
+    
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-
+    	
         //OAuth2User
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         String id = userPrincipal.getId();
@@ -70,7 +74,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         //응답 설정
         // 쿼리 파라미터로 access 및 refresh 토큰 전달
-        String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:9080/store-tokens")
+        String targetUrl = UriComponentsBuilder.fromUriString("http://"+ vueServer +":9080/store-tokens")
                 .queryParam("access", access)
                 .queryParam("refresh", refresh)
                 .build().toUriString();

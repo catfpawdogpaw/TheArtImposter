@@ -2,6 +2,7 @@ package com.catpawdogpaw.theartimposter.security.config;
 
 import java.util.Collections;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -31,7 +32,9 @@ public class SecurityConfig {
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private final JwtUtil jwtUtil;
 	private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-
+	@Value("${vueServer}")
+	private String vueServer;
+	
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		// csrf disable
@@ -42,7 +45,7 @@ public class SecurityConfig {
 
 				CorsConfiguration configuration = new CorsConfiguration();
 
-				configuration.setAllowedOrigins(Collections.singletonList("http://localhost:9080"));
+				configuration.setAllowedOrigins(Collections.singletonList("http://"+vueServer+":9080"));
 				configuration.setAllowedMethods(Collections.singletonList("*"));
 				configuration.setAllowCredentials(true);
 				configuration.setAllowedHeaders(Collections.singletonList("*"));

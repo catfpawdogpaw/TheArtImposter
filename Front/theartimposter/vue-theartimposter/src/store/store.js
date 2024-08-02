@@ -1,14 +1,14 @@
-import axios from "@/plugins/axios";
-import { eraseCookie, getCookie } from "@/utils/cookie";
-import { EventBus } from "@/utils/eventBus"; // 이벤트 버스 가져오기
-import Vue from "vue";
-import Vuex from "vuex"; // 쿠키 유틸리티 함수 가져오기
+import axios from '@/plugins/axios';
+import { eraseCookie, getCookie } from '@/utils/cookie';
+import { EventBus } from '@/utils/eventBus'; // 이벤트 버스 가져오기
+import Vue from 'vue';
+import Vuex from 'vuex'; // 쿠키 유틸리티 함수 가져오기
 
 Vue.use(Vuex);
 export default new Vuex.Store({
     state: {
-        accessToken: localStorage.getItem("access_token") || "",
-        isAuthenticated: !!localStorage.getItem("access_token"),
+        accessToken: localStorage.getItem('access_token') || '',
+        isAuthenticated: !!localStorage.getItem('access_token'),
         user: null, // 유저 정보 필드
         gameRoomStatus: null, // 게임 룸 상태 필드
         players: [], // 유저 목록 필드 추가
@@ -17,25 +17,25 @@ export default new Vuex.Store({
         otherPlayers: [],
         myRoomNumber: null,
         voteResult: null,
-        springHost: "localhost:8080",
-        nodeHost: "localhost:3000",
+        springHost: '192.168.230.30:8080',
+        nodeHost: '192.168.230.30:3000',
     },
     mutations: {
         setAccessToken(state, token) {
             state.accessToken = token;
             state.isAuthenticated = true;
-            localStorage.setItem("access_token", token);
+            localStorage.setItem('access_token', token);
         },
         setUser(state, user) {
             // 유저 정보를 저장하는 mutation 추가
             state.user = user;
         },
         logout(state) {
-            state.accessToken = "";
+            state.accessToken = '';
             state.isAuthenticated = false;
             state.user = null;
-            localStorage.removeItem("access_token");
-            eraseCookie("refresh_token");
+            localStorage.removeItem('access_token');
+            eraseCookie('refresh_token');
         },
         setGameRoomStatus(state, status) {
             // 게임 룸 상태를 저장하는 mutation 추가
@@ -45,12 +45,12 @@ export default new Vuex.Store({
         addPlayer(state, player) {
             // 유저를 추가하는 mutation 추가
             state.players.push(player);
-            EventBus.$emit("addPlayer"); // gameInfo 변경 시 이벤트 발행
+            EventBus.$emit('addPlayer'); // gameInfo 변경 시 이벤트 발행
         },
         setTurnPlayer(state, player) {
             // setTurnPlayer 뮤테이션 추가
             state.turnPlayer = player;
-            EventBus.$emit("turnPlayerChanged", player); // turnPlayer 변경 시 이벤트 발행
+            EventBus.$emit('turnPlayerChanged', player); // turnPlayer 변경 시 이벤트 발행
         },
         setGameInfo(state, gameInfo) {
             // state.myInfo = gameInfo.myInfo;
@@ -73,74 +73,74 @@ export default new Vuex.Store({
     },
     actions: {
         login({ commit }, { accessToken }) {
-            commit("setAccessToken", accessToken);
+            commit('setAccessToken', accessToken);
         },
         fetchUser({ commit }) {
             return axios
-                .get("/user/me")
+                .get('/user/me')
                 .then((response) => {
-                    console.log("내가 원하는 순서 0");
-                    commit("setUser", response.data);
-                    console.log("내가 원하는 순서 1");
+                    console.log('내가 원하는 순서 0');
+                    commit('setUser', response.data);
+                    console.log('내가 원하는 순서 1');
                     console.log(response.data);
                     return response.data; // Promise 반환
                 })
                 .catch(() => {
-                    commit("logout");
+                    commit('logout');
                 });
         },
         logout({ commit }) {
             return axios
-                .post("/user/logout", {}, { withCredentials: true }) // withCredentials 추가
+                .post('/user/logout', {}, { withCredentials: true }) // withCredentials 추가
                 .then(() => {
-                    commit("logout");
+                    commit('logout');
                 })
                 .catch((error) => {
-                    console.error("Logout failed:", error);
+                    console.error('Logout failed:', error);
                     if (error.response && error.response.status === 403) {
-                        commit("logout");
+                        commit('logout');
                     }
                 });
         },
         refreshToken({ commit }) {
             return axios
-                .post("/reissue", {}, { withCredentials: true })
+                .post('/reissue', {}, { withCredentials: true })
                 .then((response) => {
                     const { access, refresh } = response.data;
                     console.log(`accessToken: ${access}, refreshToken: ${refresh}`);
-                    commit("setAccessToken", access);
+                    commit('setAccessToken', access);
                     // Optional: Set new refresh token as cookie if necessary
                     document.cookie = `refresh=${refresh};path=/;SameSite=Lax;`;
                     return access;
                 })
                 .catch((error) => {
-                    commit("logout");
+                    commit('logout');
                     return Promise.reject(error);
                 });
         },
         updateGameRoomStatus({ commit }, status) {
             // 게임 룸 상태를 업데이트하는 action 추가
-            commit("setGameRoomStatus", status);
+            commit('setGameRoomStatus', status);
         },
         addPlayer({ commit }, player) {
             // 유저를 추가하는 action 추가
-            commit("addPlayer", player);
+            commit('addPlayer', player);
         },
         updateTurnPlayer({ commit }, player) {
             // updateTurnPlayer 액션 추가
-            commit("setTurnPlayer", player);
+            commit('setTurnPlayer', player);
         },
         updateGameInfo({ commit }, gameInfo) {
             // updateGameInfo 액션 추가
-            commit("setGameInfo", gameInfo);
+            commit('setGameInfo', gameInfo);
         },
         updateMyRoomNumber({ commit }, myRoomNumber) {
             // setMyRoomNumber 액션 추가
-            commit("setMyRoomNumber", myRoomNumber);
+            commit('setMyRoomNumber', myRoomNumber);
         },
         updateVoteResult({ commit }, voteResult) {
             // setMyRoomNumber 액션 추가
-            commit("setVoteResult", voteResult);
+            commit('setVoteResult', voteResult);
         },
     },
     getters: {
@@ -149,7 +149,7 @@ export default new Vuex.Store({
         getGameRoomStatus: (state) => state.gameRoomStatus, // 게임 룸 상태 getter 추가
         getPlayers: (state) => state.players, // 플레이어 목록 getter 추가
         getTurnPlayer: (state) => state.turnPlayer, // getTurnPlayer getter 추가
-        refreshToken: () => getCookie("refresh_token"),
+        refreshToken: () => getCookie('refresh_token'),
         getMyInfo: (state) => state.myInfo,
         getOtherPlayers: (state) => state.otherPlayers,
         getMyRoomNumber: (state) => state.myRoomNumber,
