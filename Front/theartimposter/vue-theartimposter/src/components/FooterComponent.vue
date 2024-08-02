@@ -5,7 +5,7 @@
                 <img src="@/assets/game/image/p-logo.png" alt="Project Logo" />
             </div>
             <div class="description">
-                <p>
+                <p style="color: white">
                     <strong>The Art Imposter</strong>는<br />
                     차례대로 순서를 진행하여 주제를 모르는<br />
                     가짜 예술가를 찾아내는 게임입니다.<br />

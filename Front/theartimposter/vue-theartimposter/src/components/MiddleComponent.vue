@@ -99,6 +99,8 @@ export default {
     flex-direction: column;
     align-items: center;
     width: 100%;
+  background-image: url('https://skribbl.io/img/background.png');
+
 }
 
 .header {
@@ -132,7 +134,6 @@ export default {
     flex: 1;
     padding: 50px;
     box-sizing: border-box;
-    border: 1px solid black;
     height: 700px;
     margin-top: 50px;
 }

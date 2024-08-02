@@ -4,8 +4,8 @@
       <div class="title">
         <h1>The Art Imposter</h1>
       </div>
-      <div class="auth-button" v-if="user">
-        <button @click="logout">로그아웃</button>
+      <div  v-if="user">
+        <button class="auth-button" @click="logout">로그아웃</button>
       </div>
       <div v-else>
         <button class="auth-button" @click="login">로그인</button>

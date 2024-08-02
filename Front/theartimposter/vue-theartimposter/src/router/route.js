@@ -14,6 +14,7 @@ import MiddleComponent from "@/components/MiddleComponent.vue";
 import UserCompo from "@/components/loginCompo/UserCompo.vue";
 import TestModalComponent from "@/components/test-vue/TestModalComponent.vue";
 import MainCompo from "@/components/websocket/MainCompo.vue";
+import SideComponent from "@/components/SideComponent.vue";
 
 export default [
   {
@@ -29,7 +30,7 @@ export default [
         components: {
           // 메인 화면에 띄우는 컴포넌트 변경하기
           main: MainCompo,
-          side: LoginCompo,
+          side: SideComponent,
         },
       },
       {
