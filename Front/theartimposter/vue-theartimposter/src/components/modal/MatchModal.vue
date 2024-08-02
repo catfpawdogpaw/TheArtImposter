@@ -12,6 +12,13 @@ export default {
     props: {
         show: Boolean,
     },
+    watch: {
+        show(newVal) {
+            if (!newVal) {
+                this.$router.push('/game');
+            }
+        },
+    },
 };
 </script>
 
