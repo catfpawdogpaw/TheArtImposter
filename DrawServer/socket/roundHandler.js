@@ -17,6 +17,9 @@ const roundHandler = {
 
             roundStartlog(GameRoomStatus);
 
+            // 3초 대기
+            await sleep(defaultGameSet.NOMAL_DELAY * 1000);
+            
             // 턴 시작
             await startTurns(io, socket, GameRoomStatus);
 

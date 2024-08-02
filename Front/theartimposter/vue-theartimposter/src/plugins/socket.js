@@ -31,8 +31,9 @@ export default {
             console.log('gameInfo:', data);
             store.dispatch('updateGameInfo', data);
             console.log('settingGamePlayers - 이벤트 버스 출발');
-            EventBus.$emit('settingGamePlayers'); // gameInfo 변경 시 이벤트 발행
-            EventBus.$emit('settingGamePlayers2'); // gameInfo 변경 시 이벤트 발행
+            EventBus.$emit('settingGamePlayers'); // gameInfo 변경 시 이벤트 발행, 교체되는 컴포
+            EventBus.$emit('settingGamePlayers2'); // gameInfo 변경 시 이벤트 발행, 유지 되는 컴포
+            EventBus.$emit('settingGame'); // gameInfo 변경 시 이벤트 발행
         });
 
         socket.on('turnStart', (data) => {
