@@ -4,7 +4,7 @@ import io from "socket.io-client";
 export default {
     install(Vue, { store }) {
         console.log("소켓 저장");
-        const socket = io(`http://${this.$nodeHost}`);
+        const socket = io(`http://${store.state.nodeHost}`);
         Vue.prototype.$socket = socket;
 
         socket.on("connect", () => {

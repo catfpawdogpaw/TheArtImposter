@@ -47,7 +47,7 @@ export default {
             const refreshToken = this.$store.getters.refreshToken;
             if (this.room.trim() !== "" && refreshToken) {
                 if (!this.socket) {
-                    this.socket = socketHandler.connectToServer(`http://${this.$nodeHost}`); // 서버 URL을 적절히 변경
+                    this.socket = socketHandler.connectToServer(`http://${this.$store.state.nodeHost}`); // 서버 URL을 적절히 변경
                 }
                 console.log("소켓" + this.socket);
                 socketHandler.joinRoom(this.socket, this.room, refreshToken, this.userId);
@@ -71,7 +71,7 @@ export default {
     },
     created() {
         if (!this.socket) {
-            this.socket = socketHandler.connectToServer(`http://${this.$nodeHost}`); // 서버 URL을 적절히 변경
+            this.socket = socketHandler.connectToServer(`http://${this.$store.state.nodeHost}`); // 서버 URL을 적절히 변경
         }
         const accessToken = this.$store.getters.refreshToken;
         if (accessToken) {
@@ -80,7 +80,7 @@ export default {
                 .then(() => {
                     console.log("User fetched:", this.userId);
                     if (!this.socket) {
-                        this.socket = socketHandler.connectToServer(`http://${this.$nodeHost}`); // 서버 URL을 적절히 변경
+                        this.socket = socketHandler.connectToServer(`http://${this.$store.state.nodeHost}`); // 서버 URL을 적절히 변경
                     }
                 })
                 .catch(() => {
