@@ -10,12 +10,7 @@
         <!-- 삭제할 것 -->
 
         <!-- <button @click="getCurrentSessions">Get Current Sessions</button> -->
-        
-        <div>
-            <h2>Vuex 상태</h2>
-            <p>Game Room ID: {{ roomId }}</p>
-            <p>Game Room Title: {{ roomTitle }}</p>
-        </div>
+
     
     </div>
 </template>
@@ -43,7 +38,7 @@ export default {
         };
     },
     computed: {
-        ...mapState(['roomId', 'roomTitle']), // Vuex 상태 맵핑
+        ...mapState(['gameRoomId', 'gameRoomTitle']), // Vuex 상태 맵핑
     },
     methods: {
         ...mapActions(['setRoomInfo']),  // setRoomInfo 액션을 맵핑
@@ -56,24 +51,9 @@ export default {
                     this.connected = true;
                     console.log('Connected: ' + frame);
 
+                    console.log('connect 실행 ')
                     this.stompClient.subscribe('/wait-service/waitroom/sessions', (message) => {
                         this.showMessage(JSON.parse(message.body));
-                    });
-
-
-                    this.stompClient.subscribe('/wait-service/waitroom', (message) => {
-                        const receivedMessage = JSON.parse(message.body);
-                        console.log('Received: ', receivedMessage);
-                        this.receivedMessages.push(receivedMessage);
-                        
-                        if (receivedMessage.roomId && receivedMessage.roomTitle) {
-                            this.setRoomInfo({
-                                roomId: receivedMessage.roomId,
-                                roomTitle: receivedMessage.roomTitle,
-                            });
-                            this.showMatch = true;
-                            setTimeout(this.startGame, 3000);
-                        }
                     });
                 },
             });
@@ -141,8 +121,9 @@ export default {
         },
         startGame() {
             this.showMatch = false;
+       
             // 게임화면으로 전환
-            // this.$router.push("/game");
+            this.$router.push("/game");
         },
         startSubject() {
             this.showSubject = true;

@@ -8,7 +8,9 @@ export default new Vuex.Store({
     state: {
         accessToken: localStorage.getItem("access_token") || "",
         isAuthenticated: !!localStorage.getItem("access_token"),
-        user: null // 유저 정보 필드
+        user: null, // 유저 정보 필드
+        gameRoomId: 80, // 추가: 게임 방 ID
+        gameRoomTitle: 'TestRoom', // 추가: 게임 방 제목
     },
     mutations: {
         setAccessToken(state, token) {
@@ -25,6 +27,10 @@ export default new Vuex.Store({
             state.user = null;
             localStorage.removeItem("access_token");
             eraseCookie("refresh_token");
+        },
+        setGameRoom(state, { roomId, roomTitle }) { // 게임 방 정보를 저장하는 mutation
+            state.gameRoomId = roomId;
+            state.gameRoomTitle = roomTitle;
         },
     },
     actions: {
@@ -69,6 +75,9 @@ export default new Vuex.Store({
                     commit('logout');
                     return Promise.reject(error);
                 });
+        },
+        setRoomInfo({ commit }, roomInfo) { // 게임 방 정보를 설정하는 액션
+            commit('setGameRoom', roomInfo);
         },
     },
 

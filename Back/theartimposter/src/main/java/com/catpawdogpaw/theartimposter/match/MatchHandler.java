@@ -92,7 +92,7 @@ public class MatchHandler {
 		
 		Long gameRoomId = gameRoomService.createGameRoom(gameRoom);
 		log.info("gameRoomId" + gameRoomId);
-		
+		log.info("gameRoomTitle" + gameRoom.getTitle());
 		
 		STNDTO stnDTO = new STNDTO();
 		GameRoomSTNDTO gameRoomStnDto = new GameRoomSTNDTO();
@@ -140,9 +140,11 @@ public class MatchHandler {
 	    // JSON 메시지 생성
 	    ObjectMapper objectMapper = new ObjectMapper();
 	    Map<String, Object> message = new HashMap<>();
+	 
 	    message.put("roomId", gameRoomId);
 	    message.put("roomTitle", gameRoom.getTitle());
-
+	    System.out.println(message);
+	    
 	    String jsonMessage = "";
 	    try {
 	        jsonMessage = objectMapper.writeValueAsString(message);
@@ -153,11 +155,11 @@ public class MatchHandler {
 	    //roomId, roomTitle 정보 vue에 반환 
 	    for (WebSocketSession user : matchedUsers) {
 	        if (user != null && user.isOpen()) {
-	            user.getAttributes().put("gameRoomId", gameRoomId);
+	            user.getAttributes().put("roomId", gameRoomId);
 	            try {
 	                user.sendMessage(new TextMessage(jsonMessage));
-	                log.info("gameRoomId : " + gameRoomId);
-	                log.info("gameRoomTitle : " + gameRoom.getTitle());
+	                log.info("roomId : " + gameRoomId);
+	                log.info("roomTitle : " + gameRoom.getTitle());
 	                
 	            } catch (Exception e) {
 	                log.error("Error sending match found message", e);
