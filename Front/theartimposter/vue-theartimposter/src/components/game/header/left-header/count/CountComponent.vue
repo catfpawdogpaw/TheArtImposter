@@ -1,7 +1,7 @@
 <template>
     <div class="count-component">
-        <img class="clock-icon" src="@/assets/game/image/clock.png" alt="Clock Icon" />
-        <span>{{ count }}</span>
+        <img class="clock-icon" src="@/assets/game/image/clock-invert.png" alt="Clock Icon" />
+        <span class="font">{{ count }}</span>
     </div>
 </template>
 
@@ -80,7 +80,7 @@ export default {
     height: 50px;
     display: flex;
     align-items: center;
-    background-color: #ccc;
+    background-color: #464e69;
     border-radius: 5px;
     margin-top: 22.5px;
 }
@@ -93,5 +93,9 @@ export default {
 .count-component span {
     margin-left: 15px;
     scale: 2;
+}
+
+.font {
+    color: #dadada;
 }
 </style>

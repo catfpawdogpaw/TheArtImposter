@@ -171,7 +171,7 @@ export default {
 
 <style scoped>
 canvas {
-    border: 1px solid black;
-    background-color: ivory;
+    border: 2px solid rgb(13, 18, 71);
+    background-color: hsla(227, 54%, 93%, 0.849);
 }
 </style>

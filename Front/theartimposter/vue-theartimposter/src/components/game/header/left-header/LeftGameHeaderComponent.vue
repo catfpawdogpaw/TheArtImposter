@@ -60,13 +60,13 @@ export default {
     margin: 0 auto;
     margin-bottom: var(--h-game-header-margin-bottom);
     border: 1px solid black;
+    background-color: rgba(21, 21, 78, 0.676);
 }
 
 .t {
     display: flex;
     align-items: center;
     border-radius: 5px;
-    background-color: #f9f9f9;
 }
 
 .count-component,

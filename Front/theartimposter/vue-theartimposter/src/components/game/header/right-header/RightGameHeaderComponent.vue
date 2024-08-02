@@ -27,6 +27,7 @@ export default {
     height: var(--h-game-header-height);
     margin-bottom: var(--h-game-header-margin-bottom);
     border: 1px solid black;
+    background-color: rgba(21, 21, 78, 0.676);
 }
 
 .t {

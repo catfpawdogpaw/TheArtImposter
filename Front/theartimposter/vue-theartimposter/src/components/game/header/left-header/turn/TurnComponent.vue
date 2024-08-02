@@ -70,7 +70,7 @@ export default {
 .turn-component {
     display: flex;
     align-items: center;
-    background-color: #ccc;
+    background-color: #464e69;
     width: 380px;
     height: 50px;
     margin-top: 22.5px;
@@ -93,7 +93,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    color: white;
+    color: #dadada;
     font-weight: bold;
     margin: 0 14px;
     transition: transform 0.3s;

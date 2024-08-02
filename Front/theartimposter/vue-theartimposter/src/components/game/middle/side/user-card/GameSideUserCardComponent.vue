@@ -46,7 +46,7 @@ export default {
 .user-card {
     display: flex;
     align-items: center;
-    background-color: #ffffff;
+    background-color: rgba(21, 21, 78, 0.676);
     border: 1px solid #7a7a7a;
     margin: 0 0 20px;
     width: 300px;
@@ -91,7 +91,7 @@ export default {
 
 .score {
     text-align: left;
-    color: #999;
+    color: #dadada;
     margin-left: 120px;
 }
 </style>

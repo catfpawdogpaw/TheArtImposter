@@ -1,7 +1,7 @@
 <template>
     <div class="answer-component">
         <span class="answer-span"
-            ><strong>{{ answer }}</strong></span
+            ><strong class="font">{{ answer }}</strong></span
         >
     </div>
 </template>
@@ -24,11 +24,15 @@ export default {
     margin-top: 22.5px;
     display: flex;
     align-items: center;
-    background-color: #ccc;
+    background-color: #464e69;
     border-radius: 5px;
 }
 
 .answer-span {
     margin: 0 auto;
+}
+
+.font {
+    color: #dadada;
 }
 </style>

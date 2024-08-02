@@ -93,7 +93,6 @@ export default {
 
 .main-content {
     flex: 3;
-    border-right: 1px solid #ccc;
     box-sizing: border-box;
 }
 
@@ -103,6 +102,6 @@ export default {
     justify-content: center;
     align-items: center;
     border: 1px solid black;
-    background-color: #ffffff;
+    background-color: rgba(21, 21, 78, 0.676);
 }
 </style>

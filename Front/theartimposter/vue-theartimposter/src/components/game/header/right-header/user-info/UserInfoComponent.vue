@@ -42,7 +42,7 @@ export default {
 
 .stats {
     font-size: 14px;
-    color: gray;
+    color: #dadada;
     margin-top: 15px;
     margin-left: 50px;
 }

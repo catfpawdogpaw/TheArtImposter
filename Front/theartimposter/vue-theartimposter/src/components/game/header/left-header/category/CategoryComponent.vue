@@ -1,7 +1,7 @@
 <template>
     <div class="category-component">
         <span class="category-span"
-            ><strong>{{ category }}</strong></span
+            ><strong class="font">{{ category }}</strong></span
         >
     </div>
 </template>
@@ -24,11 +24,15 @@ export default {
     height: 50px;
     margin-top: 22.5px;
     align-items: center;
-    background-color: #ccc;
+    background-color: #464e69;
     border-radius: 5px;
 }
 
 .category-span {
     margin: 0 auto;
+}
+
+.font {
+    color: #dadada;
 }
 </style>
