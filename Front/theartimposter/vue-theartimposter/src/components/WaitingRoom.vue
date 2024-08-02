@@ -7,15 +7,23 @@
         <!-- <button @click="startSubject">주제 모달</button>
         <subject-modal :show="showSubject" :subject="subject" :word="word" /> -->
 
-<!-- 삭제할 것 -->
+        <!-- 삭제할 것 -->
 
         <!-- <button @click="getCurrentSessions">Get Current Sessions</button> -->
+        
+        <div>
+            <h2>Vuex 상태</h2>
+            <p>Game Room ID: {{ roomId }}</p>
+            <p>Game Room Title: {{ roomTitle }}</p>
+        </div>
+    
     </div>
 </template>
 
 <script>
 import MatchModal from "@/components/modal/MatchModal.vue";
 // import SubjectModal from "@/components/modal/SubjectModal.vue";
+import { mapActions, mapState } from 'vuex';  // Vuex의 mapActions 가져오기
 
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
@@ -31,9 +39,15 @@ export default {
             showSubject: false,
             subject: "자동차",
             word: "람보르기니",
+            receivedMessages: [], // 추가: 받은 메시지를 저장하기 위한 배열
         };
     },
+    computed: {
+        ...mapState(['roomId', 'roomTitle']), // Vuex 상태 맵핑
+    },
     methods: {
+        ...mapActions(['setRoomInfo']),  // setRoomInfo 액션을 맵핑
+
         connect() {
             const socket = new SockJS('http://localhost:8080/wait-websocket');
             this.stompClient = new Client({
@@ -44,6 +58,22 @@ export default {
 
                     this.stompClient.subscribe('/wait-service/waitroom/sessions', (message) => {
                         this.showMessage(JSON.parse(message.body));
+                    });
+
+
+                    this.stompClient.subscribe('/wait-service/waitroom', (message) => {
+                        const receivedMessage = JSON.parse(message.body);
+                        console.log('Received: ', receivedMessage);
+                        this.receivedMessages.push(receivedMessage);
+                        
+                        if (receivedMessage.roomId && receivedMessage.roomTitle) {
+                            this.setRoomInfo({
+                                roomId: receivedMessage.roomId,
+                                roomTitle: receivedMessage.roomTitle,
+                            });
+                            this.showMatch = true;
+                            setTimeout(this.startGame, 3000);
+                        }
                     });
                 },
             });
@@ -60,15 +90,13 @@ export default {
         },
         getCurrentSessions() {
             if (this.stompClient && this.connected) {
-        this.stompClient.publish({ destination: "/app/waitroom/sessions", body: "{}" });
-        console.log("get current session");
-    } else {
-        console.error('stompClient is not connected');
-    }
+                this.stompClient.publish({ destination: "/app/waitroom/sessions", body: "{}" });
+                console.log("get current session");
+            } else {
+                console.error('stompClient is not connected');
+            }
         },
         startMatching() {
-            // 여기에 매칭 로직을 구현합니다.
-
             const socket = new SockJS('http://localhost:8080/wait-service/wait-websocket');
             this.stompClient = new Client({
                 webSocketFactory: () => socket,
@@ -77,12 +105,17 @@ export default {
                     console.log('Connected: ' + frame);
 
                     this.stompClient.subscribe('/wait-service/waitroom', (message) => {
-                        const receivedMessage = message.body;
-                        console.log('Received: ' + receivedMessage);
+                        const receivedMessage = JSON.parse(message.body);
+                        console.log('Received: ', receivedMessage);
                         this.receivedMessages.push(receivedMessage);
 
-                        if (receivedMessage.startsWith('Match Found: ')) {
-                            this.matchedGameRoom = receivedMessage;
+                        if (receivedMessage.roomId && receivedMessage.roomTitle) {
+                            this.setRoomInfo({
+                                roomId: receivedMessage.roomId,
+                                roomTitle: receivedMessage.roomTitle,
+                            });
+                            this.showMatch = true;
+                            setTimeout(this.startGame, 3000);
                         }
                     });
 
@@ -91,10 +124,7 @@ export default {
             });
             this.stompClient.activate();
 
-
             // 매칭이 성공하면 모달을 표시하고 게임으로 전환합니다.
-
-            // 매칭 성공했는지 확인 
             this.showMatch = true;
             setTimeout(this.startGame, 3000);
         },
@@ -112,7 +142,7 @@ export default {
         startGame() {
             this.showMatch = false;
             // 게임화면으로 전환
-            this.$router.push("/");
+            // this.$router.push("/game");
         },
         startSubject() {
             this.showSubject = true;

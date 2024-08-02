@@ -7,7 +7,7 @@
 
     <!-- 방 생성 -->
        <insert id="createGameRoom" parameterType="com.catpawdogpaw.theartimposter.gameroom.model.GameRoom" useGeneratedKeys="true" keyProperty="gameRoomId" keyColumn="game_room_id">
-        INSERT INTO gameroom (game_setting_id, title, created_at, destroy_at)
+        INSERT INTO gameroom (GAMESETTING_GAME_SETTING_ID, title, created_at, destroy_at)
         VALUES (#{gameSettingId}, #{title}, SYSTIMESTAMP, #{destroyAt, jdbcType=TIMESTAMP})
     </insert>
     
@@ -24,7 +24,7 @@
     <!-- 방 조회 -->
     <select id="getGameRoomById" resultType="com.catpawdogpaw.theartimposter.gameroom.model.GameRoom">
         SELECT game_room_id AS gameRoomId, 
-               game_setting_id AS gameSettingId, 
+               GAMESETTING_GAME_SETTING_ID AS gameSettingId, 
                title,
                created_at AS createdAt, 
                destroy_at AS destroyAt
@@ -35,7 +35,7 @@
 	<!-- 모든 방 조회  -->
 	<select id="findAllGameRoom" resultType="com.catpawdogpaw.theartimposter.gameroom.model.GameRoom">
     SELECT game_room_id AS gameRoomId, 
-           game_setting_id AS gameSettingId, 
+           GAMESETTING_GAME_SETTING_ID AS gameSettingId, 
            title,
            created_at AS createdAt, 
            destroy_at AS destroyAt
@@ -48,7 +48,7 @@
 	<update id="updateGameRoom"  parameterType="com.catpawdogpaw.theartimposter.gameroom.model.GameRoom">
 		UPDATE gameroom
 	    <set>
-	        <if test="gameSettingId != null">game_setting_id = #{gameSettingId, jdbcType=BIGINT},</if>
+	        <if test="gameSettingId != null">GAMESETTING_GAME_SETTING_ID = #{gameSettingId, jdbcType=BIGINT},</if>
 	        <if test="title != null">title = #{title, jdbcType=VARCHAR},</if>
 	        <if test="createdAt != null">created_at = #{createdAt, jdbcType=TIMESTAMP},</if>
 	        <if test="destroyAt != null">destroy_at = #{destroyAt, jdbcType=TIMESTAMP},</if>

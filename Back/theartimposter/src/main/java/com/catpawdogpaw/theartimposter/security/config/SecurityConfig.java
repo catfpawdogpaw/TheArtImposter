@@ -89,8 +89,7 @@ public class SecurityConfig {
 				.requestMatchers("/Nodejs/**").permitAll()
 				.requestMatchers("/wait-service/wait-websocket/**", "/waitroom/**").permitAll() // WebSocket
 				.requestMatchers("/ws/**").permitAll()
-				.anyRequest().permitAll());
-//				.anyRequest().authenticated());
+				.anyRequest().authenticated());
 
 		// 세션 설정 : STATELESS
 		http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

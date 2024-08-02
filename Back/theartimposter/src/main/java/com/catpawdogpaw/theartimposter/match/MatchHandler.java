@@ -2,7 +2,9 @@ package com.catpawdogpaw.theartimposter.match;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
@@ -25,6 +27,8 @@ import com.catpawdogpaw.theartimposter.nodejs.entity.dto.SubjectSTNDTO;
 import com.catpawdogpaw.theartimposter.nodejs.service.NodejsService;
 import com.catpawdogpaw.theartimposter.subject.SubjectService;
 import com.catpawdogpaw.theartimposter.subject.model.Subject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -68,9 +72,9 @@ public class MatchHandler {
 	private void checkAndMatchUsers() throws Exception {
 		log.info("checkAndMatchUsers");
 		synchronized (waitingUsers) {
-			while (waitingUsers.size() >= 1) { // 5로 변경하기
+			while (waitingUsers.size() >= 5) { // 5로 변경하기
 				WebSocketSession[] matchedUsers = new WebSocketSession[5];
-				for (int i = 0; i < 1; i++) {
+				for (int i = 0; i < 5; i++) {
 					matchedUsers[i] = waitingUsers.poll();
 				}
 				createAndAssignGameRoom(matchedUsers);
@@ -85,8 +89,11 @@ public class MatchHandler {
 		gameRoom.setTitle(UUID.randomUUID().toString()); // 무작위 제목
 		gameRoom.setGameSettingId(1L); // 고정된 게임 설정 ID
 		
+		
 		Long gameRoomId = gameRoomService.createGameRoom(gameRoom);
-
+		log.info("gameRoomId" + gameRoomId);
+		
+		
 		STNDTO stnDTO = new STNDTO();
 		GameRoomSTNDTO gameRoomStnDto = new GameRoomSTNDTO();
 		gameRoomStnDto.setGameRoomId(gameRoomId.intValue());
@@ -130,16 +137,44 @@ public class MatchHandler {
 		// gameRoomId를 Node.js 서버로 전송
 		nodeJsService.sendToNode(stnDTO);
 
-		for (WebSocketSession user : matchedUsers) {
-			if (user != null && user.isOpen()) {
-				user.getAttributes().put("gameRoomId", gameRoomId);
-				try {
-					user.sendMessage(new TextMessage("Match Found: " + gameRoomId));
-				} catch (Exception e) {
-					log.error("Error sending match found message", e);
-				}
-			}
-		}
+	    // JSON 메시지 생성
+	    ObjectMapper objectMapper = new ObjectMapper();
+	    Map<String, Object> message = new HashMap<>();
+	    message.put("roomId", gameRoomId);
+	    message.put("roomTitle", gameRoom.getTitle());
+
+	    String jsonMessage = "";
+	    try {
+	        jsonMessage = objectMapper.writeValueAsString(message);
+	    } catch (JsonProcessingException e) {
+	        log.error("Error converting message to JSON", e);
+	    }
+
+	    //roomId, roomTitle 정보 vue에 반환 
+	    for (WebSocketSession user : matchedUsers) {
+	        if (user != null && user.isOpen()) {
+	            user.getAttributes().put("gameRoomId", gameRoomId);
+	            try {
+	                user.sendMessage(new TextMessage(jsonMessage));
+	                log.info("gameRoomId : " + gameRoomId);
+	                log.info("gameRoomTitle : " + gameRoom.getTitle());
+	                
+	            } catch (Exception e) {
+	                log.error("Error sending match found message", e);
+	            }
+	        }
+	    }
+//
+//		for (WebSocketSession user : matchedUsers) {
+//			if (user != null && user.isOpen()) {
+//				user.getAttributes().put("gameRoomId", gameRoomId);
+//				try {
+//					user.sendMessage(new TextMessage("Match Found: " + gameRoomId));
+//				} catch (Exception e) {
+//					log.error("Error sending match found message", e);
+//				}
+//			}
+//		}
 	}
 
 	public void addSession(String sessionId, WebSocketSession session) {
