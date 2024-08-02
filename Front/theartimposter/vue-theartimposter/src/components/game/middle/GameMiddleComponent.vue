@@ -55,9 +55,6 @@ export default {
         EventBus.$off('roundEnd', this.changeSideComponent);
     },
     methods: {
-        joinRoom() {
-            this.$socket.emit('joinRoom', 'TestRoom', 23432, 'sadafafaf');
-        },
         changeSideComponent() {
             this.isVoteComponent = !this.isVoteComponent;
             this.isChatSideComponent = !this.isChatSideComponent;
