@@ -11,7 +11,7 @@ async function joinHandler(io, socket) {
         // redis jwt토큰 있는지 검증후 해당유저정보 가져오기
         console.log(roomTitle + "  " + userId + " ");
         const player = await validateToken(userId, refreshToken, socket);
-        //const player = testPlayerDTO();
+        // const player = testPlayerDTO();
         if (!player) {
             return;
         }
@@ -84,16 +84,15 @@ function checkRoomStatus(socket, roomTitle) {
 }
 
 function sendGameRoomStatus(socket, gameRoomStatus) {
-
-  socket.on("GameRoomStatus", () => {
+    socket.on("GameRoomStatus", () => {
+        socket.emit("GameRoomStatus", getRoomStatus(gameRoomStatus));
+    });
     socket.emit("GameRoomStatus", getRoomStatus(gameRoomStatus));
-  });
-  socket.emit("GameRoomStatus", getRoomStatus(gameRoomStatus));
 
-  function getRoomStatus(gameRoomStatus) {
-    const { roundResults, drawingData, ...status } = gameRoomStatus;
-    return status;
-  }
+    function getRoomStatus(gameRoomStatus) {
+        const { roundResults, drawingData, ...status } = gameRoomStatus;
+        return status;
+    }
 }
 
 function handleDisconnect(io, gameRoomStatus, player, roomTitle) {
