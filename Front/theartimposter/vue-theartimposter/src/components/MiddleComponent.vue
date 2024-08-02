@@ -1,15 +1,15 @@
 <template>
     <div class="middle">
-        <div class="header">
-            <div class="room-input" v-if="isAuthenticated">
-                <label for="room">Room:</label>
-                <input v-model="room" id="room" placeholder="Enter room name" />
-                <button @click="joinRoom">Join Room</button>
-            </div>
-            <div v-else>
-                <p>Please log in to join a room.</p>
-            </div>
-        </div>
+<!--        <div class="header">-->
+<!--            <div class="room-input" v-if="isAuthenticated">-->
+<!--                <label for="room">Room:</label>-->
+<!--                <input v-model="room" id="room" placeholder="Enter room name" />-->
+<!--                <button @click="joinRoom">Join Room</button>-->
+<!--            </div>-->
+<!--            <div v-else>-->
+<!--                <p>Please log in to join a room.</p>-->
+<!--            </div>-->
+<!--        </div>-->
         <div class="content">
             <div class="main-content">
                 <router-view name="main"></router-view>
@@ -99,6 +99,8 @@ export default {
     flex-direction: column;
     align-items: center;
     width: 100%;
+  background-image: url('https://skribbl.io/img/background.png');
+
 }
 
 .header {
@@ -124,7 +126,7 @@ export default {
 .main-content {
     flex: 3;
     border-right: 1px solid #ccc;
-    padding: 20px;
+    padding: 50px;
     box-sizing: border-box;
 }
 
@@ -132,5 +134,7 @@ export default {
     flex: 1;
     padding: 50px;
     box-sizing: border-box;
+    height: 700px;
+    margin-top: 50px;
 }
 </style>

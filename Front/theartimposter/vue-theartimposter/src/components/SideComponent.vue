@@ -9,4 +9,10 @@
 export default {};
 </script>
 
-<style scoped></style>
+<style scoped>
+.side {
+  border: 1px solid white;
+  min-height: 100px;
+}
+
+</style>

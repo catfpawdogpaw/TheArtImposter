@@ -31,7 +31,7 @@ export default {
                 .dispatch('fetchUser')
                 .then(() => {
                     // 리다이렉트
-                  this.$router.push({ path: '/' }).catch(() => {});
+                  this.$router.push({ path: '/lobby' }).catch(() => {});
                 })
                 .catch((error) => {
                     console.error('Failed to fetch user:', error);

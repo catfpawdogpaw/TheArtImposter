@@ -5,7 +5,7 @@
                 <img src="@/assets/game/image/p-logo.png" alt="Project Logo" />
             </div>
             <div class="description">
-                <p>
+                <p style="color: white">
                     <strong>The Art Imposter</strong>는<br />
                     차례대로 순서를 진행하여 주제를 모르는<br />
                     가짜 예술가를 찾아내는 게임입니다.<br />
@@ -44,13 +44,14 @@ export default {};
 <style scoped>
 .footer {
     width: 100%;
-    background-color: #ebebeb;
+    background-color: #273c75;
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     border-top: 1px solid #444;
     padding: 20px 0;
+    margin-left: 20px;
 }
 
 .footer-content {
@@ -73,7 +74,7 @@ export default {};
     margin: 0 20px;
     text-align: left;
     font-size: 16px;
-    color: #444;
+    color: #ccc;
     text-align: center;
 }
 
@@ -134,7 +135,7 @@ export default {};
     margin: 0;
     font-size: 12px;
     line-height: 1.5;
-    color: #444;
+    color: #ccc;
     margin-right: 100px;
     scale: 1.25;
 }
