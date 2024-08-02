@@ -22,13 +22,13 @@
 </template>
 
 <script>
-import socketHandler from '@/components/chatting/socketHandler';
+import socketHandler from "@/components/chatting/socketHandler";
 
 export default {
-    name: 'MiddleComponent',
+    name: "MiddleComponent",
     data() {
         return {
-            room: '',
+            room: "",
             socket: null,
         };
     },
@@ -43,17 +43,17 @@ export default {
     },
     methods: {
         joinRoom() {
-            console.log('조인 버튼 누름');
+            console.log("조인 버튼 누름");
             const refreshToken = this.$store.getters.refreshToken;
-            if (this.room.trim() !== '' && refreshToken) {
+            if (this.room.trim() !== "" && refreshToken) {
                 if (!this.socket) {
-                    this.socket = socketHandler.connectToServer('http://localhost:3000'); // 서버 URL을 적절히 변경
+                    this.socket = socketHandler.connectToServer(`http://${this.$nodeHost}`); // 서버 URL을 적절히 변경
                 }
-                console.log('소켓' + this.socket);
+                console.log("소켓" + this.socket);
                 socketHandler.joinRoom(this.socket, this.room, refreshToken, this.userId);
                 console.log(`Joining room: ${this.room} with userId: ${this.userId}`);
             } else {
-                console.error('Room name or refresh token is missing');
+                console.error("Room name or refresh token is missing");
             }
         },
     },
@@ -71,23 +71,23 @@ export default {
     },
     created() {
         if (!this.socket) {
-            this.socket = socketHandler.connectToServer('http://localhost:3000'); // 서버 URL을 적절히 변경
+            this.socket = socketHandler.connectToServer(`http://${this.$nodeHost}`); // 서버 URL을 적절히 변경
         }
         const accessToken = this.$store.getters.refreshToken;
         if (accessToken) {
             this.$store
-                .dispatch('fetchUser')
+                .dispatch("fetchUser")
                 .then(() => {
-                    console.log('User fetched:', this.userId);
+                    console.log("User fetched:", this.userId);
                     if (!this.socket) {
-                        this.socket = socketHandler.connectToServer('http://localhost:3000'); // 서버 URL을 적절히 변경
+                        this.socket = socketHandler.connectToServer(`http://${this.$nodeHost}`); // 서버 URL을 적절히 변경
                     }
                 })
                 .catch(() => {
-                    console.error('Failed to fetch user information');
+                    console.error("Failed to fetch user information");
                 });
         } else {
-            console.error('Access token is missing');
+            console.error("Access token is missing");
         }
     },
 };
